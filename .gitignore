@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Configuración sensible
+.env
+
+# Artefactos generados
+data/*
+!data/.gitkeep
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/

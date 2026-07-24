@@ -15,6 +15,7 @@ Esta carpeta organiza toda la documentación técnica, diagramas, resultados y a
 | **☕ Back-End** | API Spring Boot (Java 17), Swagger y endpoints | [Ver Documentación](./backend/README.md) |
 | **🐍 Data Science** | Análisis EDA, modelos ML y métricas | [Ver Documentación](./data-science/README.md) |
 | **☁️ OCI Cloud** | Configuración de Oracle Cloud (Storage & Compute) | [Ver Documentación](./oci-cloud/README.md) |
+| **⚙️ Gobernanza & GitHub** | Protección de ramas, GitFlow y flujo de CI/CD | [Ver Documentación](./github-config.md) |
 
 ---
 

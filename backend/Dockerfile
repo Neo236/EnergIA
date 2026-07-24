@@ -5,14 +5,14 @@ FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
 
 WORKDIR /app
 
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw .
-COPY mvnw.cmd .
+COPY analisis-energetico-api/pom.xml .
+COPY analisis-energetico-api/.mvn .mvn
+COPY analisis-energetico-api/mvnw .
+COPY analisis-energetico-api/mvnw.cmd .
 
 RUN ./mvnw dependency:go-offline -B || true
 
-COPY src ./src
+COPY analisis-energetico-api/src ./src
 
 RUN ./mvnw clean package -DskipTests
 

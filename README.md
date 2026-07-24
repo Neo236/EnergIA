@@ -171,6 +171,7 @@ main          ◀── Producción / Evaluación Hackathon (protegida)
         ├── feature/ml-model-training
         ├── feature/fastapi-inference-service
         ├── feature/docker-compose-integration
+        ├── feature/docs
         └── feature/oci-object-storage-config
 ```
 

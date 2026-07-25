@@ -45,6 +45,7 @@ jobs:
   docker-ci:
     name: Validate Docker Compose
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout Repository

@@ -34,13 +34,9 @@ jobs:
       - name: Grant Execute Permission for Maven Wrapper
         run: chmod +x backend/analisis-energetico-api/mvnw
 
-      - name: Run Maven Tests
+      - name: Build, Test & Package
         working-directory: backend/analisis-energetico-api
-        run: ./mvnw clean test
-
-      - name: Build Application Package
-        working-directory: backend/analisis-energetico-api
-        run: ./mvnw package -DskipTests
+        run: ./mvnw -B verify
 
   docker-ci:
     name: Validate Docker Compose

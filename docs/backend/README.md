@@ -18,20 +18,26 @@ Documentación técnica del desarrollo de la API REST principal encargada de orq
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `POST` | `/api/v1/analisis-energetico` | Procesa los datos de consumo y devuelve clasificación, costo y recomendaciones. |
-| `GET`  | `/actuator/health` | Estado de salud del servicio backend. |
+| `GET`  | `/actuator/health` | Estado de salud del servicio backend (habilitado mediante `spring-boot-starter-actuator`). |
 
 ---
 
-## 🐳 Dockerization del Backend
+## 🐳 Dockerization del Backend y Orquestación
 
 El backend se construye mediante un **Dockerfile multi-stage** optimizado para Java 17 y Spring Boot:
 
-- **Etapa 1 (Builder):** Utiliza `maven:3.9.6-eclipse-temurin-17-alpine` para compilar el proyecto bajo `backend/analisis-energetico-api/` y generar el artefacto `.jar` omitiendo los tests en empaquetado (`./mvnw clean package -DskipTests`).
-- **Etapa 2 (Runner):** Utiliza `eclipse-temurin:17-jre-alpine` ejecutado con un usuario no root (`appuser`), exponiendo el puerto `8080` e incluyendo comprobación de salud (`HEALTHCHECK`).
+- **Etapa 1 (Builder):** Utiliza `maven:3.9.6-eclipse-temurin-17-alpine` para compilar el proyecto bajo `backend/analisis-energetico-api/` y generar el artefacto `.jar`.
+- **Etapa 2 (Runner):** Utiliza `eclipse-temurin:17-jre-alpine` ejecutado con un usuario no root (`appuser`), exponiendo el puerto `8080` e incluyendo comprobación de salud (`HEALTHCHECK` mediante `wget` al endpoint `/actuator/health`).
 
-### Comando de Construcción Directo:
+### Orquestación con Docker Compose
+La orquestación se gestiona mediante [`docker-compose.yml`](../../docker-compose.yml):
+- Levanta el servicio `backend` aislado en la red interna `energiai-network`.
+- *Nota:* El servicio `ml-service` se encuentra temporalmente comentado hasta que el módulo de Data Science complete sus archivos fuente.
+
+### Comando de Construcción y Ejecución:
 ```bash
-docker build -t energiai-backend -f backend/Dockerfile .
+# Construcción e inicio del contenedor Backend
+docker compose up -d --build backend
 ```
 
 ---

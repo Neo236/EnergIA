@@ -1,0 +1,19 @@
+# .dockerignore del contexto de build del backend (docker-compose usa context: ./backend)
+# Nota: mvnw y .mvn/ NO se excluyen porque el Dockerfile los necesita.
+
+# Artefactos de build de Maven
+**/target/
+**/*.class
+
+# Archivos de entorno de IDEs
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+.DS_Store
+
+# Logs y archivos temporales
+*.log
+tmp/
+temp/

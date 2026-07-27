@@ -19,29 +19,32 @@ services:
       # - OCI_STORAGE_NAMESPACE=${OCI_STORAGE_NAMESPACE}
       # - OCI_STORAGE_BUCKET=${OCI_STORAGE_BUCKET}
       # - OCI_STORAGE_REGION=${OCI_STORAGE_REGION}
-    depends_on:
-      ml-service:
-        condition: service_started
+    # NOTA: Descomentar depends_on cuando el microservicio ml-service esté completo
+    # depends_on:
+    #   ml-service:
+    #     condition: service_started
     restart: unless-stopped
     networks:
       - energiai-network
 
   # -------------------------------------------------------------
   # Microservicio Data Science / ML - FastAPI (Python 3.10)
+  # NOTA: Comentado temporalmente hasta que el módulo data-science esté completo (faltan requirements.txt y src/api/main.py).
+  # Descomentar una vez que el equipo de Data Science agregue dichos archivos.
   # -------------------------------------------------------------
-  ml-service:
-    build:
-      context: ./data-science
-      dockerfile: Dockerfile
-    container_name: energiai-ml-service
-    ports:
-      - "8000:8000"
-    environment:
-      - PORT=8000
-      - ENVIRONMENT=production
-    restart: unless-stopped
-    networks:
-      - energiai-network
+  # ml-service:
+  #   build:
+  #     context: ./data-science
+  #     dockerfile: Dockerfile
+  #   container_name: energiai-ml-service
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - PORT=8000
+  #     - ENVIRONMENT=production
+  #   restart: unless-stopped
+  #   networks:
+  #     - energiai-network
 
 networks:
   energiai-network:

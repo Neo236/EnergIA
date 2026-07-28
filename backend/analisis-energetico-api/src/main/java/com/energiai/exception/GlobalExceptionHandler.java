@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name(),
-                "Errores de validacion en los datos de entrada",
+                "Errores en el cuerpo del (JSON), o de validacion en los datos de entrada",
                 erroresCampos
         );
 
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name(),
-                "El cuerpo de la solicitud (JSON) es invalido o esta ausente"
+                "El formato de la solicitud (JSON) es invalido o esta ausente"
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);

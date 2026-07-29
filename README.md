@@ -138,8 +138,9 @@ Content-Type: application/json
 
 | Servicio | Puerto Local | Puerto Producción (OCI) |
 |----------|:------------:|:-----------------------:|
-| API Spring Boot | `8080` | `80` |
-| Microservicio ML (Opcional) | `8000` | `8000` (interno) |
+| API Spring Boot | `8080` | `443` (HTTPS) vía proxy inverso |
+| Frontend (en desarrollo) | `3000` | raíz del dominio vía proxy (same-origin) |
+| Microservicio ML (Opcional) | `8000` | interno (solo red Docker) |
 
 ---
 
@@ -151,6 +152,7 @@ Una vez levantado el back-end, la documentación estará accesible en:
 |-------------|-----------|
 | **Swagger UI** (interfaz visual) | `http://localhost:8080/swagger-ui.html` |
 | **OpenAPI JSON** (spec completa) | `http://localhost:8080/v3/api-docs` |
+| **Health check** (Actuator) | `http://localhost:8080/actuator/health` |
 
 > 💡 **Nota sobre buenas prácticas en Producción:** 
 > Durante la fase de desarrollo local se mantiene la ruta estándar de Swagger UI (`/swagger-ui.html`). Al momento de desplegar en producción, como buena práctica, se puede configurar una ruta más limpia (ej. `/docs`), proteger el acceso mediante autenticación o incluso deshabilitar Swagger completamente por motivos de seguridad.
@@ -245,10 +247,12 @@ uvicorn src.api.main:app --reload --port 8000
 
 ## ☁️ Integración con OCI (Oracle Cloud Infrastructure)
 
-| Servicio OCI | Uso en el Proyecto |
-|-------------|-------------------|
-| **OCI Object Storage** | Almacenamiento del modelo serializado (`.pkl` / `.onnx`) y datasets de entrenamiento. |
-| **OCI Compute** | Instancia de VM para despliegue de los contenedores Docker en producción. |
+| Servicio OCI | Uso en el Proyecto | Estado |
+|-------------|-------------------|--------|
+| **OCI Compute** | VM ARM64 con los dos ambientes (producción y staging) detrás de proxy con HTTPS. | ✅ Desplegado |
+| **OCI Object Storage** | Almacenamiento del modelo serializado (`.pkl` / `.onnx`) y datasets de entrenamiento. | 🟡 Bucket + PAR listos |
+
+Detalle completo de la infraestructura (red, VM, dominios, seguridad, runbook): [`docs/oci-cloud/`](docs/oci-cloud/README.md).
 
 ### Configuración del Object Storage
 
@@ -261,7 +265,7 @@ oci:
   object-storage:
     namespace: [POR CONFIGURAR]
     bucket-name: g9-energy-test-bucket
-    region: Chile Central (Santiago) # confirmar identificador técnico OCI (ej. sa-santiago-1) antes de usarlo aquí
+    region: sa-santiago-1 # Chile Central (Santiago)
   auth:
     config-file: [POR CONFIGURAR]
 ```

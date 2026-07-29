@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name(),
-                "Errores en el cuerpo del (JSON), o de validacion en los datos de entrada",
+                "Errores de validacion en los datos de entrada",
                 erroresCampos
         );
 

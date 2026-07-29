@@ -39,9 +39,9 @@ jobs:
         run: ./mvnw -B verify
 
   docker-ci:
-    name: Validate Docker Compose
+    name: Build Docker Images
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - name: Checkout Repository
@@ -49,3 +49,6 @@ jobs:
 
       - name: Validate docker-compose.yml
         run: docker compose config
+
+      - name: Build Docker Images
+        run: docker compose build

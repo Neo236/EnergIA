@@ -252,15 +252,16 @@ uvicorn src.api.main:app --reload --port 8000
 
 ### Configuración del Object Storage
 
-> ⚠️ **Pendiente de Configuración:** Los valores a continuación deberán ser reemplazados por los datos reales de la cuenta de OCI del equipo.
+> ✅ **Bucket y región confirmados (Sprint 2)** — ver evidencia completa en [`docs/oci-cloud/README.md`](./docs/oci-cloud/README.md).
+> Namespace y archivo de autenticación se configuran por entorno al momento del despliegue (a cargo de Lautaro/Sergio) y no se publican en este ejemplo.
 
 ```yaml
 # application.yml (Spring Boot) - Ejemplo
 oci:
   object-storage:
     namespace: [POR CONFIGURAR]
-    bucket-name: [POR CONFIGURAR]
-    region: [POR CONFIGURAR]
+    bucket-name: g9-energy-test-bucket
+    region: Chile Central (Santiago) # confirmar identificador técnico OCI (ej. sa-santiago-1) antes de usarlo aquí
   auth:
     config-file: [POR CONFIGURAR]
 ```

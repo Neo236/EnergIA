@@ -26,8 +26,10 @@ Documentación técnica del desarrollo de la API REST principal encargada de orq
 
 El backend se construye mediante un **Dockerfile multi-stage** optimizado para Java 17 y Spring Boot:
 
-- **Etapa 1 (Builder):** Utiliza `maven:3.9.6-eclipse-temurin-17-alpine` para compilar el proyecto bajo `backend/analisis-energetico-api/` y generar el artefacto `.jar`.
-- **Etapa 2 (Runner):** Utiliza `eclipse-temurin:17-jre-alpine` ejecutado con un usuario no root (`appuser`), exponiendo el puerto `8080` e incluyendo comprobación de salud (`HEALTHCHECK` mediante `wget` al endpoint `/actuator/health`).
+- **Etapa 1 (Builder):** Utiliza `maven:3.9-eclipse-temurin-17` para compilar el proyecto bajo `backend/analisis-energetico-api/` y generar el artefacto `.jar`.
+- **Etapa 2 (Runner):** Utiliza `eclipse-temurin:17-jre` ejecutado con un usuario no root (`appuser`), exponiendo el puerto `8080` e incluyendo comprobación de salud (`HEALTHCHECK` mediante `wget` al endpoint `/actuator/health`).
+
+> 💡 **Arquitectura ARM:** se usan las variantes Debian (no Alpine) porque la instancia OCI Compute del proyecto es **ARM**, y estas imágenes publican soporte `arm64` multi-arquitectura de forma confiable. Como estas variantes no incluyen `wget` por defecto, la etapa de runtime lo instala explícitamente para que el `HEALTHCHECK` siga funcionando.
 
 ### Orquestación con Docker Compose
 La orquestación se gestiona mediante [`docker-compose.yml`](../../docker-compose.yml):

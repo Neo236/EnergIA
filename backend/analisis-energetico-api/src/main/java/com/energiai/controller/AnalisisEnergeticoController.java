@@ -37,7 +37,8 @@ public class AnalisisEnergeticoController {
         @ApiResponse(responseCode = "400",
         description = "Datos de entradas invalidos o faltantes."),
         @ApiResponse(responseCode = "500",
-        description = "Error interno al procesar el analisis.")
+        description = "Error interno al procesar el analisis."),
+        @ApiResponse(responseCode = "503", description = "El servicio de Machine Learning no se encuentra disponible.")
     })
 
     @PostMapping

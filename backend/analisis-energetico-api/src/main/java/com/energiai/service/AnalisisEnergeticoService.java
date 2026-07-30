@@ -1,9 +1,12 @@
 package com.energiai.service;
 
 import org.springframework.stereotype.Service;
+
 import com.energiai.dto.DatosRegistroAnalisis;
 import com.energiai.dto.DatosRegistroConsumo;
+
 import java.util.List;
+
 
 @Service
 public class AnalisisEnergeticoService {
@@ -54,6 +57,7 @@ public class AnalisisEnergeticoService {
         .recomendaciones(recomendaciones)
         .build();
     }
+
 
 }
 

@@ -69,6 +69,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
     }
 
+    @ExceptionHandler(ServicioMlNoDisponibleException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejaServicioMlNoDisponible(ServicioMlNoDisponibleException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+            HttpStatus.SERVICE_UNAVAILABLE.value(),
+            HttpStatus.SERVICE_UNAVAILABLE.name(),
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(respuesta);
+    }
+
     /**
      * Manejo global de errores internos no controlados.
      * Devuelve HTTP 500 Internal Server Error.

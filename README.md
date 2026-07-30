@@ -40,7 +40,7 @@ El proyecto se divide en dos áreas principales: Backend (Java) y Data Science (
 
 | Capa | Tecnología | Rol |
 |------|-----------|-----|
-| **Back-End** | Java 17+ / Spring Boot 3.x | API REST principal, orquestación y validaciones. |
+| **Back-End** | Java 17+ / Spring Boot 4.0.7 | API REST principal, orquestación y validaciones. |
 | **Data Science** | Python 3.10+ / Pandas / Scikit-Learn | Análisis de datos (EDA), entrenamiento del modelo ML y generación de reglas. |
 | **Infraestructura** | Oracle Cloud (OCI) + Docker | Almacenamiento (Object Storage) y Despliegue (Compute). |
 

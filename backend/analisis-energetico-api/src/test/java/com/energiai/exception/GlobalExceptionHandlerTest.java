@@ -55,7 +55,7 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(400, response.getBody().status());
-        assertEquals("El cuerpo de la solicitud (JSON) es invalido o esta ausente", response.getBody().mensaje());
+        assertEquals("El formato de la solicitud (JSON) es invalido o esta ausente", response.getBody().mensaje());
     }
 
     @Test

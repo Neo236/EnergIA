@@ -1,0 +1,54 @@
+name: Continuous Integration (CI)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-ci:
+    name: Build & Test Backend (Spring Boot)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+          cache-dependency-path: 'backend/analisis-energetico-api/pom.xml'
+
+      - name: Grant Execute Permission for Maven Wrapper
+        run: chmod +x backend/analisis-energetico-api/mvnw
+
+      - name: Build, Test & Package
+        working-directory: backend/analisis-energetico-api
+        run: ./mvnw -B verify
+
+  docker-ci:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml
+        run: docker compose config
+
+      - name: Build Docker Images
+        run: docker compose build

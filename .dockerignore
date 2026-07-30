@@ -13,9 +13,6 @@ README.md
 
 # Java / Maven Build Artifacts
 **/target/
-**/.mvn/
-**/mvnw
-**/mvnw.cmd
 **/*.class
 **/*.jar
 **/*.war

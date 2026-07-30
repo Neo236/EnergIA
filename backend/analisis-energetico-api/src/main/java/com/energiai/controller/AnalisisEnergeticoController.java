@@ -19,7 +19,8 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/analisis-energetico")
-@Tag(name = "Analisis Energetico", description = "Endpoints para el diagnostico y evaluacion de consumo electronico")
+@Tag(name = "Analisis Energetico",
+description = "Endpoints para el diagnostico y evaluacion de consumo electronico")
 public class AnalisisEnergeticoController {
 
     @Autowired
@@ -31,9 +32,12 @@ public class AnalisisEnergeticoController {
     )
 
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Analisis realizado exitosamente."),
-        @ApiResponse(responseCode = "400", description = "Datos de entradas invalidos o faltantes."),
-        @ApiResponse(responseCode = "500", description = "Error interno al procesar el analisis.")
+        @ApiResponse(responseCode = "200",
+        description = "Analisis realizado exitosamente."),
+        @ApiResponse(responseCode = "400",
+        description = "Datos de entradas invalidos o faltantes."),
+        @ApiResponse(responseCode = "500",
+        description = "Error interno al procesar el analisis.")
     })
 
     @PostMapping

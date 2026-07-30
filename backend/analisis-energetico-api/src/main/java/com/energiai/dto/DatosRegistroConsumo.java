@@ -24,8 +24,8 @@ public record DatosRegistroConsumo ( //Request => Entrada
     Integer cantidad_equipos,
 
     @Schema(
-        description = "Tipo de inmuebles (RESIDENCIAL, COMERCIAL, INDUSTRIAL)",
-        example = "RESIDENCIAL")
+        description = "Tipo de inmueble (Casa, Departamento, Comercio, Pyme)",
+        example = "Casa")
     @NotBlank 
     @Pattern(
         regexp = "^(Casa|Departamento|Comercio|Pyme)$",

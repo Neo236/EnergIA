@@ -13,8 +13,8 @@ public class AnalisisEnergeticoService {
         Double probabilidad;
         List<String> recomendaciones;
 
-        // 1. Calculo de costo estimado provisional...
-        double precio = datos.uso_horario_pico() ? 120.0 : 100.0;
+        // 1. Calculo de costo estimado con tarifa acordada de $0.75/kWh
+        double precio = 0.75;
         double costoEstimado = datos.consumo_kwh() * precio;
 
         // 2. Logica de Clasificacion Prosivional
@@ -32,7 +32,7 @@ public class AnalisisEnergeticoService {
             probabilidad = 0.65;
             recomendaciones = List.of(
                 "Consumo moderado.",
-                "Optimizar el uso de aire acondicionado.", //Posible cambio: Utilizar una variable para el nombre del equipo en lugar de hardcodear "aire acondicionado"
+                "Optimizar el uso de aire acondicionado.",
                 "Desconectar equipos en modo Stand-by.",
                 "Considerar iluminación LED."
             );
@@ -56,3 +56,4 @@ public class AnalisisEnergeticoService {
     }
 
 }
+

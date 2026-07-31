@@ -1,4 +1,4 @@
-# 📋 EnergiAI — Propuesta Técnica
+# 📋 EnergiAI — Propuesta Técnica (Obsoleta - 31/7/2026)
 
 > 📎 **Anexo del [Informe Semana 1](../informe.md)** — propuesta del 21/07, ofrecida antes de la integración del Software Engineer al equipo. No es la versión final del stack que quedó, pero ayudó a establecerlo. Se preserva como snapshot de ese momento.
 

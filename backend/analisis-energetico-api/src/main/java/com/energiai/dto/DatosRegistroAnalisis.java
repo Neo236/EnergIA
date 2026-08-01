@@ -1,6 +1,7 @@
 package com.energiai.dto;
 
 import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -10,7 +11,7 @@ public record DatosRegistroAnalisis( //response = salida
     @Schema(
         description = "Categoria del consumo (Eficiente, Moderado, Ineficiente)",
         example = "Ineficiente")
-    String categoria,
+    CategoriaConsumo categoria,
 
     @Schema(
         description = "Nivel de probalidad de diagnostico (0.0 a 1.0)",

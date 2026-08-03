@@ -81,4 +81,14 @@ class GlobalExceptionHandlerTest {
         assertEquals(500, response.getBody().status());
         assertEquals("Ocurrio un error interno en el servidor. Por favor, intente mas tarde.", response.getBody().mensaje());
     }
+
+    @Test                                                                                                                                                                         
+    void cuandoServicioMlNoDisponible_retornaRespuestaUniforme503() {                                                                                                             
+        ServicioMlNoDisponibleException ex = new ServicioMlNoDisponibleException("El servicio ML no responde");                                                                   
+                                                                                                                                                                                  
+        ResponseEntity<DatosErrorRespuesta> response = exceptionHandler.manejaServicioMlNoDisponible(ex);                                                                         
+                                                                                                                                                                                  
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());                                                                                                   
+        assertEquals(503, response.getBody().status());
+    }
 }

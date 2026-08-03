@@ -15,7 +15,10 @@ public record DatosRegistroAnalisis( //response = salida
 
     @Schema(
         description = "Nivel de probalidad de diagnostico (0.0 a 1.0)",
-        example = "0.64")
+        example = "0.64",
+        minimum = "0.0",
+        maximum = "1.0"
+    )
     Double probabilidad,
 
     @Schema(
@@ -32,7 +35,7 @@ public record DatosRegistroAnalisis( //response = salida
 
     @Schema(
         description = "Costo mensual estimado en moneda local",
-        example = "54060.0")
+        example = "377.88")
     Double costo_estimado_mensual
 ){
 

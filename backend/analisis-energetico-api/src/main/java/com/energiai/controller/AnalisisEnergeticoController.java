@@ -41,7 +41,21 @@ public class AnalisisEnergeticoController {
                 description = "Análisis realizado exitosamente.",                                                                                                                 
                 content = @Content(                                                                                                                                               
                     mediaType = "application/json",                                                                                                                               
-                    schema = @Schema(implementation = DatosRegistroAnalisis.class)                                                                                                
+                    schema = @Schema(implementation = DatosRegistroAnalisis.class),
+                    examples = @ExampleObject(
+                        value = """                                                                                                                                                       
+                        {                                                                                                                                                                 
+                            "categoria": "EFICIENTE",                                                                                                                                       
+                            "probabilidad": 0.25,                                                                                                                                           
+                            "costo_estimado_mensual": 337.875,                                                                                                                              
+                            "recomendaciones": [                                                                                                                                            
+                                "Excelente nivel de consumo.",                                                                                                                                
+                                "Mantener los hábitos actuales de ahorro.",                                                                                                                   
+                                "Continuar monitoreando el consumo mensual."                                                                                                                  
+                            ]                                                                                                                                                               
+                        }                                                                                                                                                                 
+                            """
+                    )                                                                                                
                 )                                                                                                                                                                 
             ),                                                                                                                                                                    
             @ApiResponse(                                                                                                                                                         
@@ -59,18 +73,18 @@ public class AnalisisEnergeticoController {
                           "mensaje": "Errores de validacion en los datos de entrada",                                                                                             
                           "detalles": [                                                                                                                                           
                             {                                                                                                                                                     
-                              "campo": "fuente_energia",                                                                                                                          
-                              "mensaje": "La fuente de energia es obligatoria"                                                                                                    
+                              "campo": "fuente_calefaccion",                                                                                                                          
+                              "mensaje": "La fuente de energia para calefaccion es obligatoria"                                                                                                    
                             }                                                                                                                                                     
                           ]                                                                                                                                                       
                         }                                                                                                                                                         
                         """                                                                                                                                                       
                     )                                                                                                                                                             
-                )                                                                                                                                                                 
+                )                                                                                                                                                             
             ),                                                                                                                                                                    
             @ApiResponse(                                                                                                                                                         
                 responseCode = "404",                                                                                                                                             
-                description = "Ruta de acceso de negocio no encontrado.",                                                                                                      
+                description = "El recurso solicitado o la ruta no fueron encontrados.",                                                                                                      
                 content = @Content(                                                                                                                                               
                     mediaType = "application/json",                                                                                                                               
                     schema = @Schema(implementation = DatosErrorRespuesta.class),                                                                                                 
@@ -116,7 +130,7 @@ public class AnalisisEnergeticoController {
                           "timestamp": "2026-08-01T16:45:00",                                                                                                                     
                           "status": 503,                                                                                                                                          
                           "error": "SERVICE_UNAVAILABLE",                                                                                                                         
-                          "mensaje": "El servicio de Machine Learning no se encuentra disponible en este momento."                                                                
+                          "mensaje": "El servicio de Machine Learning no se encuentra disponible."                                                                
                         }                                                                                                                                                         
                         """                                                                                                                                                       
                     )                                                                                                                                                             

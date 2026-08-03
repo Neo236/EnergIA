@@ -1,18 +1,19 @@
 package com.energiai.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.energiai.dto.CategoriaConsumo;
 import com.energiai.dto.DatosRegistroAnalisis;
 import com.energiai.dto.DatosRegistroConsumo;
-
-import java.util.List;
 
 
 @Service
 public class AnalisisEnergeticoService {
     public DatosRegistroAnalisis realizarAnalisis(DatosRegistroConsumo datos){
 
-        String categoria;
+        CategoriaConsumo categoria;
         Double probabilidad;
         List<String> recomendaciones;
 
@@ -22,7 +23,7 @@ public class AnalisisEnergeticoService {
 
         // 2. Logica de Clasificacion Prosivional
         if (datos.consumo_kwh() > 500 || datos.horas_alto_consumo() > 6){
-            categoria = "Ineficiente";
+            categoria = CategoriaConsumo.INEFICIENTE;
             probabilidad = 0.90;
             recomendaciones = List.of(
                 "Consumo elevado detectado.",
@@ -31,7 +32,7 @@ public class AnalisisEnergeticoService {
                 "Evaluar la eficiencia energética de los equipos actuales."
             );
         } else if (datos.consumo_kwh() > 200) {
-            categoria = "Moderado";
+            categoria = CategoriaConsumo.MODERADO;
             probabilidad = 0.65;
             recomendaciones = List.of(
                 "Consumo moderado.",
@@ -40,7 +41,7 @@ public class AnalisisEnergeticoService {
                 "Considerar iluminación LED."
             );
         } else {
-            categoria = "Eficiente";
+            categoria = CategoriaConsumo.EFICIENTE;
             probabilidad = 0.25;
             recomendaciones = List.of(
                 "Excelente nivel de consumo.",

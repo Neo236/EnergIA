@@ -79,6 +79,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(respuesta);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejarIllegalArgumentException(IllegalArgumentException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
+
     /**
      * Manejo global de errores internos no controlados.
      * Devuelve HTTP 500 Internal Server Error.

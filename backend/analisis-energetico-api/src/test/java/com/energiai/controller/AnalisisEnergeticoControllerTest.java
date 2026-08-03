@@ -1,19 +1,22 @@
-package com.energiai.controller;
+package com.energiai.controller;                                                                                                                                              
+                                                                                                                                                                                  
+import org.junit.jupiter.api.BeforeEach;                                                                                                                                      
+import org.junit.jupiter.api.DisplayName;                                                                                                                                     
+import org.junit.jupiter.api.Test;                                                                                                                                            
+import org.springframework.beans.factory.annotation.Autowired;                                                                                                                                                                                                      
+import org.springframework.boot.test.context.SpringBootTest;                                                                                                                  
+import org.springframework.http.MediaType;                                                                                                                                    
+import org.springframework.test.web.servlet.MockMvc;                                                                                                                          
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;                                                                                                            
+                                                                                                                                                                                  
+import com.energiai.exception.GlobalExceptionHandler;                                                                                                                         
+import com.energiai.service.AnalisisEnergeticoService;                                                                                                                        
+                                                                                                                                                                                  
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;                                                                                       
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;                                                                                     
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;  
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.energiai.exception.GlobalExceptionHandler;
-import com.energiai.service.AnalisisEnergeticoService;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+@SpringBootTest
 class AnalisisEnergeticoControllerTest {
 
     private MockMvc mockMvc;
@@ -125,4 +128,29 @@ class AnalisisEnergeticoControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
     }
+
+    @Test                                                                                                                                                                     
+        @DisplayName("POST /api/analisis: Rechaza petición con valor fuera del catálogo")                                                                                         
+        void probarEndpointConCatalogoInvalido() throws Exception {                                                                                                               
+            String jsonInvalido = """                                                                                                                                             
+                {                                                                                                                                                                 
+                  "consumo_kwh": 300.0,                                                                                                                                           
+                  "cantidad_equipos": 5,                                                                                                                                          
+                  "tipo_inmueble": "OPCION_INEXISTENTE",                                                                                                                          
+                  "uso_horario_pico": true,                                                                                                                                       
+                  "horas_alto_consumo": 5,                                                                                                                                        
+                  "metros_cuadrados": 50,                                                                                                                                         
+                  "antiguedad_vivienda": 10,                                                                                                                                      
+                  "zona_fria": false,                                                                                                                                             
+                  "calidad_aislamiento": "MEDIA",                                                                                                                                 
+                  "fuente_calefaccion": "SOLAR",                                                                                                                                  
+                  "fuente_agua_caliente": "ELECTRICIDAD"                                                                                                                          
+                }                                                                                                                                                                 
+                """;                                                                                                                                                              
+                                                                                                                                                                                  
+            mockMvc.perform(post("/api/v1/analisis-energetico")                                                                                                                                 
+                    .contentType(MediaType.APPLICATION_JSON)                                                                                                                      
+                    .content(jsonInvalido))                                                                                                                                       
+                    .andExpect(status().isBadRequest());                                                                                       
+        }
 }

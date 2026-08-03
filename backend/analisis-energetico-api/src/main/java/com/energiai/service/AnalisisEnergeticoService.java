@@ -13,13 +13,17 @@ import com.energiai.dto.DatosRegistroConsumo;
 public class AnalisisEnergeticoService {
     public DatosRegistroAnalisis realizarAnalisis(DatosRegistroConsumo datos){
 
+        // if(true){
+        //     throw new ServicioMlNoDisponibleException("El servicio Machine Learning no se encuentra disponible");
+        // }
+
         CategoriaConsumo categoria;
         Double probabilidad;
         List<String> recomendaciones;
 
         // 1. Calculo de costo estimado con tarifa acordada de $0.75/kWh
         double precio = 0.75;
-        double costoEstimado = datos.consumo_kwh() * precio;
+        double costoEstimado = Math.round((datos.consumo_kwh() * precio) * 100.0) / 100.0;
 
         // 2. Logica de Clasificacion Prosivional
         if (datos.consumo_kwh() > 500 || datos.horas_alto_consumo() > 6){
@@ -58,7 +62,6 @@ public class AnalisisEnergeticoService {
         .recomendaciones(recomendaciones)
         .build();
     }
-
 
 }
 

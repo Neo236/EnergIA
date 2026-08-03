@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.energiai.dto.DatosErrorCampo;
 import com.energiai.dto.DatosErrorRespuesta;
@@ -102,5 +103,16 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+    }
+
+     @ExceptionHandler(NoResourceFoundException.class)                                                                                                                             
+    public ResponseEntity<DatosErrorRespuesta> manejarRutaNoEncontrada(NoResourceFoundException ex) {                                                                             
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(                                                                                                                   
+                HttpStatus.NOT_FOUND.value(),                                                                                                                                     
+                HttpStatus.NOT_FOUND.name(),                                                                                                                                      
+                "La ruta solicitada no existe: " + ex.getResourcePath()                                                                                                           
+        );                                                                                                                                                                        
+                                                                                                                                                                                  
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);                                                                                        
     }
 }

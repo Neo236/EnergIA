@@ -18,7 +18,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
     @Schema(
         description = "Cantidad de equipos activos",
         example = "8")
-    @NotNull @Min(value = 1) @Max(value = 500)
+    @NotNull @Min(value = 1) @Max(value = 100)
     Integer cantidad_equipos,
 
     @Schema(

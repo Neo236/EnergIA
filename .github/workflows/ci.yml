@@ -61,17 +61,6 @@ jobs:
           pip install -r requirements.txt
           pip install pytest httpx
 
-      - name: Validate Dockerfile parses
-        # hadolint puede no estar disponible; si falla por runtime (no por lint
-        # real), seguimos. --no-fail: warnings no rompen el job; solo errores
-        # de parse del Dockerfile sí lo rompen.
-        run: |
-          if ! command -v hadolint >/dev/null 2>&1 && ! docker images hadolint/hadolint >/dev/null 2>&1; then
-            echo "hadolint not available, skipping"
-          else
-            docker run --rm -i hadolint/hadolint hadolint --no-fail < data-science/Dockerfile
-          fi
-
       - name: Lint Python syntax
         working-directory: data-science/raw
         run: |

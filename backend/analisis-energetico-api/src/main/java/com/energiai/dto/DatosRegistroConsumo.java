@@ -12,7 +12,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
     @Schema(
         description = "Consumo electrico total en KWh",
         example = "450.5")
-    @NotNull @Positive 
+    @NotNull @Positive @Max(value = 1000)
     Double consumo_kwh,
 
     @Schema(
@@ -28,7 +28,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
     TipoInmueble tipo_inmueble,
 
     @Schema(
-        description = "Indica si la medicion incluye franja de horario pico (18hs a 23hs) - Igual a 0 es false y distinto a 0 es true.",
+        description = "Indica si la medicion incluye franja de horario pico (18hs a 23hs).",
         example = "true")
     @NotNull
     Boolean uso_horario_pico,
@@ -53,7 +53,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
 
     @Schema(
         description = "Indica si la vivienda se encuentra ubicada en una zona climatica considerada fria.",
-        example = "No")
+        example = "false")
     @NotNull
     Boolean zona_fria,
 

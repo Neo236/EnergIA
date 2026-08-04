@@ -1,10 +1,11 @@
 package com.energiai.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 
 public record DatosRegistroConsumo ( //Request => Entrada
@@ -12,7 +13,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
     @Schema(
         description = "Consumo electrico total en KWh",
         example = "450.5")
-    @NotNull @Positive @Max(value = 1000)
+    @NotNull @DecimalMin(value = "1.0", inclusive = true) @DecimalMax(value = "1000.0", inclusive = true)
     Double consumo_kwh,
 
     @Schema(

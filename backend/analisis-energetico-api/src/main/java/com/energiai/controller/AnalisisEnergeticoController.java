@@ -43,7 +43,7 @@ public class AnalisisEnergeticoController {
                     mediaType = "application/json",                                                                                                                               
                     schema = @Schema(implementation = DatosRegistroAnalisis.class),
                     examples = @ExampleObject(
-                        value = """
+                        value = """                                                                                                                                                       
                         {                                                                                                                                                                 
                             "categoria": "Eficiente",                                                                                                                                       
                             "probabilidad": 0.25,                                                                                                                                           

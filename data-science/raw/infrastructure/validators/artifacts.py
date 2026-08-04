@@ -39,14 +39,14 @@ def validar_metricas(path: str) -> dict:
     f1_eficiente = 0.0
     for line in reporte.splitlines():
         parts = line.split()
-        if parts and parts[0] == "eficiente":
+        if parts and parts[0].lower() == "eficiente":
             f1_eficiente = float(parts[3])
             break
 
     ok = f1_eficiente > 0.0
     return {
         "ok": ok,
-        "msg": f"f1-score(eficiente)={f1_eficiente:.4f} (>0.00 esperado)",
+        "msg": f"f1-score(Eficiente)={f1_eficiente:.4f} (>0.00 esperado)",
         "reporte": reporte,
         "f1": f1_eficiente,
     }

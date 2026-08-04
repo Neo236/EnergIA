@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from application.training import entrenar_y_guardar_modelo
 from infrastructure.config import Config
 from infrastructure.data.simulation import generar_dataset
@@ -11,6 +13,10 @@ def main() -> int:
     counts = df["categoria"].value_counts()
     pct = (counts / counts.sum() * 100).round(2)
     print(f"[INFO] Distribución categoria (%):\n{pct.to_string()}")
+
+    Path(Config.OUTPUT_JSON_PATH).parent.mkdir(parents=True, exist_ok=True)
+    Path(Config.OUTPUT_MODEL_PATH).parent.mkdir(parents=True, exist_ok=True)
+    Path(Config.OUTPUT_METRICAS_PATH).parent.mkdir(parents=True, exist_ok=True)
 
     df.to_json(Config.OUTPUT_JSON_PATH, orient="records", indent=4)
     print(f"[OK] JSON exportado: {Config.OUTPUT_JSON_PATH} ({len(df)} registros)")

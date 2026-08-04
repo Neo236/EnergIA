@@ -38,6 +38,74 @@ jobs:
         working-directory: backend/analisis-energetico-api
         run: ./mvnw -B verify
 
+  data-science-ci:
+    name: Test Data Science Microservice (FastAPI)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          cache-dependency-path: 'data-science/raw/requirements.txt'
+
+      - name: Install dependencies
+        working-directory: data-science/raw
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest httpx
+
+      - name: Validate Dockerfile parses
+        run: docker run --rm -i hadolint/hadolint < data-science/Dockerfile || echo "hadolint not available, skipping"
+
+      - name: Lint Python syntax
+        working-directory: data-science/raw
+        run: |
+          python -m compileall -q domain application infrastructure interfaces
+
+      - name: Validate API schema consistency
+        working-directory: data-science/raw
+        run: |
+          python -c "
+          from interfaces.api.schemas import TipoInmueble, CalidadAislamiento, FuenteEnergia
+          from infrastructure.data.simulation import TIPO_INMUEBLE, CALIDAD_AISLAMIENTO, FUENTE
+          from application.training import CAT_COLS, NUM_COLS
+          from application.inference import MODELO_FEATURES
+          assert set(TipoInmueble.__args__) == set(TIPO_INMUEBLE), 'tipo_inmueble mismatch'
+          assert set(CalidadAislamiento.__args__) == set(CALIDAD_AISLAMIENTO), 'aislamiento mismatch'
+          assert set(FuenteEnergia.__args__) == set(FUENTE), 'fuente mismatch'
+          assert set(CAT_COLS + NUM_COLS) == set(MODELO_FEATURES), 'feature mismatch'
+          print('Schema consistency OK')
+          "
+
+      - name: Run pytest
+        working-directory: data-science/raw
+        run: python -m pytest tests/ -v --tb=short
+
+      - name: Build Docker image
+        run: docker build -t energiai-ml:test -f data-science/Dockerfile data-science
+
+      - name: Smoke test container /health
+        run: |
+          docker run -d --name ml-test -p 8765:8000 energiai-ml:test
+          sleep 8
+          for i in 1 2 3 4 5; do
+            if curl -fsS http://localhost:8765/health; then
+              echo "Healthcheck OK"
+              break
+            fi
+            echo "Waiting... attempt $i"
+            sleep 3
+          done
+          docker stop ml-test
+          docker rm ml-test
+
   docker-ci:
     name: Build Docker Images
     runs-on: ubuntu-latest

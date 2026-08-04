@@ -1,21 +1,227 @@
-# Python
+# =============================================================================
+# .gitignore — G9 LATAM TEAM 09 | Hackathon ONE | Alura + Oracle
+# Cubre: Java/Maven · Python/Data Science · IDEs · OS · Seguridad/OCI
+# =============================================================================
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# JAVA / MAVEN / SPRING BOOT
+# ──────────────────────────────────────────────────────────────────────────────
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Maven wrapper binaries
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/MavenWrapperDownloader.java
+
+# Spring Boot devtools
+.spring-boot-devtools.properties
+
+# Logs generados por Spring
+*.log
+logs/
+log/
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PYTHON / DATA SCIENCE / MACHINE LEARNING
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Bytecode
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
+*.pyd
 
 # Entornos virtuales
+.venv/
 venv/
 env/
-.venv/
+ENV/
+.env/
+.python-version
 
-# Configuración sensible
-.env
+# Distribución / Packaging
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
 
-# Artefactos generados
-data/*
-!data/.gitkeep
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+profile_default/
+ipython_config.py
 
-# OS / Editor
-.DS_Store
-.vscode/
+# Modelos serializados y datasets
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.hdf5
+*.model
+*.pt
+*.pth
+*.onnx
+*.sav
+
+# Datasets locales (subir solo a OCI Object Storage)
+data/raw/
+data/processed/
+*.csv
+*.parquet
+*.json.gz
+*.xlsx
+*.xls
+
+# MLflow / DVC
+mlruns/
+.dvc/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# mypy / type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Profiling
+*.prof
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# IDEs — IntelliJ IDEA / VS Code / Eclipse
+# ──────────────────────────────────────────────────────────────────────────────
+
+# IntelliJ IDEA
 .idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Eclipse
+.eclipse/
+.classpath
+.project
+.settings/
+*.launch
+bin/
+
+# NetBeans
+nbproject/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# STS / Spring Tools Suite
+.sts4-cache/
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SISTEMA OPERATIVO
+# ──────────────────────────────────────────────────────────────────────────────
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SEGURIDAD — Variables de Entorno y Credenciales
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Archivos de entorno
+.env
+.env.*
+!.env.example
+*.env
+
+# Certificados y claves privadas
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.cer
+*.crt
+*.der
+
+# Configuración OCI CLI
+oci_config
+config
+~/.oci/
+.oci/
+
+# Secretos de aplicación (Spring Boot)
+application-secrets.properties
+application-secrets.yml
+application-prod.properties
+application-prod.yml
+
+# AWS (por si se usa en CI/CD)
+.aws/credentials
+.aws/config
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# DOCKER
+# ──────────────────────────────────────────────────────────────────────────────
+.docker/
+docker-compose.override.yml
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# MISCELÁNEOS
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Archivos temporales
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
+
+# Node (si se usa front-end opcional)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*

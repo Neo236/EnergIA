@@ -1,0 +1,34 @@
+# Git & Documentación
+.git
+.gitignore
+README.md
+*.md
+
+# Archivos de entorno de IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Java / Maven Build Artifacts
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+
+# Python / Data Science Artifacts
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.venv/
+**/env/
+**/venv/
+**/.pytest_cache/
+**/.ipynb_checkpoints/
+
+# Logs & Archivos Temporales
+*.log
+tmp/
+temp/

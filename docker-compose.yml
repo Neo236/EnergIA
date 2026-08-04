@@ -16,35 +16,45 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - ML_SERVICE_URL=http://ml-service:8000
       # Variables OCI Object Storage (configurar para producción en OCI)
-      # - OCI_STORAGE_NAMESPACE=${OCI_STORAGE_NAMESPACE}
-      # - OCI_STORAGE_BUCKET=${OCI_STORAGE_BUCKET}
-      # - OCI_STORAGE_REGION=${OCI_STORAGE_REGION}
-    # NOTA: Descomentar depends_on cuando el microservicio ml-service esté completo
-    # depends_on:
-    #   ml-service:
-    #     condition: service_started
+      - OCI_NAMESPACE=${OCI_NAMESPACE}
+      - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
+      - OCI_REGION=${OCI_REGION:-santiago-chile-1}
+    depends_on:
+      ml-service:
+        condition: service_started
     restart: unless-stopped
     networks:
       - energiai-network
 
   # -------------------------------------------------------------
   # Microservicio Data Science / ML - FastAPI (Python 3.10)
-  # NOTA: Comentado temporalmente hasta que el módulo data-science esté completo (faltan requirements.txt y src/api/main.py).
-  # Descomentar una vez que el equipo de Data Science agregue dichos archivos.
   # -------------------------------------------------------------
-  # ml-service:
-  #   build:
-  #     context: ./data-science
-  #     dockerfile: Dockerfile
-  #   container_name: energiai-ml-service
-  #   ports:
-  #     - "8000:8000"
-  #   environment:
-  #     - PORT=8000
-  #     - ENVIRONMENT=production
-  #   restart: unless-stopped
-  #   networks:
-  #     - energiai-network
+  ml-service:
+    build:
+      context: ./data-science
+      dockerfile: Dockerfile
+    container_name: energiai-ml-service
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - ENVIRONMENT=production
+      - STORAGE_BACKEND=${STORAGE_BACKEND:-local}
+      - STORAGE_LOCAL_ROOT=/app
+      - OCI_NAMESPACE=${OCI_NAMESPACE}
+      - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
+      - OCI_REGION=${OCI_REGION:-santiago-chile-1}
+      # Auth: descomentar SOLO una opción
+      # Opción A: instance principal (recomendado para VM OCI)
+      - OCI_INSTANCE_PRINCIPAL=${OCI_INSTANCE_PRINCIPAL:-true}
+      # Opción B: API key
+      # - OCI_USER_OCID=${OCI_USER_OCID}
+      # - OCI_TENANCY_OCID=${OCI_TENANCY_OCID}
+      # - OCI_FINGERPRINT=${OCI_FINGERPRINT}
+      # - OCI_PRIVATE_KEY_PATH=/run/secrets/oci_api_key.pem
+    restart: unless-stopped
+    networks:
+      - energiai-network
 
 networks:
   energiai-network:

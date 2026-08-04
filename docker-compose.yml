@@ -39,7 +39,7 @@ services:
     environment:
       - PORT=8000
       - ENVIRONMENT=production
-      - STORAGE_BACKEND=${STORAGE_BACKEND:-oci}
+      - STORAGE_BACKEND=${STORAGE_BACKEND:-local}
       - STORAGE_LOCAL_ROOT=/app
       - OCI_NAMESPACE=${OCI_NAMESPACE}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}

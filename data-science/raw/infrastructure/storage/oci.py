@@ -8,9 +8,9 @@ log = logging.getLogger(__name__)
 class OciBucketStorage:
     """OCI Object Storage backed by oci-python-sdk (official Oracle SDK).
 
-    Soporta 3 métodos de auth (en orden de prioridad):
-    1. OCI_CONFIG_FILE path explícito (CI/dev con config local)
-    2. OCI_INSTANCE_PRINCIPAL=true (en VM OCI: sin credenciales)
+    Soporta 3 métodos de auth (en orden de prioridad de _get_client):
+    1. OCI_INSTANCE_PRINCIPAL=true (en VM OCI: sin credenciales, recomendado)
+    2. OCI_CONFIG_FILE path explícito (CI runners / bastion con config local)
     3. API key via env vars OCI_USER_OCID, OCI_TENANCY_OCID, OCI_FINGERPRINT,
        OCI_PRIVATE_KEY_PATH o OCI_PRIVATE_KEY_CONTENT
 
@@ -76,12 +76,14 @@ class OciBucketStorage:
 
     def upload(self, local_path: str, remote_path: str) -> None:
         client = self._get_client()
+        # Streamea el archivo directamente al SDK sin cargarlo entero en memoria,
+        # evitando picos de RAM en datasets/modelos grandes.
         with open(local_path, "rb") as f:
             client.put_object(
                 self.namespace,
                 self.bucket,
                 remote_path,
-                f.read(),
+                f,
             )
 
     def download(self, remote_path: str, local_path: str) -> None:

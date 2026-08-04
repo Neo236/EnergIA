@@ -1,5 +1,5 @@
+import logging
 import os
-import sys
 
 from fastapi import FastAPI, HTTPException
 
@@ -10,8 +10,6 @@ from infrastructure.storage.sync import ensure_artifacts
 from interfaces.api.schemas import AnalisisRequest
 
 log_level = os.getenv("LOG_LEVEL", "INFO")
-import logging
-
 logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger(__name__)
 

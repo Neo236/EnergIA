@@ -1,8 +1,6 @@
-import os
 import sys
 
 from infrastructure.config import Config
-from infrastructure.storage import get_storage
 from infrastructure.storage.sync import ensure_artifacts
 from infrastructure.validators.artifacts import (
     validar_json,

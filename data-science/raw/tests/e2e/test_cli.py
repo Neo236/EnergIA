@@ -9,7 +9,7 @@ import pytest
 REPO_ROOT = str(Path(__file__).resolve().parents[2])
 
 
-def _run_cli(*args, cwd=None, env=None, monkeypatch=None):
+def _run_cli(*args, cwd=None, env=None):
     full_env = os.environ.copy()
     full_env["PYTHONPATH"] = REPO_ROOT
     if env:

@@ -114,7 +114,12 @@ class TestOciBucketStorageMocked:
                 self.objects = {"bucket/data/modelo.joblib": b"model-bytes"}
 
             def put_object(self, namespace, bucket, name, body):
-                self.objects[f"{bucket}/{name}"] = body
+                # OciBucketStorage.upload pasa un file-like; SDK acepta bytes
+                # o stream. Mock capturamos bytes si es file-like.
+                if hasattr(body, "read"):
+                    self.objects[f"{bucket}/{name}"] = body.read()
+                else:
+                    self.objects[f"{bucket}/{name}"] = body
 
             def get_object(self, namespace, bucket, name):
                 if f"{bucket}/{name}" not in self.objects:

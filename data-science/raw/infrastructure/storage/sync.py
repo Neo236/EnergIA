@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 
 from infrastructure.config import Config
 from infrastructure.storage import get_storage

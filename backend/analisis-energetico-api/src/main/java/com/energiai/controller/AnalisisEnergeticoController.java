@@ -43,11 +43,11 @@ public class AnalisisEnergeticoController {
                     mediaType = "application/json",                                                                                                                               
                     schema = @Schema(implementation = DatosRegistroAnalisis.class),
                     examples = @ExampleObject(
-                        value = """
+                        value = """                                                                                                                                                       
                         {                                                                                                                                                                 
-                            "categoria": "Eficiente",                                                                                                                                       
+                            "categoria": "EFICIENTE",                                                                                                                                       
                             "probabilidad": 0.25,                                                                                                                                           
-                            "costo_estimado_mensual": 337.87,                                                                                                                              
+                            "costo_estimado_mensual": 337.875,                                                                                                                              
                             "recomendaciones": [                                                                                                                                            
                                 "Excelente nivel de consumo.",                                                                                                                                
                                 "Mantener los hábitos actuales de ahorro.",                                                                                                                   

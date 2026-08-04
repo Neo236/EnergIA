@@ -1,13 +1,30 @@
 import os
+import sys
 
 from fastapi import FastAPI, HTTPException
 
 from application.inference import procesar_solicitud_api
 from infrastructure.config import Config
+from infrastructure.storage import get_storage
+from infrastructure.storage.sync import ensure_artifacts
 from interfaces.api.schemas import AnalisisRequest
 
-app = FastAPI(title="EnergiAI - Analisis Energetico", version="1.1.0")
+log_level = os.getenv("LOG_LEVEL", "INFO")
+import logging
+
+logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+log = logging.getLogger(__name__)
+
+app = FastAPI(title="EnergiAI - Analisis Energetico", version="1.2.0")
 MODEL_PATH = os.getenv("MODEL_PATH", Config.OUTPUT_MODEL_PATH)
+
+
+@app.on_event("startup")
+def _startup():
+    try:
+        ensure_artifacts()
+    except Exception as e:
+        log.warning("ensure_artifacts falló al startup: %s", e)
 
 
 @app.get("/")
@@ -43,6 +60,7 @@ def analisis_energetico(req: AnalisisRequest):
             status_code=503,
             detail=(
                 f"Modelo no encontrado en {MODEL_PATH}. "
-                "Ejecuta 'make pipeline' para entrenar y persistir el modelo."
+                "Si STORAGE_BACKEND=oci, ejecuta 'make pipeline' con STORAGE_BACKEND=oci "
+                "para subir el modelo al bucket."
             ),
         )

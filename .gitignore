@@ -186,7 +186,6 @@ $RECYCLE.BIN/
 
 # Configuración OCI CLI
 oci_config
-config
 ~/.oci/
 .oci/
 

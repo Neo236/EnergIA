@@ -29,7 +29,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
     TipoInmueble tipo_inmueble,
 
     @Schema(
-        description = "Indica si la medicion incluye franja de horario pico (18hs a 23hs) - Igual a 0 es false y distinto a 0 es true.",
+        description = "Indica si la medicion incluye franja de horario pico (18hs a 23hs)",
         example = "true")
     @NotNull
     Boolean uso_horario_pico,

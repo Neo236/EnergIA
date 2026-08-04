@@ -1,0 +1,34 @@
+from application.training import entrenar_y_guardar_modelo
+from infrastructure.config import Config
+from infrastructure.data.simulation import generar_dataset
+
+
+def main() -> int:
+    print(f"[INFO] Num clientes={Config.NUM_CLIENTES} seed={Config.RANDOM_SEED}")
+
+    df = generar_dataset(Config.NUM_CLIENTES, Config.RANDOM_SEED)
+
+    counts = df["categoria"].value_counts()
+    pct = (counts / counts.sum() * 100).round(2)
+    print(f"[INFO] Distribución categoria (%):\n{pct.to_string()}")
+
+    df.to_json(Config.OUTPUT_JSON_PATH, orient="records", indent=4)
+    print(f"[OK] JSON exportado: {Config.OUTPUT_JSON_PATH} ({len(df)} registros)")
+
+    print("[INFO] Entrenando pipeline...")
+    resultado = entrenar_y_guardar_modelo(
+        df=df,
+        output_path=Config.OUTPUT_MODEL_PATH,
+        metricas_path=Config.OUTPUT_METRICAS_PATH,
+        random_seed=Config.RANDOM_SEED,
+    )
+    print(f"[OK] Modelo exportado: {Config.OUTPUT_MODEL_PATH}")
+    print(f"[OK] Métricas persistidas: {Config.OUTPUT_METRICAS_PATH}")
+
+    print("\n[REPORTE DE CLASIFICACIÓN]")
+    print(resultado["reporte"])
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

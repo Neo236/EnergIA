@@ -4,11 +4,11 @@ help:
 	@echo "Targets:"
 	@echo "  install       pip install -r requirements.txt"
 	@echo "  init-env      cp .env.example .env (si no existe)"
-	@echo "  run           alias de 'pipeline' (ejecuta main.py)"
+	@echo "  run           alias de 'pipeline' (ejecuta interfaces.cli.train)"
 	@echo "  pipeline      genera dataset, entrena y guarda artefactos en data/"
-	@echo "  demo          smoke test de inferencia (python src/inference.py)"
-	@echo "  serve         levanta FastAPI en :8000 (uvicorn app:app)"
-	@echo "  test          ejecuta validacion.py sobre los artefactos"
+	@echo "  demo          smoke test de inferencia (python application/inference.py)"
+	@echo "  serve         levanta FastAPI en :8000 (uvicorn interfaces.api.app:app)"
+	@echo "  test          ejecuta interfaces.cli.validate sobre los artefactos"
 	@echo "  freeze        regenera requirements.txt con pip freeze"
 	@echo "  docker-build  build de la imagen para OCI (python:3.10-slim)"
 	@echo "  docker-run    ejecuta el contenedor exponiendo :8000"
@@ -23,16 +23,16 @@ init-env:
 run: pipeline
 
 pipeline:
-	python3 main.py
+	python3 -m interfaces.cli.train
 
 demo:
-	python3 src/inference.py
+	python3 -m application.inference
 
 serve:
-	python3 -m uvicorn app:app --host 0.0.0.0 --port 8000
+	python3 -m uvicorn interfaces.api.app:app --host 0.0.0.0 --port 8000
 
 test:
-	python3 validacion.py
+	python3 -m interfaces.cli.validate
 
 freeze:
 	python3 -m pip freeze > requirements.txt

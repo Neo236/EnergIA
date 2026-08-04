@@ -1,4 +1,3 @@
-import joblib
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
@@ -7,20 +6,36 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+from infrastructure.ml.model_storage import save_metrics, save_model
+
+CAT_COLS = [
+    "tipo_inmueble",
+    "calidad_aislamiento",
+    "fuente_calefaccion",
+    "fuente_agua_caliente",
+]
+NUM_COLS = [
+    "metros_cuadrados",
+    "antiguedad_vivienda",
+    "zona_fria",
+    "consumo_kwh",
+    "uso_horario_pico",
+    "horas_alto_consumo",
+    "cantidad_equipos",
+]
+FEATURE_COLS = NUM_COLS + CAT_COLS
+TARGET_COL = "categoria"
+
 
 def entrenar_y_guardar_modelo(df: pd.DataFrame, output_path: str,
                                metricas_path: str, random_seed: int) -> dict:
-    y = df["categoria"]
-    X = df.drop(columns=["id_cliente", "categoria", "puntaje"])
-
-    cat_cols = ["tipo_vivienda", "calefaccion", "region",
-                "eficiencia_promedio", "energia_renovable"]
-    num_cols = [c for c in X.columns if c not in cat_cols]
+    y = df[TARGET_COL]
+    X = df[FEATURE_COLS]
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ("num", StandardScaler(), num_cols),
-            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), cat_cols),
+            ("num", StandardScaler(), NUM_COLS),
+            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), CAT_COLS),
         ]
     )
 
@@ -38,7 +53,7 @@ def entrenar_y_guardar_modelo(df: pd.DataFrame, output_path: str,
     y_pred = modelo.predict(X_test)
     reporte = classification_report(y_test, y_pred, zero_division=0)
 
-    joblib.dump(modelo, output_path)
-    joblib.dump({"y_test": y_test, "y_pred": y_pred}, metricas_path)
+    save_model(modelo, output_path)
+    save_metrics({"y_test": y_test, "y_pred": y_pred}, metricas_path)
 
     return {"modelo": modelo, "reporte": reporte, "y_test": y_test, "y_pred": y_pred}

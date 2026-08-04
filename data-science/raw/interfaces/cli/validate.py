@@ -1,6 +1,7 @@
 import sys
 
 from infrastructure.config import Config
+from infrastructure.storage.sync import ensure_artifacts
 from infrastructure.validators.artifacts import (
     validar_json,
     validar_metricas,
@@ -9,6 +10,8 @@ from infrastructure.validators.artifacts import (
 
 
 def main():
+    ensure_artifacts()
+
     print("=" * 70)
     print("VALIDACIÓN DE ARTEFACTOS - MVP EFICIENCIA ENERGÉTICA")
     print("=" * 70)

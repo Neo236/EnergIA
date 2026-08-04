@@ -1,0 +1,18 @@
+# Core FastAPI stack
+fastapi
+uvicorn[standard]
+pydantic
+
+# Data science
+pandas
+numpy
+scikit-learn
+scipy
+joblib
+
+# Config / parsing
+python-dotenv
+python-dateutil
+
+# OCI Object Storage (Sprint 2 integration)
+oci

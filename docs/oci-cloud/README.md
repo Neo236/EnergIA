@@ -342,3 +342,71 @@ Si la instancia se pierde o hay que recrearla, nada es irrecuperable — la IP r
 
 ## 🖼️ Archivos y Capturas (`assets/`)
 Guarde las capturas de la consola de OCI, configuración de buckets y red en `docs/oci-cloud/assets/`, siguiendo la convención `NN-oci-<servicio>-<descripcion>.png` usada arriba. Para procedimientos con varias capturas, agrupe en una subcarpeta kebab-case (ej. `assets/par-oci-object-storage/`). Los diagramas van embebidos en mermaid (GitHub los renderiza nativo).
+
+---
+
+## 🧠 Data Science + Object Storage
+
+El microservicio `data-science/` (FastAPI en `data-science/Dockerfile`) consume y produce artefactos que viven en el bucket `g9-energy-test-bucket`:
+
+| Objeto en el bucket | Productor | Consumidor |
+|---|---|---|
+| `data/database_beta.json` | `make pipeline` (CLI train) | `make test` (CLI validate), notebooks EDA |
+| `data/modelo_eficiencia_v1.joblib` | `make pipeline` | API `/analisis-energetico` (al startup descarga) |
+| `data/metricas_v1.joblib` | `make pipeline` | `make test` (verifica F1-score > 0) |
+
+### Storage abstraction
+
+`data-science/raw/infrastructure/storage/` define dos backends seleccionables vía env var:
+
+| `STORAGE_BACKEND` | Backend | Uso |
+|---|---|---|
+| `local` (default) | `LocalStorage` (filesystem) | dev, CI, tests |
+| `oci` | `OciBucketStorage` (oci-python-sdk) | prod en VM OCI |
+
+```python
+from infrastructure.storage import get_storage
+storage = get_storage()  # elige según STORAGE_BACKEND
+storage.upload("local_model.joblib", "data/modelo_eficiencia_v1.joblib")
+storage.download("data/modelo_eficiencia_v1.joblib", "/tmp/modelo.joblib")
+storage.exists("data/modelo.joblib")  # True/False
+```
+
+### Auth para `STORAGE_BACKEND=oci`
+
+Orden de prioridad (definido en `OciBucketStorage._get_client()`):
+
+1. **`OCI_INSTANCE_PRINCIPAL=true`** — recomendado en VM OCI Compute. Sin credenciales en disco. El SDK detecta automáticamente el OCID de la instancia vía IMDS.
+2. **`OCI_CONFIG_FILE=/path/to/config`** — config tradicional de `~/.oci/config`. Útil desde CI runners o bastion.
+3. **API key via env vars** — `OCI_USER_OCID`, `OCI_TENANCY_OCID`, `OCI_FINGERPRINT`, `OCI_PRIVATE_KEY_PATH` (o `OCI_PRIVATE_KEY_CONTENT`).
+
+### Flujo end-to-end
+
+```
+1. data-scientist corre make pipeline localmente
+   → STORAGE_BACKEND=local → artefactos en ./data-science/data/
+   → opcionalmente con STORAGE_BACKEND=oci → sube al bucket
+
+2. CI (data-science-ci en .github/workflows/ci.yml)
+   → pytest 97 tests (storage mockeado, sin red)
+   → docker build + smoke test /health
+   → NO sube al bucket (no hay credenciales en CI)
+
+3. Deploy a VM OCI (cd workflow)
+   → docker compose up ml-service
+   → STORAGE_BACKEND=oci + OCI_INSTANCE_PRINCIPAL=true
+   → app.startup descarga modelo desde bucket al FS local
+   → /analisis-energetico lee modelo local (cacheado)
+```
+
+### Variables de entorno requeridas
+
+Ver `data-science/raw/.env.example` para referencia completa. Mínimo para bucket en prod:
+
+```bash
+STORAGE_BACKEND=oci
+OCI_NAMESPACE=sergiovillenavergara
+OCI_BUCKET=g9-energy-test-bucket
+OCI_REGION=santiago-chile-1
+OCI_INSTANCE_PRINCIPAL=true
+```

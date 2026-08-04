@@ -54,7 +54,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
 
     @Schema(
         description = "Indica si la vivienda se encuentra ubicada en una zona climatica considerada fria.",
-        example = "No")
+        example = "false")
     @NotNull
     Boolean zona_fria,
 

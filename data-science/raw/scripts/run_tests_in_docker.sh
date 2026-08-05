@@ -5,9 +5,10 @@
 # de produccion usado por docker-compose.yml.
 #
 # Uso:
-#   ./scripts/run_tests_in_docker.sh            # solo tests
-#   ./scripts/run_tests_in_docker.sh --sync     # sincroniza colab primero
-#   ./scripts/run_tests_in_docker.sh --rebuild  # rebuild sin cache
+#   ./scripts/run_tests_in_docker.sh                 # solo tests
+#   ./scripts/run_tests_in_docker.sh --sync          # sincroniza colab primero
+#   ./scripts/run_tests_in_docker.sh --rebuild       # rebuild sin cache
+#   ./scripts/run_tests_in_docker.sh --sync --rebuild # combinables en cualquier orden
 #
 # Requisitos: Docker accesible desde este shell.
 #   - Linux/macOS: docker nativo.
@@ -36,7 +37,10 @@ fi
 IMAGE_TAG="energiai-tests:latest"
 BUILD_FLAGS=()
 
-if [[ "${1:-}" == "--rebuild" ]]; then
+# Detectar flags en cualquier posicion usando match de substring sobre "$*".
+# Asi da igual el orden: ./script.sh --sync --rebuild ==
+#                       ./script.sh --rebuild --sync.
+if [[ " $* " == *" --rebuild "* ]]; then
     BUILD_FLAGS+=(--no-cache)
 fi
 
@@ -55,7 +59,7 @@ echo "[INFO] Building $IMAGE_TAG (context=$BUILD_CONTEXT, docker=$DOCKER)"
 # dentro del contenedor quede reflejada en el host (para inspection post-run).
 RAW_DIR="$SCRIPT_DIR/.."
 CMD_ARGS=(pytest -v)
-if [[ "${1:-}" == "--sync" || "${2:-}" == "--sync" ]]; then
+if [[ " $* " == *" --sync "* ]]; then
     CMD_ARGS=(bash -c "python scripts/sync_colab_notebook.py --apply && pytest -v")
 fi
 

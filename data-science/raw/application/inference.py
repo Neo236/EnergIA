@@ -5,6 +5,15 @@ from application.training import FEATURE_COLS
 from domain.recommendations import calcular_recomendaciones
 from infrastructure.config import Config
 from infrastructure.ml.model_storage import load_model
+from interfaces.api.schemas import (
+    DEFAULT_ANTIGUEDAD_VIVIENDA,
+    DEFAULT_CALIDAD_AISLAMIENTO,
+    DEFAULT_FUENTE_AGUA_CALIENTE,
+    DEFAULT_FUENTE_CALEFACCION,
+    DEFAULT_METROS_CUADRADOS,
+    DEFAULT_USO_HORARIO_PICO,
+    DEFAULT_ZONA_FRIA,
+)
 
 # El orden/identidad de las features se deriva del training pipeline para
 # garantizar que la inferencia use exactamente el mismo set que el modelo
@@ -13,19 +22,20 @@ MODELO_FEATURES = list(FEATURE_COLS)
 
 CATEGORIAS_VALIDAS = {"Eficiente", "Moderado", "Ineficiente"}
 
-# Defaults para features que el caller puede omitir. Fuente unica: el schema
-# Pydantic. Si la API recibe solo los campos obligatorios, este dict suple
-# los opcionales al modelo. Mantener sincronizado con schemas.py.
+# Defaults para features que el caller puede omitir. FUENTE UNICA:
+# las constantes DEFAULT_* de interfaces.api.schemas. Si la API recibe solo
+# los campos obligatorios, este dict suple los opcionales al modelo con
+# los mismos valores que la API usa por default.
 DEFAULTS = {
     "tipo_inmueble": "Casa",
-    "metros_cuadrados": 1000.0,
-    "antiguedad_vivienda": 50,
-    "zona_fria": False,
-    "calidad_aislamiento": "Media",
-    "fuente_calefaccion": "Electricidad",
-    "fuente_agua_caliente": "Electricidad",
+    "metros_cuadrados": DEFAULT_METROS_CUADRADOS,
+    "antiguedad_vivienda": DEFAULT_ANTIGUEDAD_VIVIENDA,
+    "zona_fria": DEFAULT_ZONA_FRIA,
+    "calidad_aislamiento": DEFAULT_CALIDAD_AISLAMIENTO,
+    "fuente_calefaccion": DEFAULT_FUENTE_CALEFACCION,
+    "fuente_agua_caliente": DEFAULT_FUENTE_AGUA_CALIENTE,
     "consumo_kwh": 500.0,
-    "uso_horario_pico": False,
+    "uso_horario_pico": DEFAULT_USO_HORARIO_PICO,
     "horas_alto_consumo": 12,
     "cantidad_equipos": 30,
 }

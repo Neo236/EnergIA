@@ -7,7 +7,10 @@ Obligatorias (4) - el usuario tipico las tiene a mano:
     - horas_alto_consumo: estimacion del usuario.
 
 Opcionales (7) - contexto del hogar que el usuario no siempre conoce:
-    Defaults alineados con `application.inference.DEFAULTS` (fuente unica).
+    Las constantes DEFAULT_* debajo son la FUENTE UNICA de los defaults.
+    `application.inference.DEFAULTS` las importa y arma el dict de
+    defaults para el modelo. Si cambias un valor aqui, se propaga
+    automaticamente al modelo de inferencia.
 """
 
 from typing import Literal
@@ -19,8 +22,8 @@ CalidadAislamiento = Literal["Muy Alta", "Alta", "Media", "Baja", "Muy Baja"]
 FuenteEnergia = Literal["Electricidad", "Solar", "Otros"]
 
 
-# Defaults para campos opcionales. Mantener sincronizado con
-# application.inference.DEFAULTS. Si cambias un valor, cambia en ambos lados.
+# Defaults para campos opcionales. FUENTE UNICA: importado por
+# application.inference para construir su dict DEFAULTS.
 DEFAULT_METROS_CUADRADOS = 1000.0
 DEFAULT_ANTIGUEDAD_VIVIENDA = 50
 DEFAULT_ZONA_FRIA = False

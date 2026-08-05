@@ -1,10 +1,13 @@
 """Generador del dataset sintetico de hogares.
 
-Replica literal la logica del notebook `notebooks/data_colab.ipynb`
+Replica la logica del notebook `notebooks/data_colab.ipynb`
 (Fases 1-3: configuracion + tablas Hogar y Consumo).
 
 Decisiones de diseno:
-- API legacy de NumPy (`np.random.seed`) para coincidir byte-a-byte con el colab.
+- API legacy de NumPy (`np.random.seed`) para acercarse al algoritmo
+  legacy del colab. NOTA: NumPy 2.0+ cambio este algoritmo (NEP 19) y
+  la paridad byte-a-byte YA NO es posible con NumPy moderno. La
+  validacion es estadistica (ver TestParidadConColabEst).
 - Parametros centralizados en `infrastructure.config.Config`.
 - `zona_fria` y `uso_horario_pico` se generan como string "Si"/"No" (igual que
   el colab) y al final se mapean a int 0/1 para compatibilidad con el

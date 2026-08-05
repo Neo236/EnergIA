@@ -133,3 +133,10 @@ def generar_dataset(num_clientes: int = Config.NUM_CLIENTES,
     ), f"Categorias invalidas: {df['categoria'].unique()}"
 
     return df
+
+
+# Re-exports para compatibilidad con callers que importaban desde aqui.
+# Las constantes canonicas viven en infrastructure.config.Config.
+TIPO_INMUEBLE = Config.TIPO_INMUEBLE
+CALIDAD_AISLAMIENTO = Config.CALIDAD_AISLAMIENTO
+FUENTE = Config.FUENTE

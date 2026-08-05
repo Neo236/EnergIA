@@ -11,12 +11,12 @@ idna==3.10
 joblib==1.5.2
 narwhals==1.42.0
 numpy==2.2.6
-oci==2.143.1
 pandas==2.2.3
 pydantic==2.10.6
 pydantic_core==2.27.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
+requests==2.32.3
 scikit-learn==1.6.1
 scipy==1.14.1
 six==1.17.0

@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from application.inference import (
@@ -14,14 +15,16 @@ class TestAFilaModelo:
         assert list(fila.columns) == MODELO_FEATURES
         assert fila.shape == (1, len(MODELO_FEATURES))
 
-    def test_alias_consumo_electrico_a_consumo_kwh(self):
-        fila = _a_fila_modelo({"consumo_electrico_kwh": 999.9})
-        assert fila["consumo_kwh"].iloc[0] == 999.9
-
     def test_usa_defaults_cuando_faltan_keys(self):
         fila = _a_fila_modelo({})
         for feat in MODELO_FEATURES:
             assert fila[feat].iloc[0] == DEFAULTS[feat]
+
+    def test_input_completo_pasa_tal_cual(self):
+        payload = {feat: i * 1.0 for i, feat in enumerate(MODELO_FEATURES)}
+        fila = _a_fila_modelo(payload)
+        for feat in MODELO_FEATURES:
+            assert fila[feat].iloc[0] == payload[feat]
 
 
 class TestProcesarSolicitudApi:
@@ -53,12 +56,33 @@ class TestProcesarSolicitudApi:
         with pytest.raises(FileNotFoundError):
             procesar_solicitud_api(payload, str(tmp_artifact_dir / "no.joblib"))
 
-    def test_payload_alias_consumo_electrico(self, trained_model):
-        payload = {"consumo_electrico_kwh": 100, "cantidad_equipos": 5}
-        result = procesar_solicitud_api(payload, trained_model["model_path"])
-        assert "categoria" in result
-
     def test_payload_minimo_solo_consumo(self, trained_model):
         payload = {"consumo_kwh": 200}
         result = procesar_solicitud_api(payload, trained_model["model_path"])
         assert "categoria" in result
+        assert result["categoria"] in {"Eficiente", "Moderado", "Ineficiente"}
+
+    def test_costo_usa_tarifa_de_config(self, trained_model, monkeypatch):
+        """Validar que cambiar TARIFA_KWH en Config impacta el costo."""
+        from infrastructure import config as cfg_module
+
+        monkeypatch.setattr(cfg_module.Config, "TARIFA_KWH", 1.50)
+
+        payload = {"consumo_kwh": 100}
+        result = procesar_solicitud_api(payload, trained_model["model_path"])
+        assert result["costo_estimado_mensual"] == pytest.approx(150.0, rel=0.01)
+
+    def test_categoria_invalida_del_modelo_lanza_valueerror(
+        self, trained_model, monkeypatch
+    ):
+        """Si el modelo devuelve una clase fuera del set cerrado, raise."""
+        class _ModeloRoto:
+            classes_ = np.array(["Eficiente", "Moderado", "Kryptonita"])
+            def predict_proba(self, X):
+                return np.array([[0.1, 0.2, 0.7]])
+
+        monkeypatch.setattr(
+            "application.inference.load_model", lambda path: _ModeloRoto()
+        )
+        with pytest.raises(ValueError, match="categoria no soportada"):
+            procesar_solicitud_api({"consumo_kwh": 100}, "dummy")

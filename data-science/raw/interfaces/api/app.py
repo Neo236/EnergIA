@@ -45,7 +45,7 @@ def analisis_energetico(req: AnalisisRequest):
         "calidad_aislamiento": req.calidad_aislamiento,
         "fuente_calefaccion": req.fuente_calefaccion,
         "fuente_agua_caliente": req.fuente_agua_caliente,
-        "consumo_kwh": req.consumo_electrico_kwh,
+        "consumo_kwh": req.consumo_kwh,
         "uso_horario_pico": req.uso_horario_pico,
         "horas_alto_consumo": req.horas_alto_consumo,
         "cantidad_equipos": req.cantidad_equipos,

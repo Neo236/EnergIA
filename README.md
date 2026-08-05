@@ -97,11 +97,17 @@ Content-Type: application/json
 
 ```json
 {
-  "consumo_kwh": 420.0,
-  "uso_horario_pico": true,
-  "cantidad_equipos": 10,
-  "tipo_inmueble": "Casa",
-  "horas_alto_consumo": 8
+"consumo_kwh": 450.5,
+"cantidad_equipos": 8,
+"tipo_inmueble": "Casa",
+"uso_horario_pico": true,
+"horas_alto_consumo": 6,
+"metros_cuadrados": 30,
+"antiguedad_vivienda": 34,
+"zona_fria": false,
+"calidad_aislamiento": "Media",
+"fuente_calefaccion": "Solar",
+"fuente_agua_caliente": "Electricidad"
 }
 ```
 
@@ -109,14 +115,15 @@ Content-Type: application/json
 
 ```json
 {
-  "categoria": "Ineficiente",
-  "probabilidad": 0.81,
-  "costo_estimado_mensual": 315.00,
-  "recomendaciones": [
-    "Reducir el uso de equipos durante los horarios pico",
-    "Evaluar equipos con alto consumo energético",
-    "Distribuir las actividades de mayor consumo a lo largo del día"
-  ]
+"categoria": "Moderado",
+"probabilidad": 0.65,
+"recomendaciones": [
+"Consumo moderado.",
+"Optimizar el uso de aire acondicionado.",
+"Desconectar equipos eléctricos en modo Stand-by.",
+"Considerar iluminación LED."
+],
+"costo_estimado_mensual": 337.88
 }
 ```
 
@@ -126,12 +133,21 @@ Content-Type: application/json
 
 | Campo | Tipo | Obligatorio | Restricciones |
 |-------|------|:-----------:|---------------|
-| `consumo_kwh` | `Double` | ✅ | Debe ser **> 0** |
+| `consumo_kwh` | `Double` | ✅ | Debe ser **1 ≤ valor ≤ 1000** |
 | `uso_horario_pico` | `Boolean` | ✅ | `true` o `false` |
-| `cantidad_equipos` | `Integer` | ✅ | Debe ser **≥ 1** |
-| `tipo_inmueble` | `String` | ✅ | Solo valores: `Casa`, `Departamento`, `Comercio`, `Pyme` |
-| `horas_alto_consumo` | `Integer` | ✅ | Rango: **0 – 24** |
-
+| `cantidad_equipos` | `Integer` | ✅ | Debe ser **1 ≤ valor ≤ 100** |
+| `tipo_inmueble` | `String (Enum)` | ✅ | Solo valores: `Casa`, `Departamento`, `Comercio`, `Pyme` |
+| `horas_alto_consumo` | `Integer` | ✅ | Rango: **0 ≤ valor ≤ 24** |
+| `metros_cuadrados` | `Integer` |  | Rango: **26 ≤ valor ≤ 2000** |
+| `antiguedad_vivienda` | `Integer` |  | Rango: **0 ≤ valor ≤ 150** |
+| `zona_fria` | `Boolean` |  | `true o false` |
+| `calidad_aislamiento` | `String (Enum)` |  | Solo valores: `Muy alta`, `Alta`, 
+`Media`, `Baja`, `Muy 
+baja` |
+| `fuente_calefaccion` | `String (Enum)` |  | Solo valores: `Solar`, `Electricidad`, 
+`Otros` |
+| `fuente_agua_caliente` | `String (Enum)` |  | Solo valores: `Solar`, `Electricidad`, 
+`Otros` |
 ---
 
 ## 🌐 Configuración de Puertos y Red
@@ -224,22 +240,49 @@ uvicorn src.api.main:app --reload --port 8000
 ### Ejemplo 1 — Perfil Eficiente
 ```json
 {
-  "consumo_kwh": 120.0,
+  "consumo_kwh": 200,
+  "cantidad_equipos": 6,
+  "tipo_inmueble": "Casa",
   "uso_horario_pico": false,
-  "cantidad_equipos": 4,
-  "tipo_inmueble": "Departamento",
-  "horas_alto_consumo": 2
+  "horas_alto_consumo": 6,
+  "metros_cuadrados": 26,
+  "antiguedad_vivienda": 2,
+  "zona_fria": false,
+  "calidad_aislamiento": "Alta",
+  "fuente_calefaccion": "Solar",
+  "fuente_agua_caliente": "Solar"
 }
 ```
-
-### Ejemplo 2 — Perfil Ineficiente
+### Ejemplo 2 — Perfil Moderado
 ```json
 {
-  "consumo_kwh": 420.0,
+  "consumo_kwh": 300,
+  "cantidad_equipos": 8,
+  "tipo_inmueble": "Departamento",
   "uso_horario_pico": true,
+  "horas_alto_consumo": 3,
+  "metros_cuadrados": 35,
+  "antiguedad_vivienda": 7,
+  "zona_fria": false,
+  "calidad_aislamiento": "Media",
+  "fuente_calefaccion": "Electricidad",
+  "fuente_agua_caliente": "Electricidad"
+}
+```
+### Ejemplo 3 — Perfil Ineficiente
+```json
+{
+  "consumo_kwh": 600,
   "cantidad_equipos": 10,
-  "tipo_inmueble": "Casa",
-  "horas_alto_consumo": 8
+  "tipo_inmueble": "Departamento",
+  "uso_horario_pico": true,
+  "horas_alto_consumo": 6,
+  "metros_cuadrados": 40,
+  "antiguedad_vivienda": 15,
+  "zona_fria": true,
+  "calidad_aislamiento": "Baja",
+  "fuente_calefaccion": "Electricidad",
+  "fuente_agua_caliente": "Electricidad"
 }
 ```
 

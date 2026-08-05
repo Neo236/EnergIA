@@ -20,6 +20,10 @@ public record DatosRegistroAnalisis( //response = salida
         maximum = "1.0"
     )
     Double probabilidad,
+    @Schema(
+        description = "Costo mensual estimado en moneda local",
+        example = "377.88")
+    Double costo_estimado_mensual,
 
     @Schema(
     description = "Lista de recomendaciones sugeridas por el sistema", 
@@ -30,13 +34,7 @@ public record DatosRegistroAnalisis( //response = salida
         ]
         """
     )
-    List<String> recomendaciones,
-
-
-    @Schema(
-        description = "Costo mensual estimado en moneda local",
-        example = "377.88")
-    Double costo_estimado_mensual
+    List<String> recomendaciones
 ){
 
 }

@@ -1,102 +1,135 @@
+"""Generador del dataset sintetico de hogares.
+
+Replica literal la logica del notebook `notebooks/data_colab.ipynb`
+(Fases 1-3: configuracion + tablas Hogar y Consumo).
+
+Decisiones de diseno:
+- API legacy de NumPy (`np.random.seed`) para coincidir byte-a-byte con el colab.
+- Parametros centralizados en `infrastructure.config.Config`.
+- `zona_fria` y `uso_horario_pico` se generan como string "Si"/"No" (igual que
+  el colab) y al final se mapean a int 0/1 para compatibilidad con el
+  `ColumnTransformer` numérico de `application/training.py`.
+- `categoria` se calcula desde `domain.scoring.calcular_iee_y_categoria` para
+  garantizar coherencia con las reglas IEE del colab.
+"""
+
 import numpy as np
 import pandas as pd
 
-
-TIPO_INMUEBLE = ["Casa", "Departamento", "Comercio", "Pyme"]
-TIPO_INMUEBLE_PROBS = [0.3525, 0.2980, 0.1970, 0.1525]
-
-CALIDAD_AISLAMIENTO = ["Muy Alta", "Alta", "Media", "Baja", "Muy Baja"]
-CALIDAD_AISLAMIENTO_PROBS = [0.1220, 0.1965, 0.3380, 0.2055, 0.1380]
-
-FUENTE = ["Electricidad", "Solar", "Otros"]
-FUENTE_PROBS = [0.4505, 0.3630, 0.1865]
-
-CATEGORIA = ["Eficiente", "Moderado", "Ineficiente"]
+from domain.scoring import calcular_iee_y_categoria
+from infrastructure.config import Config
 
 
-def generar_dataset(num_clientes: int, seed: int) -> pd.DataFrame:
-    rng = np.random.default_rng(seed)
+def generar_dataset(num_clientes: int = Config.NUM_CLIENTES,
+                    seed: int = Config.RANDOM_SEED) -> pd.DataFrame:
+    # Reproducibilidad: API legacy de NumPy (identica a data_colab.ipynb)
+    np.random.seed(seed)
 
-    hogar_id = np.array([f"Hogar_{i:04d}" for i in range(1, num_clientes + 1)])
+    hogar_id = ["Hogar_" + str(i).zfill(4) for i in range(1, num_clientes + 1)]
 
-    tipo_inmueble = rng.choice(TIPO_INMUEBLE, size=num_clientes, p=TIPO_INMUEBLE_PROBS)
-
-    metros_cuadrados = np.round(
-        rng.normal(1048, 576, num_clientes).clip(26, 2000)
-    ).astype(int)
-
-    antiguedad_vivienda = np.round(
-        rng.normal(77, 43, num_clientes).clip(0, 150)
-    ).astype(int)
-
-    zona_fria = rng.choice([True, False], size=num_clientes, p=[0.5, 0.5])
-
-    calidad_aislamiento = rng.choice(
-        CALIDAD_AISLAMIENTO, size=num_clientes, p=CALIDAD_AISLAMIENTO_PROBS
+    tipo_inmueble = np.random.choice(
+        a=list(Config.TIPO_INMUEBLE),
+        size=num_clientes,
+        replace=True,
+        p=list(Config.TIPO_INMUEBLE_PROBS),
     )
 
-    fuente_calefaccion = rng.choice(FUENTE, size=num_clientes, p=FUENTE_PROBS)
-
-    fuente_agua_caliente = rng.choice(FUENTE, size=num_clientes, p=FUENTE_PROBS)
-
-    uso_horario_pico = rng.choice([True, False], size=num_clientes, p=[0.5, 0.5])
-
-    horas_alto_consumo = np.round(
-        rng.normal(12, 7, num_clientes).clip(0, 24)
-    ).astype(int)
-
-    cantidad_equipos = np.round(
-        rng.normal(51, 29, num_clientes).clip(1, 100)
-    ).astype(int)
-
-    base_consumo = (
-        0.05 * metros_cuadrados
-        + 1.5 * antiguedad_vivienda * 0.3
-        + zona_fria.astype(int) * 80
-        + (calidad_aislamiento == "Muy Baja").astype(int) * 120
-        + (calidad_aislamiento == "Baja").astype(int) * 70
-        + (calidad_aislamiento == "Media").astype(int) * 30
-        + (fuente_calefaccion == "Electricidad").astype(int) * 110
-        + (fuente_calefaccion == "Otros").astype(int) * 40
-        + uso_horario_pico.astype(int) * 60
-        + 0.6 * horas_alto_consumo
-        + 3.2 * cantidad_equipos
-        + rng.normal(0, 60, num_clientes)
-    )
-    consumo_kwh = np.round(base_consumo.clip(0.2, 999.9), 1)
-
-    puntaje_eficiencia = (
-        -0.02 * consumo_kwh
-        + (calidad_aislamiento == "Muy Alta").astype(int) * 25
-        + (calidad_aislamiento == "Alta").astype(int) * 15
-        + (calidad_aislamiento == "Media").astype(int) * 5
-        + (fuente_calefaccion == "Solar").astype(int) * 18
-        + (fuente_agua_caliente == "Solar").astype(int) * 8
-        - uso_horario_pico.astype(int) * 6
-        - 0.04 * antiguedad_vivienda
-        - 0.02 * metros_cuadrados
-        - 0.06 * cantidad_equipos
-        + rng.normal(0, 5, num_clientes)
+    metros_cuadrados = np.random.randint(
+        low=Config.MIN_M2,
+        high=Config.MAX_M2 + 1,
+        size=num_clientes,
     )
 
-    cuantiles = np.quantile(puntaje_eficiencia, [0.20, 0.83])
-    categoria = np.where(
-        puntaje_eficiencia >= cuantiles[1], "Eficiente",
-        np.where(puntaje_eficiencia >= cuantiles[0], "Moderado", "Ineficiente")
+    antiguedad_vivienda = np.random.randint(
+        low=Config.MIN_ANTIGUEDAD,
+        high=Config.MAX_ANTIGUEDAD + 1,
+        size=num_clientes,
     )
 
-    return pd.DataFrame({
+    zona_fria = np.random.choice(
+        a=["Si", "No"],
+        size=num_clientes,
+        replace=True,
+        p=list(Config.P_ZONA_FRIA),
+    )
+
+    calidad_aislamiento = np.random.choice(
+        a=list(Config.CALIDAD_AISLAMIENTO),
+        size=num_clientes,
+        replace=True,
+        p=list(Config.CALIDAD_AISLAMIENTO_PROBS),
+    )
+
+    fuente_calefaccion = np.random.choice(
+        a=list(Config.FUENTE),
+        size=num_clientes,
+        replace=True,
+        p=list(Config.FUENTE_PROBS),
+    )
+
+    fuente_agua_caliente = np.random.choice(
+        a=list(Config.FUENTE),
+        size=num_clientes,
+        replace=True,
+        p=list(Config.FUENTE_PROBS),
+    )
+
+    consumo_kwh = np.round(
+        np.random.uniform(
+            low=Config.CONSUMO_KWH_INF,
+            high=Config.CONSUMO_KWH_SUP,
+            size=num_clientes,
+        ),
+        1,
+    )
+    consumo_kwh = np.maximum(consumo_kwh, Config.CONSUMO_KWH_INF)
+
+    uso_horario_pico = np.random.choice(
+        a=["Si", "No"],
+        size=num_clientes,
+        replace=True,
+        p=list(Config.P_HORARIO_PICO),
+    )
+
+    horas_alto_consumo = np.random.randint(
+        low=Config.MIN_CANTIDAD_HORAS,
+        high=Config.MAX_CANTIDAD_HORAS + 1,
+        size=num_clientes,
+    )
+
+    cantidad_equipos = np.random.randint(
+        low=Config.CANTIDAD_EQUIPOS_INF,
+        high=Config.CANTIDAD_EQUIPOS_SUP + 1,
+        size=num_clientes,
+    )
+
+    # Mapeo Si/No -> 1/0 para compatibilidad con NUM_COLS del training pipeline.
+    zona_fria_int = (zona_fria == "Si").astype(int)
+    uso_horario_pico_int = (uso_horario_pico == "Si").astype(int)
+
+    df = pd.DataFrame({
         "hogar_id": hogar_id,
         "tipo_inmueble": tipo_inmueble,
         "metros_cuadrados": metros_cuadrados,
         "antiguedad_vivienda": antiguedad_vivienda,
-        "zona_fria": zona_fria,
+        "zona_fria": zona_fria_int,
         "calidad_aislamiento": calidad_aislamiento,
         "fuente_calefaccion": fuente_calefaccion,
         "fuente_agua_caliente": fuente_agua_caliente,
         "consumo_kwh": consumo_kwh,
-        "uso_horario_pico": uso_horario_pico,
+        "uso_horario_pico": uso_horario_pico_int,
         "horas_alto_consumo": horas_alto_consumo,
         "cantidad_equipos": cantidad_equipos,
-        "categoria": categoria,
     })
+
+    assert df.shape == (num_clientes, 12), f"Dimension inesperada: {df.shape}"
+    assert df["hogar_id"].is_unique, "hogar_id duplicados"
+
+    df["categoria"] = calcular_iee_y_categoria(df)
+
+    assert df.shape == (num_clientes, 13), f"Dimension con categoria: {df.shape}"
+    assert set(df["categoria"].unique()).issubset(
+        {"Eficiente", "Moderado", "Ineficiente"}
+    ), f"Categorias invalidas: {df['categoria'].unique()}"
+
+    return df

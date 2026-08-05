@@ -1,24 +1,21 @@
 import numpy as np
 import pandas as pd
 
+from application.training import FEATURE_COLS
 from domain.recommendations import calcular_recomendaciones
+from infrastructure.config import Config
 from infrastructure.ml.model_storage import load_model
 
-TARIFA_KWH = 0.75
-MODELO_FEATURES = [
-    "tipo_inmueble",
-    "metros_cuadrados",
-    "antiguedad_vivienda",
-    "zona_fria",
-    "calidad_aislamiento",
-    "fuente_calefaccion",
-    "fuente_agua_caliente",
-    "consumo_kwh",
-    "uso_horario_pico",
-    "horas_alto_consumo",
-    "cantidad_equipos",
-]
+# El orden/identidad de las features se deriva del training pipeline para
+# garantizar que la inferencia use exactamente el mismo set que el modelo
+# aprendio. Cambiar FEATURE_COLS en application.training.py se propaga solo.
+MODELO_FEATURES = list(FEATURE_COLS)
 
+CATEGORIAS_VALIDAS = {"Eficiente", "Moderado", "Ineficiente"}
+
+# Defaults para features que el caller puede omitir. Fuente unica: el schema
+# Pydantic. Si la API recibe solo los campos obligatorios, este dict suple
+# los opcionales al modelo. Mantener sincronizado con schemas.py.
 DEFAULTS = {
     "tipo_inmueble": "Casa",
     "metros_cuadrados": 1000.0,
@@ -36,9 +33,17 @@ DEFAULTS = {
 
 def _a_fila_modelo(input_data: dict) -> pd.DataFrame:
     row = {feat: input_data.get(feat, DEFAULTS[feat]) for feat in MODELO_FEATURES}
-    if "consumo_electrico_kwh" in input_data and "consumo_kwh" not in input_data:
-        row["consumo_kwh"] = input_data["consumo_electrico_kwh"]
     return pd.DataFrame([row], columns=MODELO_FEATURES)
+
+
+def _normalizar_categoria(raw: str) -> str:
+    """Mapea la salida del modelo al set cerrado del dominio."""
+    if raw not in CATEGORIAS_VALIDAS:
+        raise ValueError(
+            f"Modelo devolvio categoria no soportada: {raw!r}. "
+            f"Esperado: {CATEGORIAS_VALIDAS}"
+        )
+    return raw
 
 
 def procesar_solicitud_api(input_data: dict, model_path: str) -> dict:
@@ -48,12 +53,11 @@ def procesar_solicitud_api(input_data: dict, model_path: str) -> dict:
     probs = modelo.predict_proba(X)[0]
     clases = list(modelo.classes_)
     idx = int(np.argmax(probs))
-    categoria = str(clases[idx])
+    categoria = _normalizar_categoria(str(clases[idx]))
     probabilidad = float(probs[idx])
 
-    consumo_kwh = float(input_data.get("consumo_kwh",
-                                        input_data.get("consumo_electrico_kwh", 0)))
-    costo = round(consumo_kwh * TARIFA_KWH, 2)
+    consumo_kwh = float(input_data.get("consumo_kwh", 0))
+    costo = round(consumo_kwh * Config.TARIFA_KWH, 2)
 
     recomendaciones = calcular_recomendaciones(input_data)
 

@@ -17,9 +17,9 @@ public record DatosRegistroConsumo ( //Request => Entrada
     Double consumo_kwh,
 
     @Schema(
-        description = "Cantidad de equipos activos",
+        description = "Cantidad de equipos activos. Es un dato opcional.",
         example = "8")
-    @NotNull @Min(value = 1) @Max(value = 100)
+    @Min(value = 1) @Max(value = 100)
     Integer cantidad_equipos,
 
     @Schema(
@@ -35,21 +35,21 @@ public record DatosRegistroConsumo ( //Request => Entrada
     Boolean uso_horario_pico,
 
     @Schema(
-        description = "Horas estimadas de uso de equipos de alto consumo al dia.",
+        description = "Horas estimadas de uso de equipos de alto consumo al dia. Es un dato opcional.",
         example = "6")
-    @NotNull @Min(value = 0) @Max(value = 24)
+    @Min(value = 0) @Max(value = 24)
     Integer horas_alto_consumo,
 
     @Schema(
-        description = "Superficie total habitale de la vivienda, expresada en metros cuadrados.",
+        description = "Superficie total habitable de la vivienda, expresada en metros cuadrados. Es un dato opcional.",
         example = "30")
-    @NotNull @Min(value = 26) @Max(value = 2000)
+    @Min(value = 26) @Max(value = 2000)
     Integer metros_cuadrados,
 
     @Schema(
-        description = "Cantidad de años transcurridos desde la construccion.",
+        description = "Cantidad de años transcurridos desde la construccion. Es un dato opcional.",
         example = "34")
-    @NotNull @Min(value = 0) @Max(value = 150)
+    @Min(value = 0) @Max(value = 150)
     Integer antiguedad_vivienda,
 
     @Schema(
@@ -59,9 +59,8 @@ public record DatosRegistroConsumo ( //Request => Entrada
     Boolean zona_fria,
 
     @Schema(
-        description = "Nivel de eficiencia del aislamiento térmico.",
+        description = "Nivel de eficiencia del aislamiento térmico. Es un dato opcional.",
         example = "MEDIA")
-    @NotNull
     CalidadAislamiento calidad_aislamiento,
 
     @Schema(

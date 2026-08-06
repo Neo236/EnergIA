@@ -117,15 +117,16 @@ Content-Type: application/json
 {
 "categoria": "Moderado",
 "probabilidad": 0.65,
+"costo_estimado_mensual": 337.88,
 "recomendaciones": [
 "Consumo moderado.",
 "Optimizar el uso de aire acondicionado.",
 "Desconectar equipos eléctricos en modo Stand-by.",
 "Considerar iluminación LED."
-],
-"costo_estimado_mensual": 337.88
+]
 }
 ```
+> Nota: los valores de Response Body son ilustrativos 
 
 ---
 
@@ -138,17 +139,15 @@ Content-Type: application/json
 | `cantidad_equipos` | `Integer` | ✅ | Debe ser **1 ≤ valor ≤ 100** |
 | `tipo_inmueble` | `String (Enum)` | ✅ | Solo valores: `Casa`, `Departamento`, `Comercio`, `Pyme` |
 | `horas_alto_consumo` | `Integer` | ✅ | Rango: **0 ≤ valor ≤ 24** |
-| `metros_cuadrados` | `Integer` |  | Rango: **26 ≤ valor ≤ 2000** |
-| `antiguedad_vivienda` | `Integer` |  | Rango: **0 ≤ valor ≤ 150** |
-| `zona_fria` | `Boolean` |  | `true o false` |
-| `calidad_aislamiento` | `String (Enum)` |  | Solo valores: `Muy alta`, `Alta`, 
-`Media`, `Baja`, `Muy 
-baja` |
-| `fuente_calefaccion` | `String (Enum)` |  | Solo valores: `Solar`, `Electricidad`, 
-`Otros` |
-| `fuente_agua_caliente` | `String (Enum)` |  | Solo valores: `Solar`, `Electricidad`, 
-`Otros` |
+| `metros_cuadrados` | `Integer` | Por definir | Rango: **26 ≤ valor ≤ 2000** |
+| `antiguedad_vivienda` | `Integer` | Por definir | Rango: **0 ≤ valor ≤ 150** |
+| `zona_fria` | `Boolean` | Por definir | `true o false` |
+| `calidad_aislamiento` | `String (Enum)` | Por definir | `Muy Alta`, `Alta`, `Media`, `Baja`, `Muy Baja` |
+| `fuente_calefaccion` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
+| `fuente_agua_caliente` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
 ---
+
+> Nota: la obligatoriedad definitiva de los campos incorporados en la versión 1.2 se encuentra pendiente de definición funcional. Actualmente, el DTO de Spring Boot utiliza @NotNull en los 11 campos, por lo que la implementación vigente exige su envío. El código deberá ajustarse cuando se congele el contrato definitivo.
 
 ## 🌐 Configuración de Puertos y Red
 
@@ -156,7 +155,7 @@ baja` |
 |----------|:------------:|:-----------------------:|
 | API Spring Boot | `8080` | `443` (HTTPS) vía proxy inverso |
 | Frontend (en desarrollo) | `3000` | raíz del dominio vía proxy (same-origin) |
-| Microservicio ML (Opcional) | `8000` | interno (solo red Docker) |
+| Microservicio ML / FastAPI | `8000` | interno (solo red Docker) |
 
 ---
 
@@ -226,18 +225,16 @@ cd backend
 ```
 **Para el servicio de Machine Learning (Si se usa la Alternativa A):**
 ```bash
-cd data-science
-python -m venv .venv
-# Activar el entorno virtual (depende del OS)
-pip install -r requirements.txt
-uvicorn src.api.main:app --reload --port 8000
+cd data-science/raw
+python -m pip install -r requirements.txt
+python -m uvicorn interfaces.api.app:app --reload --port 8000
 ```
 
 ---
 
 ## 💡 Ejemplos de Uso
 
-### Ejemplo 1 — Perfil Eficiente
+### Perfil de prueba orientado a Eficiente
 ```json
 {
   "consumo_kwh": 200,
@@ -253,7 +250,7 @@ uvicorn src.api.main:app --reload --port 8000
   "fuente_agua_caliente": "Solar"
 }
 ```
-### Ejemplo 2 — Perfil Moderado
+### Perfil de prueba orientado a Moderado
 ```json
 {
   "consumo_kwh": 300,
@@ -269,7 +266,7 @@ uvicorn src.api.main:app --reload --port 8000
   "fuente_agua_caliente": "Electricidad"
 }
 ```
-### Ejemplo 3 — Perfil Ineficiente
+### Perfil de prueba orientado a Ineficiente
 ```json
 {
   "consumo_kwh": 600,
@@ -292,8 +289,8 @@ uvicorn src.api.main:app --reload --port 8000
 
 | Servicio OCI | Uso en el Proyecto | Estado |
 |-------------|-------------------|--------|
-| **OCI Compute** | VM ARM64 con los dos ambientes (producción y staging) detrás de proxy con HTTPS. | ✅ Desplegado |
-| **OCI Object Storage** | Almacenamiento del modelo serializado (`.pkl` / `.onnx`) y datasets de entrenamiento. | 🟡 Bucket + PAR listos |
+| **OCI Compute** | VM ARM64 con los dos ambientes (producción y staging) detrás de proxy con HTTPS. | infraestructura preparada; despliegue integral pendiente. |
+| **OCI Object Storage** | Almacenamiento del modelo serializado (`.joblib`) y datasets de entrenamiento. | integración implementada; validación productiva pendiente. |
 
 Detalle completo de la infraestructura (red, VM, dominios, seguridad, runbook): [`docs/oci-cloud/`](docs/oci-cloud/README.md).
 

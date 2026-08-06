@@ -1,0 +1,50 @@
+# ==========================================
+# Dockerfile.test - EnergiAI MVP - CI runner
+# Python 3.10 + Jupyter + pytest
+# ==========================================
+# Ejecuta la suite completa de tests, incluido el test de paridad contra el
+# notebook de Colab (requiere jupyter para `jupyter nbconvert --execute`).
+#
+# Contexto de build esperado: data-science/ (padre de raw/).
+# Build:
+#   cd data-science && docker build -f raw/Dockerfile.test -t energiai-tests .
+# Run:
+#   docker run --rm energiai-tests
+# Run con sincronizacion previa del notebook (volumen para persistir cambios):
+#   docker run --rm -v "$(pwd)/data-science/raw:/app" energiai-tests \
+#       bash -c "python scripts/sync_colab_notebook.py --apply && pytest"
+#
+# Hay un wrapper en raw/scripts/run_tests_in_docker.sh que automatiza esto.
+# ==========================================
+
+FROM python:3.10-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# requirements del proyecto + jupyter (solo para tests)
+COPY raw/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir \
+        "jupyter>=1.0.0" \
+        "nbconvert>=7.0.0" \
+        "ipykernel>=6.0.0" \
+        "pytest>=8.0.0"
+
+# Codigo del proyecto
+COPY raw/ ./
+
+# El usuario no root ya esta creado en el Dockerfile de produccion, replicamos
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
+
+CMD ["pytest", "-v"]

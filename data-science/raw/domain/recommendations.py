@@ -1,8 +1,7 @@
 def calcular_recomendaciones(input_data: dict) -> list[str]:
     recs: list[str] = []
 
-    consumo = float(input_data.get("consumo_kwh",
-                                    input_data.get("consumo_electrico_kwh", 0)))
+    consumo = float(input_data.get("consumo_kwh", 0))
 
     if consumo > 700:
         recs.append("Tu consumo eléctrico es muy elevado. "

@@ -189,6 +189,7 @@ main          ◀── Producción / Evaluación Hackathon (protegida)
         ├── feature/fastapi-inference-service
         ├── feature/docker-compose-integration
         ├── feature/docs
+        ├── feature/frontend-p1-p2
         └── feature/oci-object-storage-config
 ```
 
@@ -229,6 +230,10 @@ cd data-science/raw
 python -m pip install -r requirements.txt
 python -m uvicorn interfaces.api.app:app --reload --port 8000
 ```
+
+**Para el Front-End (P-01 / P-02):**
+
+Abrí `frontend/index.html` en el navegador. No requiere build ni dependencias. Hoy responde contra un mock local que replica el contrato V1.2 (200, 400 con `detalles[]`, 500 y 503); el detalle del contrato y de los estados cubiertos está en [`frontend/README.md`](frontend/README.md).
 
 ---
 

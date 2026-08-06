@@ -53,7 +53,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConCasaTitleCase() throws Exception {
         String json = """
             {
-              "consumo_electrico_kwh": 450.5,
+              "consumo_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "Casa",
               "uso_horario_pico": true,
@@ -77,7 +77,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConCASAUpperCase() throws Exception {
         String json = """
             {
-              "consumo_electrico_kwh": 450.5,
+              "consumo_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "CASA",
               "uso_horario_pico": true,
@@ -101,7 +101,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConCasaLowerCase() throws Exception {
         String json = """
             {
-              "consumo_electrico_kwh": 450.5,
+              "consumo_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "casa",
               "uso_horario_pico": true,
@@ -125,7 +125,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConTipoInmuebleInvalido_Retorna400() throws Exception {
         String json = """
             {
-              "consumo_electrico_kwh": 450.5,
+              "consumo_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "Invalido",
               "uso_horario_pico": true,

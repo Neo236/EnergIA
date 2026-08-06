@@ -68,7 +68,9 @@ class TestCliValidate:
         assert "FAIL" in result.stdout or "NO existe" in result.stdout
 
     def test_validate_sobre_artefactos_validos(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("NUM_CLIENTES", "100")
+        # 500 clientes: tamaño mínimo para que cada categoría tenga soporte
+        # suficiente y el F1 de "Eficiente" no colapse a 0.
+        monkeypatch.setenv("NUM_CLIENTES", "500")
         monkeypatch.setenv("OUTPUT_JSON_PATH", str(tmp_path / "db.json"))
         monkeypatch.setenv("OUTPUT_MODEL_PATH", str(tmp_path / "modelo.joblib"))
         monkeypatch.setenv("OUTPUT_METRICAS_PATH", str(tmp_path / "metricas.joblib"))

@@ -1,27 +1,48 @@
 package com.energiai.controller;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.energiai.client.MlClient;
+import com.energiai.dto.CategoriaConsumo;
+import com.energiai.dto.DatosRegistroAnalisis;
 import com.energiai.exception.GlobalExceptionHandler;
+import com.energiai.exception.ServicioMlNoDisponibleException;
 import com.energiai.service.AnalisisEnergeticoService;
 
 class AnalisisEnergeticoControllerTest {
 
     private MockMvc mockMvc;
+    private MlClient mlClient;
 
     @BeforeEach
     void setUp() {
+        mlClient = mock(MlClient.class);
+        AnalisisEnergeticoService service = new AnalisisEnergeticoService(mlClient);
         AnalisisEnergeticoController controller = new AnalisisEnergeticoController();
-        AnalisisEnergeticoService service = new AnalisisEnergeticoService();
-        org.springframework.test.util.ReflectionTestUtils.setField(controller, "analisisService", service);
+        ReflectionTestUtils.setField(controller, "analisisService", service);
+
+        DatosRegistroAnalisis analisisMock = DatosRegistroAnalisis.builder()
+                .categoria(CategoriaConsumo.EFICIENTE)
+                .probabilidad(0.25)
+                .costo_estimado_mensual(300.0)
+                .recomendaciones(List.of("Buen consumo."))
+                .build();
+
+        when(mlClient.predecir(any())).thenReturn(analisisMock);
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
@@ -32,7 +53,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConCasaTitleCase() throws Exception {
         String json = """
             {
-              "consumo_kwh": 450.5,
+              "consumo_electrico_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "Casa",
               "uso_horario_pico": true,
@@ -56,7 +77,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConCASAUpperCase() throws Exception {
         String json = """
             {
-              "consumo_kwh": 450.5,
+              "consumo_electrico_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "CASA",
               "uso_horario_pico": true,
@@ -80,7 +101,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConCasaLowerCase() throws Exception {
         String json = """
             {
-              "consumo_kwh": 450.5,
+              "consumo_electrico_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "casa",
               "uso_horario_pico": true,
@@ -104,7 +125,7 @@ class AnalisisEnergeticoControllerTest {
     void testAnalizarConsumoConTipoInmuebleInvalido_Retorna400() throws Exception {
         String json = """
             {
-              "consumo_kwh": 450.5,
+              "consumo_electrico_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "Invalido",
               "uso_horario_pico": true,
@@ -130,7 +151,7 @@ class AnalisisEnergeticoControllerTest {
     void probarEndpointConCatalogoInvalido() throws Exception {
         String jsonInvalido = """
             {
-              "consumo_kwh": 300.0,
+              "consumo_electrico_kwh": 300.0,
               "cantidad_equipos": 5,
               "tipo_inmueble": "OPCION_INEXISTENTE",
               "uso_horario_pico": true,
@@ -148,5 +169,34 @@ class AnalisisEnergeticoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonInvalido))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/analisis-energetico: Retorna 503 cuando el servicio de ML no está disponible")
+    void testServicioMlNoDisponibleRetorna503() throws Exception {
+        when(mlClient.predecir(any())).thenThrow(new ServicioMlNoDisponibleException("El servicio Machine Learning no se encuentra disponible"));
+
+        String json = """
+            {
+              "consumo_electrico_kwh": 450.5,
+              "cantidad_equipos": 8,
+              "tipo_inmueble": "Casa",
+              "uso_horario_pico": true,
+              "horas_alto_consumo": 6,
+              "metros_cuadrados": 30,
+              "antiguedad_vivienda": 34,
+              "zona_fria": false,
+              "calidad_aislamiento": "Media",
+              "fuente_calefaccion": "Solar",
+              "fuente_agua_caliente": "Electricidad"
+            }
+            """;
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.status").value(503))
+                .andExpect(jsonPath("$.mensaje").value("El servicio Machine Learning no se encuentra disponible"));
     }
 }

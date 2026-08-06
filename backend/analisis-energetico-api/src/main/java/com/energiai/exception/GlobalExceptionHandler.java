@@ -18,10 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Manejo de validaciones de DTO (@Valid).
-     * Devuelve HTTP 400 Bad Request con el detalle de cada campo invalido o ausente.
-     */
+    // Manejo de validaciones de DTO (@Valid).
+    // Devuelve HTTP 400 Bad Request con el detalle de cada campo invalido o ausente.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<DatosErrorRespuesta> manejarValidaciones(MethodArgumentNotValidException ex) {
         List<DatosErrorCampo> erroresCampos = ex.getBindingResult()
@@ -40,10 +38,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
 
-    /**
-     * Manejo de JSON mal formado o cuerpo de solicitud ausente.
-     * Devuelve HTTP 400 Bad Request.
-     */
+    // Manejo de JSON mal formado o cuerpo de solicitud ausente.
+    // Devuelve HTTP 400 Bad Request.
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<DatosErrorRespuesta> manejarJsonInvalido(HttpMessageNotReadableException ex) {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
@@ -55,10 +51,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
 
-    /**
-     * Manejo de recursos inexistentes planteados por la logica de negocio.
-     * Devuelve HTTP 404 Not Found.
-     */
+    // Manejo de recursos inexistentes planteados por la logica de negocio.
+    // Devuelve HTTP 404 Not Found.
     @ExceptionHandler(RecursoNoEncontradoException.class)
     public ResponseEntity<DatosErrorRespuesta> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
@@ -90,10 +84,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
 
-    /**
-     * Manejo global de errores internos no controlados.
-     * Devuelve HTTP 500 Internal Server Error.
-     */
+    
+    // Manejo global de errores internos no controlados.
+    // Devuelve HTTP 500 Internal Server Error.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<DatosErrorRespuesta> manejarErrorInterno(Exception ex, HttpServletRequest request) {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(

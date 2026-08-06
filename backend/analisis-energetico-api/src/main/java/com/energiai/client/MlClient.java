@@ -22,7 +22,7 @@ public class MlClient {
     public DatosRegistroAnalisis predecir(DatosRegistroConsumo datos) {                                                                                                       
         try {                                                                                                                                                                 
             return restClient.post()                                                                                                                                          
-                    .uri(mlServiceUrl + "/predict")                                                                                                                           
+                    .uri(mlServiceUrl + "/analisis-energetico")                                                                                                                           
                     .contentType(MediaType.APPLICATION_JSON)                                                                                                                  
                     .body(datos)                                                                                                                                              
                     .retrieve()                                                                                                                                               

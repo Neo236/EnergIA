@@ -178,7 +178,7 @@ class AnalisisEnergeticoControllerTest {
 
         String json = """
             {
-              "consumo_electrico_kwh": 450.5,
+              "consumo_kwh": 450.5,
               "cantidad_equipos": 8,
               "tipo_inmueble": "Casa",
               "uso_horario_pico": true,

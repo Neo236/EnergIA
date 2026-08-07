@@ -79,11 +79,14 @@ ipython_config.py
 # Datasets locales (subir solo a OCI Object Storage)
 data/raw/
 data/processed/
+data-science/raw/data/
 *.csv
 *.parquet
 *.json.gz
 *.xlsx
 *.xls
+# Sidecars SHA256 de artefactos locales (sin los binarios no tienen sentido)
+*.sha256
 
 # MLflow / DVC
 mlruns/

@@ -815,6 +815,27 @@ class TestRetry:
             )
         assert called[0] == 1  # sin reintentos
 
+    def test_os_error_no_retryea_file_not_found(self, monkeypatch):
+        """FileNotFoundError es subclase de OSError pero NO debe reintentarse
+        aunque OSError este en retryable."""
+        from infrastructure.storage.retry import with_retry
+
+        called = [0]
+
+        def op():
+            called[0] += 1
+            raise FileNotFoundError("404")
+
+        monkeypatch.setattr("time.sleep", lambda s: None)
+        with pytest.raises(FileNotFoundError):
+            with_retry(
+                op,
+                op_name="test",
+                max_attempts=3,
+                retryable=(OSError,),  # OSError incluye FileNotFoundError
+            )
+        assert called[0] == 1  # FileNotFoundError short-circuits OSError retry
+
     def test_sha256_sidecar(self, tmp_path):
         from interfaces.cli.train import _write_sha256_sidecar
         import hashlib

@@ -36,6 +36,10 @@ def with_retry(
 ) -> T:
     """Ejecuta `op` con reintentos y backoff exponencial + jitter.
 
+    Importante: `FileNotFoundError` NUNCA se reintenta aunque este en
+    `retryable` (es subclase de `OSError`). Esto evita 3 intentos
+    en errores 404 que sabemos son terminales.
+
     Args:
         op: callable sin args que realiza la operacion.
         max_attempts: numero maximo de intentos (incluye el primero).
@@ -43,15 +47,17 @@ def with_retry(
         backoff_multiplier: factor de crecimiento por intento.
         max_backoff_s: tope al backoff para evitar esperas absurdas.
         op_name: nombre para logging.
-        retryable: tupla de excepciones que disparan retry. Por defecto
-            cualquier Exception (transitorio o no). Para OCI conviene
-            restringir a (ConnectionError, TimeoutError, ServiceError 5xx).
+        retryable: tupla de excepciones que disparan retry. Para OCI
+            conviene restringir a (ConnectionError, TimeoutError).
     """
     last_exc: BaseException | None = None
     backoff = initial_backoff_s
     for attempt in range(1, max_attempts + 1):
         try:
             return op()
+        except FileNotFoundError:
+            # 404 nunca es transitorio. Propagar sin reintentar.
+            raise
         except retryable as e:
             last_exc = e
             if attempt == max_attempts:

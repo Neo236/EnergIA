@@ -1,6 +1,7 @@
 package com.energiai.dto;
 
 import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -10,12 +11,19 @@ public record DatosRegistroAnalisis( //response = salida
     @Schema(
         description = "Categoria del consumo (Eficiente, Moderado, Ineficiente)",
         example = "Ineficiente")
-    String categoria,
+    CategoriaConsumo categoria,
 
     @Schema(
         description = "Nivel de probalidad de diagnostico (0.0 a 1.0)",
-        example = "0.64")
+        example = "0.64",
+        minimum = "0.0",
+        maximum = "1.0"
+    )
     Double probabilidad,
+    @Schema(
+        description = "Costo mensual estimado en moneda local",
+        example = "377.88")
+    Double costo_estimado_mensual,
 
     @Schema(
     description = "Lista de recomendaciones sugeridas por el sistema", 
@@ -26,13 +34,7 @@ public record DatosRegistroAnalisis( //response = salida
         ]
         """
     )
-    List<String> recomendaciones,
-
-
-    @Schema(
-        description = "Costo mensual estimado en moneda local",
-        example = "54060.0")
-    Double costo_estimado_mensual
+    List<String> recomendaciones
 ){
 
 }

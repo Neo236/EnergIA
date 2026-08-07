@@ -5,7 +5,7 @@
 ### Hackathon ONE — G9 | Alura + Oracle | LATAM
 
 ![Java](https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.7-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Machine Learning](https://img.shields.io/badge/Data_Science-ML-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
@@ -40,7 +40,7 @@ El proyecto se divide en dos áreas principales: Backend (Java) y Data Science (
 
 | Capa | Tecnología | Rol |
 |------|-----------|-----|
-| **Back-End** | Java 17+ / Spring Boot 3.x | API REST principal, orquestación y validaciones. |
+| **Back-End** | Java 17+ / Spring Boot 4.0.7 | API REST principal, orquestación y validaciones. |
 | **Data Science** | Python 3.10+ / Pandas / Scikit-Learn | Análisis de datos (EDA), entrenamiento del modelo ML y generación de reglas. |
 | **Infraestructura** | Oracle Cloud (OCI) + Docker | Almacenamiento (Object Storage) y Despliegue (Compute). |
 
@@ -97,11 +97,17 @@ Content-Type: application/json
 
 ```json
 {
-  "consumo_kwh": 420.0,
-  "uso_horario_pico": true,
-  "cantidad_equipos": 10,
-  "tipo_inmueble": "Casa",
-  "horas_alto_consumo": 8
+"consumo_kwh": 450.5,
+"cantidad_equipos": 8,
+"tipo_inmueble": "Casa",
+"uso_horario_pico": true,
+"horas_alto_consumo": 6,
+"metros_cuadrados": 30,
+"antiguedad_vivienda": 34,
+"zona_fria": false,
+"calidad_aislamiento": "Media",
+"fuente_calefaccion": "Solar",
+"fuente_agua_caliente": "Electricidad"
 }
 ```
 
@@ -109,16 +115,18 @@ Content-Type: application/json
 
 ```json
 {
-  "categoria": "Ineficiente",
-  "probabilidad": 0.81,
-  "costo_estimado_mensual": 315.00,
-  "recomendaciones": [
-    "Reducir el uso de equipos durante los horarios pico",
-    "Evaluar equipos con alto consumo energético",
-    "Distribuir las actividades de mayor consumo a lo largo del día"
-  ]
+"categoria": "Moderado",
+"probabilidad": 0.65,
+"costo_estimado_mensual": 337.88,
+"recomendaciones": [
+"Consumo moderado.",
+"Optimizar el uso de aire acondicionado.",
+"Desconectar equipos eléctricos en modo Stand-by.",
+"Considerar iluminación LED."
+]
 }
 ```
+> Nota: los valores de Response Body son ilustrativos 
 
 ---
 
@@ -126,13 +134,20 @@ Content-Type: application/json
 
 | Campo | Tipo | Obligatorio | Restricciones |
 |-------|------|:-----------:|---------------|
-| `consumo_kwh` | `Double` | ✅ | Debe ser **> 0** |
+| `consumo_kwh` | `Double` | ✅ | Debe ser **1 ≤ valor ≤ 1000** |
 | `uso_horario_pico` | `Boolean` | ✅ | `true` o `false` |
-| `cantidad_equipos` | `Integer` | ✅ | Debe ser **≥ 1** |
-| `tipo_inmueble` | `String` | ✅ | Solo valores: `Casa`, `Departamento`, `Comercio`, `Pyme` |
-| `horas_alto_consumo` | `Integer` | ✅ | Rango: **0 – 24** |
-
+| `cantidad_equipos` | `Integer` | ✅ | Debe ser **1 ≤ valor ≤ 100** |
+| `tipo_inmueble` | `String (Enum)` | ✅ | Solo valores: `Casa`, `Departamento`, `Comercio`, `Pyme` |
+| `horas_alto_consumo` | `Integer` | ✅ | Rango: **0 ≤ valor ≤ 24** |
+| `metros_cuadrados` | `Integer` | Por definir | Rango: **26 ≤ valor ≤ 2000** |
+| `antiguedad_vivienda` | `Integer` | Por definir | Rango: **0 ≤ valor ≤ 150** |
+| `zona_fria` | `Boolean` | Por definir | `true o false` |
+| `calidad_aislamiento` | `String (Enum)` | Por definir | `Muy Alta`, `Alta`, `Media`, `Baja`, `Muy Baja` |
+| `fuente_calefaccion` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
+| `fuente_agua_caliente` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
 ---
+
+> Nota: la obligatoriedad definitiva de los campos incorporados en la versión 1.2 se encuentra pendiente de definición funcional. Actualmente, el DTO de Spring Boot utiliza @NotNull en los 11 campos, por lo que la implementación vigente exige su envío. El código deberá ajustarse cuando se congele el contrato definitivo.
 
 ## 🌐 Configuración de Puertos y Red
 
@@ -140,7 +155,7 @@ Content-Type: application/json
 |----------|:------------:|:-----------------------:|
 | API Spring Boot | `8080` | `443` (HTTPS) vía proxy inverso |
 | Frontend (en desarrollo) | `3000` | raíz del dominio vía proxy (same-origin) |
-| Microservicio ML (Opcional) | `8000` | interno (solo red Docker) |
+| Microservicio ML / FastAPI | `8000` | interno (solo red Docker) |
 
 ---
 
@@ -210,36 +225,61 @@ cd backend
 ```
 **Para el servicio de Machine Learning (Si se usa la Alternativa A):**
 ```bash
-cd data-science
-python -m venv .venv
-# Activar el entorno virtual (depende del OS)
-pip install -r requirements.txt
-uvicorn src.api.main:app --reload --port 8000
+cd data-science/raw
+python -m pip install -r requirements.txt
+python -m uvicorn interfaces.api.app:app --reload --port 8000
 ```
 
 ---
 
 ## 💡 Ejemplos de Uso
 
-### Ejemplo 1 — Perfil Eficiente
+### Perfil de prueba orientado a Eficiente
 ```json
 {
-  "consumo_kwh": 120.0,
+  "consumo_kwh": 200,
+  "cantidad_equipos": 6,
+  "tipo_inmueble": "Casa",
   "uso_horario_pico": false,
-  "cantidad_equipos": 4,
-  "tipo_inmueble": "Departamento",
-  "horas_alto_consumo": 2
+  "horas_alto_consumo": 6,
+  "metros_cuadrados": 26,
+  "antiguedad_vivienda": 2,
+  "zona_fria": false,
+  "calidad_aislamiento": "Alta",
+  "fuente_calefaccion": "Solar",
+  "fuente_agua_caliente": "Solar"
 }
 ```
-
-### Ejemplo 2 — Perfil Ineficiente
+### Perfil de prueba orientado a Moderado
 ```json
 {
-  "consumo_kwh": 420.0,
+  "consumo_kwh": 300,
+  "cantidad_equipos": 8,
+  "tipo_inmueble": "Departamento",
   "uso_horario_pico": true,
+  "horas_alto_consumo": 3,
+  "metros_cuadrados": 35,
+  "antiguedad_vivienda": 7,
+  "zona_fria": false,
+  "calidad_aislamiento": "Media",
+  "fuente_calefaccion": "Electricidad",
+  "fuente_agua_caliente": "Electricidad"
+}
+```
+### Perfil de prueba orientado a Ineficiente
+```json
+{
+  "consumo_kwh": 600,
   "cantidad_equipos": 10,
-  "tipo_inmueble": "Casa",
-  "horas_alto_consumo": 8
+  "tipo_inmueble": "Departamento",
+  "uso_horario_pico": true,
+  "horas_alto_consumo": 6,
+  "metros_cuadrados": 40,
+  "antiguedad_vivienda": 15,
+  "zona_fria": true,
+  "calidad_aislamiento": "Baja",
+  "fuente_calefaccion": "Electricidad",
+  "fuente_agua_caliente": "Electricidad"
 }
 ```
 
@@ -249,8 +289,8 @@ uvicorn src.api.main:app --reload --port 8000
 
 | Servicio OCI | Uso en el Proyecto | Estado |
 |-------------|-------------------|--------|
-| **OCI Compute** | VM ARM64 con los dos ambientes (producción y staging) detrás de proxy con HTTPS. | ✅ Desplegado |
-| **OCI Object Storage** | Almacenamiento del modelo serializado (`.pkl` / `.onnx`) y datasets de entrenamiento. | 🟡 Bucket + PAR listos |
+| **OCI Compute** | VM ARM64 con los dos ambientes (producción y staging) detrás de proxy con HTTPS. | infraestructura preparada; despliegue integral pendiente. |
+| **OCI Object Storage** | Almacenamiento del modelo serializado (`.joblib`) y datasets de entrenamiento. | integración implementada; validación productiva pendiente. |
 
 Detalle completo de la infraestructura (red, VM, dominios, seguridad, runbook): [`docs/oci-cloud/`](docs/oci-cloud/README.md).
 

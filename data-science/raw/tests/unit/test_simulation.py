@@ -42,13 +42,13 @@ class TestGenerarDataset:
         assert set(df["fuente_calefaccion"].unique()).issubset(set(Config.FUENTE))
         assert set(df["fuente_agua_caliente"].unique()).issubset(set(Config.FUENTE))
 
-    def test_zona_fria_y_pico_son_int(self):
-        """zona_fria y uso_horario_pico deben llegar como int 0/1 al pipeline."""
+    def test_zona_fria_y_pico_son_string(self):
+        """zona_fria y uso_horario_pico llegan como 'Si'/'No' (paridad con colab)."""
         df = generar_dataset(num_clientes=200, seed=42)
-        assert df["zona_fria"].dtype.kind == "i"
-        assert df["uso_horario_pico"].dtype.kind == "i"
-        assert set(df["zona_fria"].unique()).issubset({0, 1})
-        assert set(df["uso_horario_pico"].unique()).issubset({0, 1})
+        assert df["zona_fria"].dtype.kind in ("O", "U", "S")
+        assert df["uso_horario_pico"].dtype.kind in ("O", "U", "S")
+        assert set(df["zona_fria"].unique()).issubset({"Si", "No"})
+        assert set(df["uso_horario_pico"].unique()).issubset({"Si", "No"})
 
     def test_categorias_exactas(self):
         df = generar_dataset(num_clientes=2000, seed=42)

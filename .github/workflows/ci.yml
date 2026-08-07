@@ -112,6 +112,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Create .env placeholder for compose validation
+        # ml-service tiene env_file: .env en docker-compose.yml. CI no necesita
+        # secrets reales (no corre storage OCI aca), solo un archivo que exista
+        # para que `docker compose config` no falle con "env file not found".
+        run: |
+          if [ ! -f .env ]; then
+            printf "# CI placeholder (no secrets, no production)\nSTORAGE_BACKEND=local\n" > .env
+          fi
+
       - name: Validate docker-compose.yml
         run: docker compose config
 

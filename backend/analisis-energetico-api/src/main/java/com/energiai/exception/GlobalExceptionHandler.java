@@ -74,6 +74,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(respuesta);
     }
 
+    // FastAPI rechazó los datos de entrada (4xx, ej: 422 de validación).
+    // El back-end lo expone como 400 Bad Request.
+    @ExceptionHandler(DatosEntradaInvalidosException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejarDatosEntradaInvalidos(DatosEntradaInvalidosException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.BAD_REQUEST.name(),
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
+
+    // El servicio de ML devolvió una respuesta inesperada o inválida.
+    // Se expone como 502 Bad Gateway (el upstream respondió de forma anómala).
+    @ExceptionHandler(MlRespuestaInvalidaException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejarMlRespuestaInvalida(MlRespuestaInvalidaException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+            HttpStatus.BAD_GATEWAY.value(),
+            HttpStatus.BAD_GATEWAY.name(),
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(respuesta);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<DatosErrorRespuesta> manejarIllegalArgumentException(IllegalArgumentException ex) {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(

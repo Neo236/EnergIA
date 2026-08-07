@@ -1,5 +1,6 @@
 package com.energiai.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -7,7 +8,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record DatosRegistroConsumo ( //Request => Entrada
 
     @Schema(
@@ -19,6 +20,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
     @Schema(
         description = "Cantidad de equipos activos. Es un dato opcional.",
         example = "8")
+    @NotNull
     @Min(value = 1) @Max(value = 100)
     Integer cantidad_equipos,
 
@@ -31,12 +33,13 @@ public record DatosRegistroConsumo ( //Request => Entrada
     @Schema(
         description = "Indica si la medicion incluye franja de horario pico (18hs a 23hs)",
         example = "true")
-    @NotNull
+    
     Boolean uso_horario_pico,
 
     @Schema(
         description = "Horas estimadas de uso de equipos de alto consumo al dia. Es un dato opcional.",
         example = "6")
+    @NotNull
     @Min(value = 0) @Max(value = 24)
     Integer horas_alto_consumo,
 
@@ -55,7 +58,7 @@ public record DatosRegistroConsumo ( //Request => Entrada
     @Schema(
         description = "Indica si la vivienda se encuentra ubicada en una zona climatica considerada fria.",
         example = "false")
-    @NotNull
+    
     Boolean zona_fria,
 
     @Schema(
@@ -66,13 +69,13 @@ public record DatosRegistroConsumo ( //Request => Entrada
     @Schema(
         description = "Fuente principal de energia utilizada para la calefaccion.",
         example = "SOLAR")
-    @NotNull
+    
     FuenteEnergia fuente_calefaccion,
 
     @Schema(
         description = "Fuente de energia uitlizada para la produccion de agua caliente sanitaria.",
         example = "ELECTRICIDAD")
-    @NotNull
+    
     FuenteEnergia fuente_agua_caliente
 
 ) {

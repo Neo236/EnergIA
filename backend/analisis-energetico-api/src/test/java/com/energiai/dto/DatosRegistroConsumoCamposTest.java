@@ -57,14 +57,14 @@ class DatosRegistroConsumoCamposTest {
         );                                                                                                                                                                    
                                                                                                                                                                                   
         var violaciones = validator.validate(dto);                                                                                                                                                                                                                          
-        assertEquals(6, violaciones.size(), "Deberia haber exactamente 6 violaciones por los campos obligatorios.");                                                                                                                                 
+        assertEquals(4, violaciones.size(), "Deberia haber exactamente 4 violaciones por los campos obligatorios.");                                                                                                                                 
     }        
 
     @Test
     @DisplayName("Campos opcionales: Debe pasar la validaciones si los campos opcionales vienen nulos.")
     void probarCamposOpcionalesNulosEsValido(){
         var dto = new DatosRegistroConsumo(
-            150.0, null, TipoInmueble.CASA, true, null, null, null, false, null, FuenteEnergia.SOLAR, FuenteEnergia.ELECTRICIDAD
+            150.0, 5, TipoInmueble.CASA, true, 4, null, null, false, null, FuenteEnergia.SOLAR, FuenteEnergia.ELECTRICIDAD
         );
 
         var violaciones = validator.validate(dto);

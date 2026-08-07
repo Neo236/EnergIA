@@ -21,10 +21,24 @@ try:
     _OCI_AVAILABLE = True
 except ImportError:
     _OCI_AVAILABLE = False
+
+    class _FakeCopyObjectDetails:
+        """Stand-in para oci.object_storage.models.CopyObjectDetails.
+
+        MagicMock() con kwargs no guarda los kwargs como atributos
+        (siempre retorna MagicMock auto-creado). Necesitamos una clase
+        real que guarde los kwargs para que el codigo bajo prueba
+        pueda leer details.source_object_name, etc.
+        """
+
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
     _fake_oci = MagicMock()
     _fake_oci.auth.signers.InstancePrincipalsSecurityTokenSigner = MagicMock()
     _fake_oci.object_storage.ObjectStorageClient = MagicMock()
-    _fake_oci.object_storage.models.CopyObjectDetails = MagicMock()
+    _fake_oci.object_storage.models.CopyObjectDetails = _FakeCopyObjectDetails
     sys.modules["oci"] = _fake_oci
     sys.modules["oci.auth"] = _fake_oci.auth
     sys.modules["oci.auth.signers"] = _fake_oci.auth.signers

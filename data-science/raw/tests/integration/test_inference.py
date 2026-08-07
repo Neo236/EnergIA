@@ -21,7 +21,15 @@ class TestAFilaModelo:
             assert fila[feat].iloc[0] == DEFAULTS[feat]
 
     def test_input_completo_pasa_tal_cual(self):
-        payload = {feat: i * 1.0 for i, feat in enumerate(MODELO_FEATURES)}
+        # Carga un payload valido: features numericas con un escalar distinto,
+        # categoricas con strings validos.
+        payload = {feat: float(i) for i, feat in enumerate(MODELO_FEATURES)}
+        payload["tipo_inmueble"] = "Casa"
+        payload["zona_fria"] = "Si"
+        payload["uso_horario_pico"] = "No"
+        payload["calidad_aislamiento"] = "Media"
+        payload["fuente_calefaccion"] = "Electricidad"
+        payload["fuente_agua_caliente"] = "Electricidad"
         fila = _a_fila_modelo(payload)
         for feat in MODELO_FEATURES:
             assert fila[feat].iloc[0] == payload[feat]
@@ -33,12 +41,12 @@ class TestProcesarSolicitudApi:
             "tipo_inmueble": "Casa",
             "metros_cuadrados": 1200,
             "antiguedad_vivienda": 50,
-            "zona_fria": False,
+            "zona_fria": "No",
             "calidad_aislamiento": "Alta",
             "fuente_calefaccion": "Solar",
             "fuente_agua_caliente": "Solar",
             "consumo_kwh": 250.0,
-            "uso_horario_pico": False,
+            "uso_horario_pico": "No",
             "horas_alto_consumo": 5,
             "cantidad_equipos": 20,
         }

@@ -1,7 +1,13 @@
 import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 
-load_dotenv()
+# Busca .env relativo al directorio de este archivo (data-science/raw/.env).
+# En Docker, env_file en docker-compose.yml ya inyecta las vars; override=False
+# evita pisar las que vienen del entorno real.
+_env_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=_env_path, override=False)
 
 
 class Config:
@@ -33,7 +39,7 @@ class Config:
     MAX_M2 = 2000
     MIN_ANTIGUEDAD = 0
     MAX_ANTIGUEDAD = 150
-    CONSUMO_KWH_INF = 0.1
+    CONSUMO_KWH_INF = 1
     CONSUMO_KWH_SUP = 1000
     MIN_CANTIDAD_HORAS = 0
     MAX_CANTIDAD_HORAS = 24

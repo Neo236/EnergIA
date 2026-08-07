@@ -12,25 +12,32 @@ Reglas de corte:
 import numpy as np
 import pandas as pd
 
+from infrastructure.config import Config
+
 
 # ---------------------------------------------------------------------------
 # Cortes fijos (mismos valores que data_colab.ipynb Fase 4)
 # ---------------------------------------------------------------------------
-BINS_CONSUMO = np.linspace(0.1, 1000, 4)
-BINS_HORAS = np.linspace(0, 24, 4)
-BINS_EQUIPOS = np.linspace(1, 100, 4)
-BINS_M2 = np.linspace(26, 2000, 4)
-BINS_ANTIGUEDAD = np.linspace(0, 150, 5)
+BINS_CONSUMO = np.linspace(Config.CONSUMO_KWH_INF, Config.CONSUMO_KWH_SUP, 4)
+BINS_HORAS = np.linspace(Config.MIN_CANTIDAD_HORAS, Config.MAX_CANTIDAD_HORAS, 4)
+BINS_EQUIPOS = np.linspace(Config.CANTIDAD_EQUIPOS_INF, Config.CANTIDAD_EQUIPOS_SUP, 4)
+BINS_M2 = np.linspace(Config.MIN_M2, Config.MAX_M2, 4)
+BINS_ANTIGUEDAD = np.linspace(Config.MIN_ANTIGUEDAD, Config.MAX_ANTIGUEDAD, 5)
 
 
 # ---------------------------------------------------------------------------
 # Helpers de coercion (acepta int 0/1, bool o string "Si"/"No")
 # ---------------------------------------------------------------------------
-def _es_si(x):
-    """True si el valor representa "Si" (int 1, bool True, o string "Si")."""
+def es_si(x) -> bool:
+    """True si el valor representa "Si" (int 1, bool True, o string 'Si'/'Sí')."""
     if isinstance(x, str):
-        return x == "Si"
+        v = x.strip().lower()
+        return v in ("si", "sí", "true", "1")
     return bool(x)
+
+
+# Backwards-compat alias para callers internos.
+_es_si = es_si
 
 
 # ---------------------------------------------------------------------------
@@ -115,7 +122,7 @@ def score_contexto(df: pd.DataFrame) -> pd.Series:
         include_lowest=True,
     ).astype(int)
 
-    score_zona = np.where(df["zona_fria"].apply(_es_si), 20, 0)
+    score_zona = np.where(df["zona_fria"].apply(_es_si), 0, 20)
 
     return score_tipo + score_m2 + score_antiguedad + score_zona
 

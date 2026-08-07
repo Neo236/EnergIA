@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from infrastructure.config import Config
+
 from domain.scoring import (
     BINS_ANTIGUEDAD,
     BINS_CONSUMO,
@@ -58,8 +60,8 @@ class TestConstantes:
 
     def test_bins_consumo_4_edges(self):
         assert len(BINS_CONSUMO) == 4
-        assert BINS_CONSUMO[0] == pytest.approx(0.1)
-        assert BINS_CONSUMO[-1] == pytest.approx(1000)
+        assert BINS_CONSUMO[0] == pytest.approx(Config.CONSUMO_KWH_INF)
+        assert BINS_CONSUMO[-1] == pytest.approx(Config.CONSUMO_KWH_SUP)
 
     def test_bins_antiguedad_5_edges(self):
         assert len(BINS_ANTIGUEDAD) == 5
@@ -111,37 +113,39 @@ class TestScoreEquipamiento:
 
 class TestScoreContexto:
     def test_casa_grande_nueva_zona_fria(self):
+        """Zona fria resta del contexto (== "No" es lo que suma 20)."""
         df = _df({**HOGAR_0001,
                   "tipo_inmueble": "Casa",
                   "metros_cuadrados": 2000,
                   "antiguedad_vivienda": 5,
                   "zona_fria": "Si"})
         s = score_contexto(df).iloc[0]
-        assert s == 30 + 10 + 20 + 20
+        assert s == 30 + 10 + 20 + 0
 
     def test_pyme_chico_viejo_no_frio(self):
+        """Vivir en zona no fria (== "No") es lo que aporta los 20 pts de zona."""
         df = _df({**HOGAR_0001,
                   "tipo_inmueble": "Pyme",
                   "metros_cuadrados": 50,
                   "antiguedad_vivienda": 140,
                   "zona_fria": "No"})
         s = score_contexto(df).iloc[0]
-        assert s == 5 + 30 + 5 + 0
+        assert s == 5 + 30 + 5 + 20
 
-    def test_acepta_int_para_zona_fria(self):
-        """Si zona_fria llega como int 0/1 (desde simulation.py) debe funcionar."""
+    def test_score_contexto_tolera_int_para_zona_fria(self):
+        """`_es_si` debe tolerar int 0/1 por retrocompatibilidad de callers."""
         df = pd.DataFrame([{
             "tipo_inmueble": "Casa", "metros_cuadrados": 1000,
             "antiguedad_vivienda": 50, "zona_fria": 1,
         }])
-        assert score_contexto(df).iloc[0] == 30 + 20 + 15 + 20
+        assert score_contexto(df).iloc[0] == 30 + 20 + 15 + 0
 
-    def test_acepta_bool_para_zona_fria(self):
+    def test_score_contexto_tolera_bool_para_zona_fria(self):
         df = pd.DataFrame([{
             "tipo_inmueble": "Casa", "metros_cuadrados": 1000,
             "antiguedad_vivienda": 50, "zona_fria": True,
         }])
-        assert score_contexto(df).iloc[0] == 30 + 20 + 15 + 20
+        assert score_contexto(df).iloc[0] == 30 + 20 + 15 + 0
 
 
 class TestObtenerCategoria:

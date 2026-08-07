@@ -15,13 +15,13 @@ CAT_COLS = [
     "calidad_aislamiento",
     "fuente_calefaccion",
     "fuente_agua_caliente",
+    "zona_fria",
+    "uso_horario_pico",
 ]
 NUM_COLS = [
     "metros_cuadrados",
     "antiguedad_vivienda",
-    "zona_fria",
     "consumo_kwh",
-    "uso_horario_pico",
     "horas_alto_consumo",
     "cantidad_equipos",
 ]

@@ -30,8 +30,8 @@ Los campos `cantidad_equipos` y `horas_alto_consumo` son **obligatorios** (`@Not
 | `antiguedad_vivienda` | `Integer` | ❌ | min 0, máx 150 | Sin restricción |
 | `zona_fria` | `Boolean` | ❌ | true o false | Sin restricción |
 | `calidad_aislamiento` | `CalidadAislamiento` | ❌ | Muy alto, Alto, Medio, Bajo, Muy bajo | Sin restricción |
-| `fuente_calefaccion` | `FuenteEnergia` | ❌ | — | Sin restricción |
-| `fuente_agua_caliente` | `FuenteEnergia` | ❌ | — | Sin restricción |
+| `fuente_calefaccion` | `FuenteEnergia` | ❌ | Solar, Electricidad, Otros | Sin restricción |
+| `fuente_agua_caliente` | `FuenteEnergia` | ❌ | Solar, Electricidad, Otros | Sin restricción |
 
 > 📌 **Total: 4 campos obligatorios y 7 opcionales.**
 

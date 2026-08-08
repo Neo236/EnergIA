@@ -34,6 +34,7 @@ El backend se construye mediante un **Dockerfile multi-stage** optimizado para J
 ### Orquestación con Docker Compose
 La orquestación se gestiona mediante [`docker-compose.yml`](../../docker-compose.yml):
 - Levanta el servicio `backend` aislado en la red interna `energiai-network`.
+- *Nota:* El servicio `ml-service` se encuentra temporalmente comentado hasta que el módulo de Data Science complete sus archivos fuente.
 
 ### Comando de Construcción y Ejecución:
 ```bash

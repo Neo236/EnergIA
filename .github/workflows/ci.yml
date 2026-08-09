@@ -103,6 +103,50 @@ jobs:
           docker stop ml-test
           docker rm ml-test
 
+  frontend-ci:
+    name: Build & Smoke Test Front-End
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t energiai-frontend:test ./frontend
+
+      # `docker compose build` solo comprueba que la imagen se CONSTRUYE.
+      # Este paso comprueba que además FUNCIONA: un typo en nginx.conf, un
+      # COPY que se olvidó de un directorio o un puerto mal configurado
+      # pasan el build y explotarían recién en el despliegue.
+      - name: Smoke test container
+        run: |
+          set -euo pipefail
+          docker run -d --name front-test -p 8099:8080 energiai-frontend:test
+          trap 'docker rm -f front-test >/dev/null 2>&1 || true' EXIT
+
+          LISTO=0
+          for i in 1 2 3 4 5; do
+            if curl -fsS http://localhost:8099/ -o /dev/null; then
+              echo "El contenedor responde (intento $i)."
+              LISTO=1
+              break
+            fi
+            echo "Esperando... intento $i"
+            sleep 2
+          done
+          if [ "$LISTO" -ne 1 ]; then
+            echo "El contenedor no respondió."
+            docker logs front-test
+            exit 1
+          fi
+
+          echo "Verificando que los recursos de P-01/P-02 se sirvan:"
+          for RUTA in /index.html /css/tokens.css /css/app.css /js/schema.js /js/api.js /js/app.js; do
+            curl -fsS "http://localhost:8099$RUTA" -o /dev/null
+            echo "  OK $RUTA"
+          done
+
   docker-ci:
     name: Build Docker Images
     runs-on: ubuntu-latest

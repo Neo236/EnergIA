@@ -1,0 +1,22 @@
+# Todo lo que no necesita viajar al daemon de Docker en cada build.
+#
+# Hoy ahorra poco (el contexto son unos KB), pero cuando el front pase a
+# Vite, `node_modules/` serían cientos de MB enviados al daemon en CADA
+# build, sobre una VM de 2 OCPUs. Conviene que ya esté.
+
+# Documentación y archivos de construcción: el Dockerfile los copia
+# explícitamente, ninguno de estos hace falta dentro de la imagen.
+README.md
+Dockerfile
+.dockerignore
+
+# Dependencias y salida de build: se generan dentro del contenedor.
+node_modules/
+dist/
+.vite/
+
+# Nunca deben terminar en una imagen.
+.env
+.env.*
+*.log
+*.tmp

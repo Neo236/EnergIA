@@ -38,10 +38,14 @@ services:
       - ENVIRONMENT=production
       - STORAGE_BACKEND=${STORAGE_BACKEND:-local}
       - STORAGE_LOCAL_ROOT=/app
+      # PAR (Pre-Authenticated Request): usado cuando STORAGE_BACKEND=par.
+      # No requiere SDK ni credenciales OCI. La URL lleva el token embebido.
+      - OCI_PAR_URL=${OCI_PAR_URL:-}
+      # SDK OCI: solo necesario cuando STORAGE_BACKEND=oci.
       - OCI_NAMESPACE=${OCI_NAMESPACE:-}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
-      - OCI_REGION=${OCI_REGION:-santiago-chile-1}
-      - OCI_INSTANCE_PRINCIPAL=${OCI_INSTANCE_PRINCIPAL:-true}
+      - OCI_REGION=${OCI_REGION:-sa-santiago-1}
+      - OCI_INSTANCE_PRINCIPAL=${OCI_INSTANCE_PRINCIPAL:-false}
     restart: unless-stopped
     networks:
       - energiai-network

@@ -88,6 +88,33 @@ jobs:
             docker build -t "$TAG" ./backend
           fi
 
+      - name: Verificar archivo .env en VM
+        run: |
+          set -euo pipefail
+          if [ ! -f .env ]; then
+            echo "::error::.env no encontrado en la VM. Crea un .env con STORAGE_BACKEND y las vars correspondientes."
+            exit 1
+          fi
+          BACKEND=$(grep -E '^STORAGE_BACKEND=' .env | cut -d= -f2 || echo 'local')
+          echo "STORAGE_BACKEND detectado: $BACKEND"
+          if [ "$BACKEND" = "par" ]; then
+            PAR_URL=$(grep -E '^OCI_PAR_URL=' .env | cut -d= -f2 || echo '')
+            if [ -z "$PAR_URL" ]; then
+              echo "::error::STORAGE_BACKEND=par pero OCI_PAR_URL no est\u00e1 definida en .env"
+              exit 1
+            fi
+            echo "OCI_PAR_URL=*** (presente)"
+          elif [ "$BACKEND" = "oci" ]; then
+            NS=$(grep -E '^OCI_NAMESPACE=' .env | cut -d= -f2 || echo '')
+            if [ -z "$NS" ]; then
+              echo "::error::STORAGE_BACKEND=oci pero OCI_NAMESPACE no est\u00e1 definida en .env"
+              exit 1
+            fi
+            echo "OCI_NAMESPACE=*** (presente)"
+          else
+            echo "STORAGE_BACKEND=local: no se requieren credenciales OCI."
+          fi
+
       - name: Levantar
         env:
           BACKEND_TAG: ${{ steps.env.outputs.tag }}

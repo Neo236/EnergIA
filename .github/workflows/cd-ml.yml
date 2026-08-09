@@ -88,6 +88,16 @@ jobs:
             docker build -t "$TAG" -f data-science/Dockerfile data-science
           fi
 
+      - name: Verificar archivo .env en VM
+        run: |
+          set -euo pipefail
+          if [ ! -f .env ]; then
+            echo "::error::.env no encontrado en la VM. Las variables OCI (OCI_NAMESPACE, OCI_BUCKET, etc.) no estarán disponibles y el servicio fallará en runtime."
+            exit 1
+          fi
+          echo "Variables de entorno presentes en .env:"
+          grep -E "^OCI_|^STORAGE_" .env | sed 's/=.*/=***/' || echo "  (ninguna variable OCI encontrada — revisar .env)"
+
       - name: Levantar
         env:
           ML_TAG: ${{ steps.env.outputs.tag }}

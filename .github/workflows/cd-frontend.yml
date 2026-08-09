@@ -170,7 +170,6 @@ jobs:
         env:
           FRONTEND_TAG: ${{ steps.env.outputs.tag }}
           FRONTEND_PORT: ${{ steps.env.outputs.puerto }}
-        run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps frontend
         run: |
           set -euo pipefail
           # export explícito: blindar contra cualquier FRONTEND_TAG residual del runner
@@ -178,7 +177,7 @@ jobs:
           export FRONTEND_PORT="$FRONTEND_PORT"
           echo "Levantando frontend con imagen energiai-frontend:${FRONTEND_TAG}"
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps frontend
 
       - name: Verificar salud
         id: salud

@@ -133,7 +133,6 @@ jobs:
         env:
           BACKEND_TAG: ${{ steps.env.outputs.tag }}
           BACKEND_PORT: ${{ steps.env.outputs.puerto }}
-        run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps backend
         run: |
           set -euo pipefail
           # export explícito: blindar contra cualquier BACKEND_TAG residual del runner
@@ -141,7 +140,7 @@ jobs:
           export BACKEND_PORT="$BACKEND_PORT"
           echo "Levantando backend con imagen energiai-backend:${BACKEND_TAG}"
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build backend
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps backend
 
       - name: Verificar salud
         id: salud

@@ -32,7 +32,7 @@ public class AnalisisEnergeticoController {
 
     @Operation(
         summary = "Realizar analisis de consumo energetico",
-        description = "Evalua los datos de consumo de un inmueble y devuelve la clasificacion provisional, costos estimados y recomendaciones."
+        description = "Evalua los datos de consumo de un inmueble y devuelve la clasificacion, costos estimados y recomendaciones."
     )
 
     @ApiResponses(value = {                                                                                                                                                   
@@ -73,8 +73,12 @@ public class AnalisisEnergeticoController {
                           "mensaje": "Errores de validacion en los datos de entrada",                                                                                             
                           "detalles": [                                                                                                                                           
                             {                                                                                                                                                     
-                              "campo": "fuente_calefaccion",                                                                                                                          
-                              "mensaje": "La fuente de energia para calefaccion es obligatoria"                                                                                                    
+                              "campo": "cantidad_equipos",                                                                                                                          
+                              "mensaje": "no debe ser nulo"                                                                                                    
+                            },                                                                                                                                                   
+                            {                                                                                                                                                     
+                              "campo": "horas_alto_consumo",                                                                                                                          
+                              "mensaje": "no debe ser nulo"                                                                                                    
                             }                                                                                                                                                     
                           ]                                                                                                                                                       
                         }                                                                                                                                                         
@@ -131,6 +135,24 @@ public class AnalisisEnergeticoController {
                           "status": 503,                                                                                                                                          
                           "error": "SERVICE_UNAVAILABLE",                                                                                                                         
                           "mensaje": "El servicio de Machine Learning no se encuentra disponible."                                                                
+                        }                                                                                                                                                         
+                        """                                                                                                                                                       
+                    )                                                                                                                                                             
+                )                                                                                                                                                                 
+            ),                                                                                                                                                                    
+            @ApiResponse(                                                                                                                                                         
+                responseCode = "502",                                                                                                                                             
+                description = "El servicio de Machine Learning devolvió una respuesta inesperada o inválida.",                                                                    
+                content = @Content(                                                                                                                                               
+                    mediaType = "application/json",                                                                                                                               
+                    schema = @Schema(implementation = DatosErrorRespuesta.class),                                                                                                 
+                    examples = @ExampleObject(                                                                                                                                                                                                                                                             
+                        value = """                                                                                                                                               
+                        {                                                                                                                                                         
+                          "timestamp": "2026-08-01T16:45:00",                                                                                                                     
+                          "status": 502,                                                                                                                                          
+                          "error": "BAD_GATEWAY",                                                                                                                                 
+                          "mensaje": "El servicio de Machine Learning devolvió una respuesta inesperada o inválida"                                                                
                         }                                                                                                                                                         
                         """                                                                                                                                                       
                     )                                                                                                                                                             

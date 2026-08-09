@@ -5,7 +5,6 @@ from fastapi import FastAPI, HTTPException
 
 from application.inference import procesar_solicitud_api
 from infrastructure.config import Config
-from infrastructure.storage import get_storage
 from infrastructure.storage.sync import ensure_artifacts
 from interfaces.api.schemas import AnalisisRequest
 

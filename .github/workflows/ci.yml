@@ -104,7 +104,7 @@ jobs:
           docker rm ml-test
 
   frontend-ci:
-    name: Build & Test Frontend (Nginx Container)
+    name: Build & Smoke Test Front-End
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -115,13 +115,37 @@ jobs:
       - name: Build Docker image
         run: docker build -t energiai-frontend:test ./frontend
 
-      - name: Smoke test container serving static content
+      # `docker compose build` solo comprueba que la imagen se CONSTRUYE.
+      # Este paso comprueba que además FUNCIONA: un typo en nginx.conf, un
+      # COPY que se olvidó de un directorio o un puerto mal configurado
+      # pasan el build y explotarían recién en el despliegue.
+      - name: Smoke test container
         run: |
-          docker run -d --name front-test -p 3456:80 energiai-frontend:test
-          sleep 3
-          curl -fsS http://localhost:3456/ || exit 1
-          docker stop front-test
-          docker rm front-test
+          set -euo pipefail
+          docker run -d --name front-test -p 8099:8080 energiai-frontend:test
+          trap 'docker rm -f front-test >/dev/null 2>&1 || true' EXIT
+
+          LISTO=0
+          for i in 1 2 3 4 5; do
+            if curl -fsS http://localhost:8099/ -o /dev/null; then
+              echo "El contenedor responde (intento $i)."
+              LISTO=1
+              break
+            fi
+            echo "Esperando... intento $i"
+            sleep 2
+          done
+          if [ "$LISTO" -ne 1 ]; then
+            echo "El contenedor no respondió."
+            docker logs front-test
+            exit 1
+          fi
+
+          echo "Verificando que los recursos de P-01/P-02 se sirvan:"
+          for RUTA in /index.html /css/tokens.css /css/app.css /js/schema.js /js/api.js /js/app.js; do
+            curl -fsS "http://localhost:8099$RUTA" -o /dev/null
+            echo "  OK $RUTA"
+          done
 
   docker-ci:
     name: Build Docker Images
@@ -131,6 +155,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Create .env placeholder for compose validation
+        # ml-service tiene env_file: .env en docker-compose.yml. CI no necesita
+        # secrets reales (no corre storage OCI aca), solo un archivo que exista
+        # para que `docker compose config` no falle con "env file not found".
+        run: |
+          if [ ! -f .env ]; then
+            printf "# CI placeholder (no secrets, no production)\nSTORAGE_BACKEND=local\n" > .env
+          fi
 
       - name: Validate docker-compose.yml
         run: docker compose config

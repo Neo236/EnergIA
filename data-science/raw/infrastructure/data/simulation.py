@@ -9,9 +9,10 @@ Decisiones de diseno:
   la paridad byte-a-byte YA NO es posible con NumPy moderno. La
   validacion es estadistica (ver TestParidadConColabEst).
 - Parametros centralizados en `infrastructure.config.Config`.
-- `zona_fria` y `uso_horario_pico` se generan como string "Si"/"No" (igual que
-  el colab) y al final se mapean a int 0/1 para compatibilidad con el
-  `ColumnTransformer` numérico de `application/training.py`.
+- `zona_fria` y `uso_horario_pico` se mantienen como string "Si"/"No" para
+  paridad bit-a-bit con el dataset final que exporta el colab
+  (`energy_consumption.json`). El pipeline de ML los trata como
+  categoricos (ver `application/training.py` CAT_COLS).
 - `categoria` se calcula desde `domain.scoring.calcular_iee_y_categoria` para
   garantizar coherencia con las reglas IEE del colab.
 """
@@ -106,21 +107,17 @@ def generar_dataset(num_clientes: int = Config.NUM_CLIENTES,
         size=num_clientes,
     )
 
-    # Mapeo Si/No -> 1/0 para compatibilidad con NUM_COLS del training pipeline.
-    zona_fria_int = (zona_fria == "Si").astype(int)
-    uso_horario_pico_int = (uso_horario_pico == "Si").astype(int)
-
     df = pd.DataFrame({
         "hogar_id": hogar_id,
         "tipo_inmueble": tipo_inmueble,
         "metros_cuadrados": metros_cuadrados,
         "antiguedad_vivienda": antiguedad_vivienda,
-        "zona_fria": zona_fria_int,
+        "zona_fria": zona_fria,
         "calidad_aislamiento": calidad_aislamiento,
         "fuente_calefaccion": fuente_calefaccion,
         "fuente_agua_caliente": fuente_agua_caliente,
         "consumo_kwh": consumo_kwh,
-        "uso_horario_pico": uso_horario_pico_int,
+        "uso_horario_pico": uso_horario_pico,
         "horas_alto_consumo": horas_alto_consumo,
         "cantidad_equipos": cantidad_equipos,
     })
@@ -131,6 +128,15 @@ def generar_dataset(num_clientes: int = Config.NUM_CLIENTES,
     df["categoria"] = calcular_iee_y_categoria(df)
 
     assert df.shape == (num_clientes, 13), f"Dimension con categoria: {df.shape}"
+    assert len(df) == len(df["categoria"]), (
+        "La cantidad de categorias no coincide con la cantidad de registros."
+    )
+    assert not df.isnull().any().any(), (
+        "El dataset final contiene valores nulos."
+    )
+    assert df["hogar_id"].is_unique, (
+        "Existen valores duplicados en hogar_id."
+    )
     assert set(df["categoria"].unique()).issubset(
         {"Eficiente", "Moderado", "Ineficiente"}
     ), f"Categorias invalidas: {df['categoria'].unique()}"

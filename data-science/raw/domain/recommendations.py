@@ -1,3 +1,6 @@
+from domain.scoring import es_si
+
+
 def calcular_recomendaciones(input_data: dict) -> list[str]:
     recs: list[str] = []
 
@@ -23,8 +26,7 @@ def calcular_recomendaciones(input_data: dict) -> list[str]:
     elif fuente_cal == "Otros":
         recs.append("Considera sistemas de calefacción más eficientes (Solar o bomba de calor).")
 
-    zona_fria = bool(input_data.get("zona_fria", False))
-    if zona_fria:
+    if es_si(input_data.get("zona_fria", False)):
         recs.append("Vivir en zona fría incrementa el consumo. Prioriza aislación y calefacción eficiente.")
 
     horas_alto = int(input_data.get("horas_alto_consumo", 0))

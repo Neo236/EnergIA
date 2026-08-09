@@ -52,10 +52,62 @@ services:
       - ENVIRONMENT=production
       - STORAGE_BACKEND=${STORAGE_BACKEND:-local}
       - STORAGE_LOCAL_ROOT=/app
-      - OCI_NAMESPACE=${OCI_NAMESPACE}
+      - OCI_NAMESPACE=${OCI_NAMESPACE:-}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-santiago-chile-1}
       - OCI_INSTANCE_PRINCIPAL=${OCI_INSTANCE_PRINCIPAL:-true}
+    restart: unless-stopped
+    networks:
+      - energiai-network
+
+  # -------------------------------------------------------------
+  # Front-End - P-01 / P-02 (nginx)
+  #
+  # ⚠️ Este servicio es la REFERENCIA de cómo deberían quedar los otros
+  #    dos. Tres diferencias deliberadas con backend y ml-service:
+  #
+  #    1. Sin `container_name`. Docker exige nombres únicos por host, así
+  #       que un nombre fijo impide correr los dos ambientes (prod y
+  #       staging) en la misma VM, que es el diseño documentado en
+  #       docs/oci-cloud/README.md. Compose ya nombra los contenedores
+  #       como <proyecto>-<servicio>-N, que es único por ambiente.
+  #    2. El puerto se publica en 127.0.0.1, no en 0.0.0.0. La doc de OCI
+  #       dice que solo el proxy debe ser alcanzable desde afuera.
+  #    3. Puerto y tag parametrizados: staging usa 3001 y el tag por SHA
+  #       es lo que hace posible el rollback sin reconstruir.
+  # -------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: energiai-frontend:${FRONTEND_TAG:-local}
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:8080"
+    restart: unless-stopped
+    networks:
+      - energiai-network
+
+  # -------------------------------------------------------------
+  # Proxy inverso - SOLO DESARROLLO LOCAL
+  #
+  # Replica el ruteo same-origin que en la VM hace Caddy nativo. No se
+  # despliega: el perfil `local` lo mantiene apagado salvo que se pida
+  # explícitamente con `docker compose --profile local up`.
+  #
+  # Hace falta porque localhost:3000 y localhost:8080 son orígenes
+  # DISTINTOS para el navegador — el puerto forma parte del origen — así
+  # que sin él el fetch a /api daría error de CORS.
+  # -------------------------------------------------------------
+  proxy:
+    image: caddy:2.11-alpine
+    profiles:
+      - local
+    ports:
+      - "127.0.0.1:${PROXY_PORT:-8088}:8088"
+    volumes:
+      - ./infra/Caddyfile.local:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - frontend
     restart: unless-stopped
     networks:
       - energiai-network

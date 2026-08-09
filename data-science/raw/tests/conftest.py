@@ -1,12 +1,49 @@
 import os
 import sys
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
 RAIZ = Path(__file__).resolve().parents[1]
 if str(RAIZ) not in sys.path:
     sys.path.insert(0, str(RAIZ))
+
+
+# El SDK oficial de OCI (`oci`) no esta en requirements.txt (solo se usa
+# cuando STORAGE_BACKEND=oci en produccion). En CI se omite para no
+# instalar dependencias innecesarias. Mockeamos el modulo completo
+# antes de cualquier import de infrastructure.storage.oci para que los
+# tests que importan CopyObjectDetails, ObjectStorageClient, etc. no
+# fallen con ModuleNotFoundError.
+try:
+    import oci  # noqa: F401
+    _OCI_AVAILABLE = True
+except ImportError:
+    _OCI_AVAILABLE = False
+
+    class _FakeCopyObjectDetails:
+        """Stand-in para oci.object_storage.models.CopyObjectDetails.
+
+        MagicMock() con kwargs no guarda los kwargs como atributos
+        (siempre retorna MagicMock auto-creado). Necesitamos una clase
+        real que guarde los kwargs para que el codigo bajo prueba
+        pueda leer details.source_object_name, etc.
+        """
+
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+    _fake_oci = MagicMock()
+    _fake_oci.auth.signers.InstancePrincipalsSecurityTokenSigner = MagicMock()
+    _fake_oci.object_storage.ObjectStorageClient = MagicMock()
+    _fake_oci.object_storage.models.CopyObjectDetails = _FakeCopyObjectDetails
+    sys.modules["oci"] = _fake_oci
+    sys.modules["oci.auth"] = _fake_oci.auth
+    sys.modules["oci.auth.signers"] = _fake_oci.auth.signers
+    sys.modules["oci.object_storage"] = _fake_oci.object_storage
+    sys.modules["oci.object_storage.models"] = _fake_oci.object_storage.models
 
 
 @pytest.fixture

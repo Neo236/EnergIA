@@ -19,7 +19,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.energiai.client.MlClient;
 import com.energiai.dto.CategoriaConsumo;
 import com.energiai.dto.DatosRegistroAnalisis;
+import com.energiai.exception.DatosEntradaInvalidosException;
 import com.energiai.exception.GlobalExceptionHandler;
+import com.energiai.exception.MlRespuestaInvalidaException;
 import com.energiai.exception.ServicioMlNoDisponibleException;
 import com.energiai.service.AnalisisEnergeticoService;
 
@@ -198,5 +200,47 @@ class AnalisisEnergeticoControllerTest {
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.status").value(503))
                 .andExpect(jsonPath("$.mensaje").value("El servicio Machine Learning no se encuentra disponible"));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/analisis-energetico: Retorna 400 cuando FastAPI rechaza los datos (422 → 400)")
+    void testDatosEntradaInvalidosRetorna400() throws Exception {
+        when(mlClient.predecir(any()))
+                .thenThrow(new DatosEntradaInvalidosException("El servicio de Machine Learning rechazó los datos de entrada (HTTP 422)"));
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "consumo_kwh": 450.5,
+                      "cantidad_equipos": 8,
+                      "tipo_inmueble": "Casa",
+                      "horas_alto_consumo": 6
+                    }
+                    """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("BAD_REQUEST"));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/analisis-energetico: Retorna 502 cuando FastAPI devuelve respuesta inválida")
+    void testMlRespuestaInvalidaRetorna502() throws Exception {
+        when(mlClient.predecir(any()))
+                .thenThrow(new MlRespuestaInvalidaException("El servicio Machine Learning devolvió una respuesta inesperada o inválida"));
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "consumo_kwh": 450.5,
+                      "cantidad_equipos": 8,
+                      "tipo_inmueble": "Casa",
+                      "horas_alto_consumo": 6
+                    }
+                    """))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.status").value(502))
+                .andExpect(jsonPath("$.error").value("BAD_GATEWAY"));
     }
 }

@@ -135,16 +135,16 @@ Content-Type: application/json
 | Campo | Tipo | Obligatorio | Restricciones |
 |-------|------|:-----------:|---------------|
 | `consumo_kwh` | `Double` | ✅ | Debe ser **1 ≤ valor ≤ 1000** |
-| `uso_horario_pico` | `Boolean` | ✅ | `true` o `false` |
+| `uso_horario_pico` | `Boolean` | Opcional | `true` o `false` |
 | `cantidad_equipos` | `Integer` | ✅ | Debe ser **1 ≤ valor ≤ 100** |
 | `tipo_inmueble` | `String (Enum)` | ✅ | Solo valores: `Casa`, `Departamento`, `Comercio`, `Pyme` |
 | `horas_alto_consumo` | `Integer` | ✅ | Rango: **0 ≤ valor ≤ 24** |
-| `metros_cuadrados` | `Integer` | Por definir | Rango: **26 ≤ valor ≤ 2000** |
-| `antiguedad_vivienda` | `Integer` | Por definir | Rango: **0 ≤ valor ≤ 150** |
-| `zona_fria` | `Boolean` | Por definir | `true o false` |
-| `calidad_aislamiento` | `String (Enum)` | Por definir | `Muy Alta`, `Alta`, `Media`, `Baja`, `Muy Baja` |
-| `fuente_calefaccion` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
-| `fuente_agua_caliente` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
+| `metros_cuadrados` | `Integer` | Opcional | Rango: **26 ≤ valor ≤ 2000** |
+| `antiguedad_vivienda` | `Integer` | Opcional | Rango: **0 ≤ valor ≤ 150** |
+| `zona_fria` | `Boolean` | Opcional | `true o false` |
+| `calidad_aislamiento` | `String (Enum)` | Opcional | `Muy Alta`, `Alta`, `Media`, `Baja`, `Muy Baja` |
+| `fuente_calefaccion` | `String (Enum)` | Opcional | Solo valores: `Solar`, `Electricidad`, `Otros` |
+| `fuente_agua_caliente` | `String (Enum)` | Opcional | Solo valores: `Solar`, `Electricidad`, `Otros` |
 ---
 
 > Nota: la obligatoriedad definitiva de los campos incorporados en la versión 1.2 se encuentra pendiente de definición funcional. Actualmente, el DTO de Spring Boot utiliza @NotNull en los 11 campos, por lo que la implementación vigente exige su envío. El código deberá ajustarse cuando se congele el contrato definitivo.

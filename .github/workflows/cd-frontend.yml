@@ -129,11 +129,28 @@ jobs:
         run: |
           set -euo pipefail
           if [ ! -f .env ]; then
-            echo "::error::.env no encontrado en la VM. Las variables OCI (OCI_NAMESPACE, OCI_BUCKET, etc.) no estarán disponibles y el servicio fallará en runtime."
+            echo "::error::.env no encontrado en la VM. Crea un .env con STORAGE_BACKEND y las vars correspondientes."
             exit 1
           fi
-          echo "Variables de entorno presentes en .env:"
-          grep -E "^OCI_|^STORAGE_" .env | sed 's/=.*/=***/' || echo "  (ninguna variable OCI encontrada — revisar .env)"
+          BACKEND=$(grep -E '^STORAGE_BACKEND=' .env | cut -d= -f2 || echo 'local')
+          echo "STORAGE_BACKEND detectado: $BACKEND"
+          if [ "$BACKEND" = "par" ]; then
+            PAR_URL=$(grep -E '^OCI_PAR_URL=' .env | cut -d= -f2 || echo '')
+            if [ -z "$PAR_URL" ]; then
+              echo "::error::STORAGE_BACKEND=par pero OCI_PAR_URL no está definida en .env"
+              exit 1
+            fi
+            echo "OCI_PAR_URL=*** (presente)"
+          elif [ "$BACKEND" = "oci" ]; then
+            NS=$(grep -E '^OCI_NAMESPACE=' .env | cut -d= -f2 || echo '')
+            if [ -z "$NS" ]; then
+              echo "::error::STORAGE_BACKEND=oci pero OCI_NAMESPACE no está definida en .env"
+              exit 1
+            fi
+            echo "OCI_NAMESPACE=*** (presente)"
+          else
+            echo "STORAGE_BACKEND=local: no se requieren credenciales OCI."
+          fi
 
       - name: Levantar
         env:

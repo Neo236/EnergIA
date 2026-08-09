@@ -82,11 +82,16 @@ jobs:
         run: |
           set -euo pipefail
           TAG="energiai-ml-service:${{ steps.env.outputs.tag }}"
-          if docker image inspect "$TAG" >/dev/null 2>&1; then
+          if docker image inspect "$TAG" > /dev/null 2>&1; then
             echo "La imagen $TAG ya existe — se reutiliza (rollback)."
           else
-            docker build -t "$TAG" -f data-science/Dockerfile data-science
+            docker build -t "$TAG" -f data-science/Dockerfile ./data-science
           fi
+          # Verificar que la imagen quedó correctamente taggeada antes de continuar
+          docker image inspect "$TAG" > /dev/null 2>&1 || {
+            echo "::error::La imagen $TAG no fue encontrada tras el build."
+            exit 1
+          }
 
       - name: Verificar archivo .env en VM
         id: dotenv
@@ -128,22 +133,40 @@ jobs:
         env:
           ML_TAG: ${{ steps.env.outputs.tag }}
           ML_PORT: ${{ steps.env.outputs.puerto }}
-        run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build ml-service
+        run: |
+          set -euo pipefail
+          # export explícito: blindar contra cualquier ML_TAG residual del runner
+          export ML_TAG="$ML_TAG"
+          export ML_PORT="$ML_PORT"
+          echo "Levantando ml-service con imagen energiai-ml-service:${ML_TAG}"
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build ml-service
 
       - name: Verificar salud
         id: salud
         continue-on-error: true
         run: |
           set -uo pipefail
-          for i in $(seq 1 10); do
-            if curl -fsS "http://127.0.0.1:${{ steps.env.outputs.puerto }}/health" | grep -q '"status":"healthy"'; then
-              echo "ML Service (FastAPI) respondiendo OK en el intento $i."
+          # 15 x 4 s = 60 s: margen para el startup de FastAPI que descarga
+          # artefactos del modelo desde OCI/PAR en el primer deploy.
+          for i in $(seq 1 15); do
+            echo "Intento $i/15 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/health"
+            HTTP=$(curl -o /tmp/health_resp.txt -w "%{http_code}" -sS \
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/health" 2>/tmp/health_err.txt || true)
+            BODY=$(cat /tmp/health_resp.txt 2>/dev/null || true)
+            if echo "$BODY" | grep -q '"status":"healthy"'; then
+              echo "ML Service respondiendo OK (intento $i). HTTP $HTTP"
               exit 0
             fi
-            echo "Esperando arranque de FastAPI (intento $i/10)…"
-            sleep 3
+            echo "  HTTP: $HTTP | Body: $BODY"
+            cat /tmp/health_err.txt 2>/dev/null || true
+            sleep 4
           done
-          echo "El servicio ML no respondió adecuadamente después de 30 s."
+          echo "El servicio ML no respondió después de 60 s."
+          echo "--- Logs del contenedor ml-service ---"
+          docker compose -p "${{ steps.env.outputs.proyecto }}" logs --tail=50 ml-service || true
+          echo "--- Estado de contenedores ---"
+          docker compose -p "${{ steps.env.outputs.proyecto }}" ps || true
           exit 1
 
       - name: Revertir si falló la verificación
@@ -153,8 +176,16 @@ jobs:
           ML_PORT: ${{ steps.env.outputs.puerto }}
         run: |
           set -euo pipefail
+          # Verificar que la imagen de rollback todavía existe (la limpieza conserva 5)
+          if ! docker image inspect "energiai-ml-service:${{ steps.previa.outputs.tag }}" > /dev/null 2>&1; then
+            echo "::error::Imagen de rollback energiai-ml-service:${{ steps.previa.outputs.tag }} no encontrada. Rollback automático imposible."
+            exit 1
+          fi
+          export ML_TAG="$ML_TAG"
+          export ML_PORT="$ML_PORT"
           echo "::warning::Deploy fallido. Restaurando la versión ${{ steps.previa.outputs.tag }}"
-          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build ml-service
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build ml-service
           echo "Ambiente restaurado."
 
       - name: Marcar el job como fallido si hubo rollback

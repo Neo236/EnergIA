@@ -8,11 +8,9 @@ from infrastructure.ml.model_storage import load_model
 from interfaces.api.schemas import (
     DEFAULT_ANTIGUEDAD_VIVIENDA,
     DEFAULT_CALIDAD_AISLAMIENTO,
-    DEFAULT_FUENTE_AGUA_CALIENTE,
-    DEFAULT_FUENTE_CALEFACCION,
+    DEFAULT_CANTIDAD_EQUIPOS,
+    DEFAULT_HORAS_ALTO_CONSUMO,
     DEFAULT_METROS_CUADRADOS,
-    DEFAULT_USO_HORARIO_PICO,
-    DEFAULT_ZONA_FRIA,
 )
 
 # El orden/identidad de las features se deriva del training pipeline para
@@ -30,19 +28,38 @@ DEFAULTS = {
     "tipo_inmueble": "Casa",
     "metros_cuadrados": DEFAULT_METROS_CUADRADOS,
     "antiguedad_vivienda": DEFAULT_ANTIGUEDAD_VIVIENDA,
-    "zona_fria": DEFAULT_ZONA_FRIA,
+    "zona_fria": "No",
     "calidad_aislamiento": DEFAULT_CALIDAD_AISLAMIENTO,
-    "fuente_calefaccion": DEFAULT_FUENTE_CALEFACCION,
-    "fuente_agua_caliente": DEFAULT_FUENTE_AGUA_CALIENTE,
+    "fuente_calefaccion": "Electricidad",
+    "fuente_agua_caliente": "Electricidad",
     "consumo_kwh": 500.0,
-    "uso_horario_pico": DEFAULT_USO_HORARIO_PICO,
-    "horas_alto_consumo": 12,
-    "cantidad_equipos": 30,
+    "uso_horario_pico": "No",
+    "horas_alto_consumo": DEFAULT_HORAS_ALTO_CONSUMO,
+    "cantidad_equipos": DEFAULT_CANTIDAD_EQUIPOS,
 }
+
+
+def _coerce_si_no(value, default: str) -> str:
+    """Normaliza valores Si/No. Acepta 'Si'/'No', bool True/False, int 0/1."""
+    if isinstance(value, bool):
+        return "Si" if value else "No"
+    if isinstance(value, (int, np.integer)) and not isinstance(value, bool):
+        return "Si" if int(value) == 1 else "No"
+    if isinstance(value, str):
+        v = value.strip().lower()
+        if v in ("si", "sí", "true", "1"):
+            return "Si"
+        if v in ("no", "false", "0", ""):
+            return "No"
+    return default
 
 
 def _a_fila_modelo(input_data: dict) -> pd.DataFrame:
     row = {feat: input_data.get(feat, DEFAULTS[feat]) for feat in MODELO_FEATURES}
+    row["zona_fria"] = _coerce_si_no(row["zona_fria"], DEFAULTS["zona_fria"])
+    row["uso_horario_pico"] = _coerce_si_no(
+        row["uso_horario_pico"], DEFAULTS["uso_horario_pico"]
+    )
     return pd.DataFrame([row], columns=MODELO_FEATURES)
 
 
@@ -84,12 +101,12 @@ def _demo_request() -> dict:
         "tipo_inmueble": "Casa",
         "metros_cuadrados": 1269,
         "antiguedad_vivienda": 61,
-        "zona_fria": False,
+        "zona_fria": "No",
         "calidad_aislamiento": "Muy Baja",
         "fuente_calefaccion": "Solar",
         "fuente_agua_caliente": "Electricidad",
         "consumo_kwh": 363.4,
-        "uso_horario_pico": True,
+        "uso_horario_pico": "Si",
         "horas_alto_consumo": 14,
         "cantidad_equipos": 19,
     }

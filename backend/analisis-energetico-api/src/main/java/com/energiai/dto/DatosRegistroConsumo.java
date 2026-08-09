@@ -1,48 +1,90 @@
 package com.energiai.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record DatosRegistroConsumo ( //Request => Entrada
 
     @Schema(
         description = "Consumo electrico total en KWh",
         example = "450.5")
-    @NotNull @Positive 
+    @NotNull @DecimalMin(value = "1.0", inclusive = true) @DecimalMax(value = "1000.0", inclusive = true) 
+
     Double consumo_kwh,
 
     @Schema(
-        description = "Cantidad de equipos activos",
+        description = "Cantidad de equipos activos.",
         example = "8")
-    @NotNull @Min(value = 1) @Max(value = 100)
+    @NotNull
+    @Min(value = 1) @Max(value = 100)
+
     Integer cantidad_equipos,
 
     @Schema(
         description = "Tipo de inmueble (Casa, Departamento, Comercio, Pyme)",
         example = "Casa")
-    @NotBlank 
-    @Pattern(
-        regexp = "^(Casa|Departamento|Comercio|Pyme)$",
-        message = "El tipo de inmueble debe ser: Casa, Departamento, Comercio o Pyme")
-    String tipo_inmueble,
+    @NotNull
+
+    TipoInmueble tipo_inmueble,
 
     @Schema(
-        description = "Indica si la medicion incluye franja de horario pico (18hs a 23hs)",
+        description = "Indica si la medicion incluye franja de horario pico (18hs a 23hs). Es un dato opcional.",
         example = "true")
-    @NotNull
+
     Boolean uso_horario_pico,
 
     @Schema(
-        description = "Horas estimadas de uso de equipos de alto consumo al dia",
+        description = "Horas estimadas de uso de equipos de alto consumo al dia.",
         example = "6")
-    @NotNull @Min(value = 0) @Max(value = 24)
-    Integer horas_alto_consumo
+    @NotNull
+    @Min(value = 0) @Max(value = 24)
+
+    Integer horas_alto_consumo,
+
+    @Schema(
+        description = "Superficie total habitable de la vivienda, expresada en metros cuadrados. Es un dato opcional.",
+        example = "30")
+    @Min(value = 26) @Max(value = 2000)
+
+    Integer metros_cuadrados,
+
+    @Schema(
+        description = "Cantidad de años transcurridos desde la construccion. Es un dato opcional.",
+        example = "34")
+    @Min(value = 0) @Max(value = 150)
+
+    Integer antiguedad_vivienda,
+
+    @Schema(
+        description = "Indica si la vivienda se encuentra ubicada en una zona climatica considerada fria. Es un dato opcional.",
+        example = "false")
+    
+    Boolean zona_fria,
+
+    @Schema(
+        description = "Nivel de eficiencia del aislamiento térmico. Tipo de aislamiento (Muy alta, Alta, Medio, Baja, Muy baja). Es un dato opcional.",
+        example = "MEDIA")
+
+    CalidadAislamiento calidad_aislamiento,
+
+    @Schema(
+        description = "Fuente principal de energia utilizada para la calefaccion. Fuente de calefacción (Solar, Electricidad, Otros). Es un dato opcional.",
+        example = "SOLAR")
+    
+    FuenteEnergia fuente_calefaccion,
+
+    @Schema(
+        description = "Fuente de energia uitlizada para la produccion de agua caliente sanitaria. Fuente de agua caliente (Solar, Electricidad, Otros). Es un dato opcional.",
+        example = "ELECTRICIDAD")
+    
+    FuenteEnergia fuente_agua_caliente
+
 ) {
 
 }

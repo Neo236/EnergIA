@@ -3,25 +3,31 @@ import pytest
 from interfaces.api.schemas import AnalisisRequest
 
 
+# 6 obligatorias + 5 opcionales (ver docstring de AnalisisRequest)
 PAYLOAD_COMPLETO = {
+    # --- obligatorias ---
     "consumo_kwh": 363.4,
-    "uso_horario_pico": True,
-    "cantidad_equipos": 19,
     "tipo_inmueble": "Departamento",
-    "horas_alto_consumo": 14,
-    "calidad_aislamiento": "Muy Baja",
-    "metros_cuadrados": 1269,
-    "antiguedad_vivienda": 61,
-    "zona_fria": False,
+    "uso_horario_pico": "Si",
     "fuente_calefaccion": "Solar",
     "fuente_agua_caliente": "Electricidad",
+    "zona_fria": "No",
+    # --- opcionales ---
+    "metros_cuadrados": 1269,
+    "antiguedad_vivienda": 61,
+    "calidad_aislamiento": "Muy Baja",
+    "horas_alto_consumo": 14,
+    "cantidad_equipos": 19,
 }
 
+# Solo las 6 obligatorias, las 5 opcionales se imputan por default
 PAYLOAD_MINIMO = {
     "consumo_kwh": 250.0,
     "tipo_inmueble": "Casa",
-    "cantidad_equipos": 8,
-    "horas_alto_consumo": 4,
+    "uso_horario_pico": "No",
+    "fuente_calefaccion": "Electricidad",
+    "fuente_agua_caliente": "Electricidad",
+    "zona_fria": "No",
 }
 
 
@@ -49,7 +55,7 @@ class TestApiEndponts:
         assert len(body["recomendaciones"]) >= 1
 
     def test_analisis_energetico_payload_minimo(self, fastapi_client):
-        """Solo los 4 campos obligatorios deben ser suficientes."""
+        """Solo las 6 obligatorias deben ser suficientes."""
         r = fastapi_client.post("/analisis-energetico", json=PAYLOAD_MINIMO)
         assert r.status_code == 200
         body = r.json()
@@ -59,25 +65,25 @@ class TestApiEndponts:
         assert isinstance(body["recomendaciones"], list)
 
     def test_analisis_energetico_opcional_default(self, fastapi_client):
-        """Si omito un opcional, debe usar el default Pydantic."""
+        """Si omito los 5 opcionales, debe usar los defaults Pydantic."""
         payload = {
             "consumo_kwh": 200.0,
             "tipo_inmueble": "Casa",
-            "cantidad_equipos": 5,
-            "horas_alto_consumo": 3,
+            "uso_horario_pico": "No",
+            "fuente_calefaccion": "Electricidad",
+            "fuente_agua_caliente": "Electricidad",
+            "zona_fria": "No",
             # metros_cuadrados omitido -> default 1000.0
             # antiguedad_vivienda omitido -> default 50
-            # zona_fria omitido -> default False
             # calidad_aislamiento omitido -> default "Media"
-            # fuente_* omitido -> default "Electricidad"
-            # uso_horario_pico omitido -> default False
+            # horas_alto_consumo omitido -> default 8
+            # cantidad_equipos omitido -> default 15
         }
         r = fastapi_client.post("/analisis-energetico", json=payload)
         assert r.status_code == 200
 
     def test_analisis_energetico_tipo_inmueble_invalido(self, fastapi_client):
-        payload = {**PAYLOAD_COMPLETO, "tipo_inmueble": "Garaje"}
-        r = fastapi_client.post("/analisis-energetico", json=payload)
+        r = fastapi_client.post("/analisis-energetico", json=PAYLOAD_COMPLETO | {"tipo_inmueble": "Garaje"})
         assert r.status_code == 422
         body = r.json()
         assert "detail" in body
@@ -87,37 +93,43 @@ class TestApiEndponts:
         )
 
     def test_analisis_energetico_horas_invalidas(self, fastapi_client):
-        payload = {**PAYLOAD_COMPLETO, "horas_alto_consumo": 30}
-        r = fastapi_client.post("/analisis-energetico", json=payload)
+        r = fastapi_client.post("/analisis-energetico", json=PAYLOAD_COMPLETO | {"horas_alto_consumo": 30})
         assert r.status_code == 422
 
     def test_analisis_energetico_aislamiento_invalido(self, fastapi_client):
-        payload = {**PAYLOAD_COMPLETO, "calidad_aislamiento": "Super Alta"}
+        r = fastapi_client.post("/analisis-energetico", json=PAYLOAD_COMPLETO | {"calidad_aislamiento": "Super Alta"})
+        assert r.status_code == 422
+
+    # ---- Faltan obligatorias (debe rechazarse con 422) ----
+
+    def test_falta_obligatorio_consumo_kwh(self, fastapi_client):
+        payload = {k: v for k, v in PAYLOAD_MINIMO.items() if k != "consumo_kwh"}
         r = fastapi_client.post("/analisis-energetico", json=payload)
         assert r.status_code == 422
 
-    def test_falta_obligatorio_consumo_kwh(self, fastapi_client):
-        r = fastapi_client.post("/analisis-energetico", json={
-            "tipo_inmueble": "Casa", "cantidad_equipos": 5, "horas_alto_consumo": 3
-        })
-        assert r.status_code == 422
-
     def test_falta_obligatorio_tipo_inmueble(self, fastapi_client):
-        r = fastapi_client.post("/analisis-energetico", json={
-            "consumo_kwh": 100, "cantidad_equipos": 5, "horas_alto_consumo": 3
-        })
+        payload = {k: v for k, v in PAYLOAD_MINIMO.items() if k != "tipo_inmueble"}
+        r = fastapi_client.post("/analisis-energetico", json=payload)
         assert r.status_code == 422
 
-    def test_falta_obligatorio_cantidad_equipos(self, fastapi_client):
-        r = fastapi_client.post("/analisis-energetico", json={
-            "consumo_kwh": 100, "tipo_inmueble": "Casa", "horas_alto_consumo": 3
-        })
+    def test_falta_obligatorio_uso_horario_pico(self, fastapi_client):
+        payload = {k: v for k, v in PAYLOAD_MINIMO.items() if k != "uso_horario_pico"}
+        r = fastapi_client.post("/analisis-energetico", json=payload)
         assert r.status_code == 422
 
-    def test_falta_obligatorio_horas_alto_consumo(self, fastapi_client):
-        r = fastapi_client.post("/analisis-energetico", json={
-            "consumo_kwh": 100, "tipo_inmueble": "Casa", "cantidad_equipos": 5
-        })
+    def test_falta_obligatorio_fuente_calefaccion(self, fastapi_client):
+        payload = {k: v for k, v in PAYLOAD_MINIMO.items() if k != "fuente_calefaccion"}
+        r = fastapi_client.post("/analisis-energetico", json=payload)
+        assert r.status_code == 422
+
+    def test_falta_obligatorio_fuente_agua_caliente(self, fastapi_client):
+        payload = {k: v for k, v in PAYLOAD_MINIMO.items() if k != "fuente_agua_caliente"}
+        r = fastapi_client.post("/analisis-energetico", json=payload)
+        assert r.status_code == 422
+
+    def test_falta_obligatorio_zona_fria(self, fastapi_client):
+        payload = {k: v for k, v in PAYLOAD_MINIMO.items() if k != "zona_fria"}
+        r = fastapi_client.post("/analisis-energetico", json=payload)
         assert r.status_code == 422
 
 
@@ -126,21 +138,21 @@ class TestSchemaDefaults:
 
     def test_defaults_correctos(self):
         req = AnalisisRequest.model_validate(PAYLOAD_MINIMO)
-        # defaults aplicados a los opcionales
+        # defaults aplicados a los 5 opcionales
         assert req.metros_cuadrados == 1000.0
         assert req.antiguedad_vivienda == 50
-        assert req.zona_fria is False
         assert req.calidad_aislamiento == "Media"
-        assert req.fuente_calefaccion == "Electricidad"
-        assert req.fuente_agua_caliente == "Electricidad"
-        assert req.uso_horario_pico is False
+        assert req.horas_alto_consumo == 8
+        assert req.cantidad_equipos == 15
 
-    def test_cuatro_obligatorias(self):
+    def test_seis_obligatorias(self):
         req = AnalisisRequest.model_validate(PAYLOAD_MINIMO)
         assert req.consumo_kwh == 250.0
         assert req.tipo_inmueble == "Casa"
-        assert req.cantidad_equipos == 8
-        assert req.horas_alto_consumo == 4
+        assert req.uso_horario_pico == "No"
+        assert req.fuente_calefaccion == "Electricidad"
+        assert req.fuente_agua_caliente == "Electricidad"
+        assert req.zona_fria == "No"
 
     def test_payload_vacio_falla(self):
         with pytest.raises(ValueError):
@@ -153,6 +165,10 @@ class TestSchemaDefaults:
     def test_horas_fuera_de_rango_falla(self):
         with pytest.raises(ValueError):
             AnalisisRequest.model_validate({**PAYLOAD_MINIMO, "horas_alto_consumo": 25})
+
+    def test_cantidad_equipos_negativa_falla(self):
+        with pytest.raises(ValueError):
+            AnalisisRequest.model_validate({**PAYLOAD_MINIMO, "cantidad_equipos": -1})
 
 
 class TestApiFileNotFound:

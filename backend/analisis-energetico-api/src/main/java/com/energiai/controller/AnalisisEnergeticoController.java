@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.energiai.dto.DatosErrorRespuesta;
 import com.energiai.dto.DatosRegistroAnalisis;
 import com.energiai.dto.DatosRegistroConsumo;
 import com.energiai.service.AnalisisEnergeticoService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,17 +32,133 @@ public class AnalisisEnergeticoController {
 
     @Operation(
         summary = "Realizar analisis de consumo energetico",
-        description = "Evalua los datos de consumo de un inmueble y devuelve la clasificacion provisional, costos estimados y recomendaciones."
+        description = "Evalua los datos de consumo de un inmueble y devuelve la clasificacion, costos estimados y recomendaciones."
     )
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200",
-        description = "Analisis realizado exitosamente."),
-        @ApiResponse(responseCode = "400",
-        description = "Datos de entradas invalidos o faltantes."),
-        @ApiResponse(responseCode = "500",
-        description = "Error interno al procesar el analisis.")
-    })
+    @ApiResponses(value = {                                                                                                                                                   
+            @ApiResponse(                                                                                                                                                         
+                responseCode = "200",                                                                                                                                             
+                description = "Análisis realizado exitosamente.",                                                                                                                 
+                content = @Content(                                                                                                                                               
+                    mediaType = "application/json",                                                                                                                               
+                    schema = @Schema(implementation = DatosRegistroAnalisis.class),
+                    examples = @ExampleObject(
+                        value = """                                                                                                                                                       
+                        {                                                                                                                                                                 
+                            "categoria": "Eficiente",                                                                                                                                       
+                            "probabilidad": 0.25,                                                                                                                                           
+                            "costo_estimado_mensual": 337.87,                                                                                                                              
+                            "recomendaciones": [                                                                                                                                            
+                                "Excelente nivel de consumo.",                                                                                                                                
+                                "Mantener los hábitos actuales de ahorro.",                                                                                                                   
+                                "Continuar monitoreando el consumo mensual."                                                                                                                  
+                            ]                                                                                                                                                               
+                        }                                                                                                                                                                 
+                            """
+                    )                                                                                                
+                )                                                                                                                                                                 
+            ),                                                                                                                                                                    
+            @ApiResponse(                                                                                                                                                         
+                responseCode = "400",                                                                                                                                             
+                description = "Datos de entrada inválidos o formato JSON incorrecto.",                                                                                            
+                content = @Content(                                                                                                                                               
+                    mediaType = "application/json",                                                                                                                               
+                    schema = @Schema(implementation = DatosErrorRespuesta.class),                                                                                                 
+                    examples = @ExampleObject(                                                                                                                                                                                                                    
+                        value = """                                                                                                                                               
+                        {                                                                                                                                                         
+                          "timestamp": "2026-08-01T16:45:00",                                                                                                                     
+                          "status": 400,                                                                                                                                          
+                          "error": "BAD_REQUEST",                                                                                                                                 
+                          "mensaje": "Errores de validacion en los datos de entrada",                                                                                             
+                          "detalles": [                                                                                                                                           
+                            {                                                                                                                                                     
+                              "campo": "cantidad_equipos",                                                                                                                          
+                              "mensaje": "no debe ser nulo"                                                                                                    
+                            },                                                                                                                                                   
+                            {                                                                                                                                                     
+                              "campo": "horas_alto_consumo",                                                                                                                          
+                              "mensaje": "no debe ser nulo"                                                                                                    
+                            }                                                                                                                                                     
+                          ]                                                                                                                                                       
+                        }                                                                                                                                                         
+                        """                                                                                                                                                       
+                    )                                                                                                                                                             
+                )                                                                                                                                                             
+            ),                                                                                                                                                                    
+            @ApiResponse(                                                                                                                                                         
+                responseCode = "404",                                                                                                                                             
+                description = "El recurso solicitado o la ruta no fueron encontrados.",                                                                                                      
+                content = @Content(                                                                                                                                               
+                    mediaType = "application/json",                                                                                                                               
+                    schema = @Schema(implementation = DatosErrorRespuesta.class),                                                                                                 
+                    examples = @ExampleObject(                                                                                                                                                                                                                                                                     
+                        value = """                                                                                                                                               
+                        {                                                                                                                                                         
+                          "timestamp": "2026-08-01T16:45:00",                                                                                                                     
+                          "status": 404,                                                                                                                                          
+                          "error": "NOT_FOUND",                                                                                                                                   
+                          "mensaje": "El recurso solicitado no fue encontrado"                                                                                                    
+                        }                                                                                                                                                         
+                        """                                                                                                                                                       
+                    )                                                                                                                                                             
+                )                                                                                                                                                                 
+            ),                                                                                                                                                                    
+            @ApiResponse(                                                                                                                                                         
+                responseCode = "500",                                                                                                                                             
+                description = "Error interno del servidor.",                                                                                                                      
+                content = @Content(                                                                                                                                               
+                    mediaType = "application/json",                                                                                                                               
+                    schema = @Schema(implementation = DatosErrorRespuesta.class),                                                                                                 
+                    examples = @ExampleObject(                                                                                                                                                                                                                                                                     
+                        value = """                                                                                                                                               
+                        {                                                                                                                                                         
+                          "timestamp": "2026-08-01T16:45:00",                                                                                                                     
+                          "status": 500,                                                                                                                                          
+                          "error": "INTERNAL_SERVER_ERROR",                                                                                                                       
+                          "mensaje": "Ocurrio un error interno en el servidor. Por favor, intente mas tarde."                                                                     
+                        }                                                                                                                                                         
+                        """                                                                                                                                                       
+                    )                                                                                                                                                             
+                )                                                                                                                                                                 
+            ),                                                                                                                                                                    
+            @ApiResponse(                                                                                                                                                         
+                responseCode = "503",                                                                                                                                             
+                description = "El servicio de Machine Learning no se encuentra disponible.",                                                                                      
+                content = @Content(                                                                                                                                               
+                    mediaType = "application/json",                                                                                                                               
+                    schema = @Schema(implementation = DatosErrorRespuesta.class),                                                                                                 
+                    examples = @ExampleObject(                                                                                                                                                                                                                                                             
+                        value = """                                                                                                                                               
+                        {                                                                                                                                                         
+                          "timestamp": "2026-08-01T16:45:00",                                                                                                                     
+                          "status": 503,                                                                                                                                          
+                          "error": "SERVICE_UNAVAILABLE",                                                                                                                         
+                          "mensaje": "El servicio de Machine Learning no se encuentra disponible."                                                                
+                        }                                                                                                                                                         
+                        """                                                                                                                                                       
+                    )                                                                                                                                                             
+                )                                                                                                                                                                 
+            ),                                                                                                                                                                    
+            @ApiResponse(                                                                                                                                                         
+                responseCode = "502",                                                                                                                                             
+                description = "El servicio de Machine Learning devolvió una respuesta inesperada o inválida.",                                                                    
+                content = @Content(                                                                                                                                               
+                    mediaType = "application/json",                                                                                                                               
+                    schema = @Schema(implementation = DatosErrorRespuesta.class),                                                                                                 
+                    examples = @ExampleObject(                                                                                                                                                                                                                                                             
+                        value = """                                                                                                                                               
+                        {                                                                                                                                                         
+                          "timestamp": "2026-08-01T16:45:00",                                                                                                                     
+                          "status": 502,                                                                                                                                          
+                          "error": "BAD_GATEWAY",                                                                                                                                 
+                          "mensaje": "El servicio de Machine Learning devolvió una respuesta inesperada o inválida"                                                                
+                        }                                                                                                                                                         
+                        """                                                                                                                                                       
+                    )                                                                                                                                                             
+                )                                                                                                                                                                 
+            )                                                                                                                                                                     
+        })                                      
 
     @PostMapping
     public ResponseEntity<DatosRegistroAnalisis> analizarConsumo(@Valid @RequestBody DatosRegistroConsumo request) {                                    

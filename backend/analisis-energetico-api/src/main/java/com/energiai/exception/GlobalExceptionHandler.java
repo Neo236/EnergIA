@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.energiai.dto.DatosErrorCampo;
 import com.energiai.dto.DatosErrorRespuesta;
@@ -17,10 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Manejo de validaciones de DTO (@Valid).
-     * Devuelve HTTP 400 Bad Request con el detalle de cada campo invalido o ausente.
-     */
+    // Manejo de validaciones de DTO (@Valid).
+    // Devuelve HTTP 400 Bad Request con el detalle de cada campo invalido o ausente.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<DatosErrorRespuesta> manejarValidaciones(MethodArgumentNotValidException ex) {
         List<DatosErrorCampo> erroresCampos = ex.getBindingResult()
@@ -39,10 +38,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
 
-    /**
-     * Manejo de JSON mal formado o cuerpo de solicitud ausente.
-     * Devuelve HTTP 400 Bad Request.
-     */
+    // Manejo de JSON mal formado o cuerpo de solicitud ausente.
+    // Devuelve HTTP 400 Bad Request.
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<DatosErrorRespuesta> manejarJsonInvalido(HttpMessageNotReadableException ex) {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
@@ -54,10 +51,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
 
-    /**
-     * Manejo de recursos inexistentes planteados por la logica de negocio.
-     * Devuelve HTTP 404 Not Found.
-     */
+    // Manejo de recursos inexistentes planteados por la logica de negocio.
+    // Devuelve HTTP 404 Not Found.
     @ExceptionHandler(RecursoNoEncontradoException.class)
     public ResponseEntity<DatosErrorRespuesta> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
@@ -69,10 +64,53 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
     }
 
-    /**
-     * Manejo global de errores internos no controlados.
-     * Devuelve HTTP 500 Internal Server Error.
-     */
+    @ExceptionHandler(ServicioMlNoDisponibleException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejaServicioMlNoDisponible(ServicioMlNoDisponibleException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+            HttpStatus.SERVICE_UNAVAILABLE.value(),
+            HttpStatus.SERVICE_UNAVAILABLE.name(),
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(respuesta);
+    }
+
+    // FastAPI rechazó los datos de entrada (4xx, ej: 422 de validación).
+    // El back-end lo expone como 400 Bad Request.
+    @ExceptionHandler(DatosEntradaInvalidosException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejarDatosEntradaInvalidos(DatosEntradaInvalidosException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.BAD_REQUEST.name(),
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
+
+    // El servicio de ML devolvió una respuesta inesperada o inválida.
+    // Se expone como 502 Bad Gateway (el upstream respondió de forma anómala).
+    @ExceptionHandler(MlRespuestaInvalidaException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejarMlRespuestaInvalida(MlRespuestaInvalidaException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+            HttpStatus.BAD_GATEWAY.value(),
+            HttpStatus.BAD_GATEWAY.name(),
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(respuesta);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<DatosErrorRespuesta> manejarIllegalArgumentException(IllegalArgumentException ex) {
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
+
+    
+    // Manejo global de errores internos no controlados.
+    // Devuelve HTTP 500 Internal Server Error.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<DatosErrorRespuesta> manejarErrorInterno(Exception ex, HttpServletRequest request) {
         DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(
@@ -82,5 +120,16 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+    }
+
+     @ExceptionHandler(NoResourceFoundException.class)                                                                                                                             
+    public ResponseEntity<DatosErrorRespuesta> manejarRutaNoEncontrada(NoResourceFoundException ex) {                                                                             
+        DatosErrorRespuesta respuesta = DatosErrorRespuesta.de(                                                                                                                   
+                HttpStatus.NOT_FOUND.value(),                                                                                                                                     
+                HttpStatus.NOT_FOUND.name(),                                                                                                                                      
+                "La ruta solicitada no existe: " + ex.getResourcePath()                                                                                                           
+        );                                                                                                                                                                        
+                                                                                                                                                                                  
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);                                                                                        
     }
 }

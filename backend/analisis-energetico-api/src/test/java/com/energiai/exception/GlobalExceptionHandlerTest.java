@@ -81,4 +81,40 @@ class GlobalExceptionHandlerTest {
         assertEquals(500, response.getBody().status());
         assertEquals("Ocurrio un error interno en el servidor. Por favor, intente mas tarde.", response.getBody().mensaje());
     }
+
+    @Test                                                                                                                                                                         
+    void cuandoServicioMlNoDisponible_retornaRespuestaUniforme503() {                                                                                                             
+        ServicioMlNoDisponibleException ex = new ServicioMlNoDisponibleException("El servicio ML no responde");                                                                   
+                                                                                                                                                                                   
+        ResponseEntity<DatosErrorRespuesta> response = exceptionHandler.manejaServicioMlNoDisponible(ex);                                                                         
+                                                                                                                                                                                   
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());                                                                                                   
+        assertEquals(503, response.getBody().status());
+    }
+
+    @Test
+    void cuandoDatosEntradaInvalidos_retornaRespuestaUniforme400() {
+        DatosEntradaInvalidosException ex =
+                new DatosEntradaInvalidosException("El servicio de Machine Learning rechazó los datos de entrada (HTTP 422)");
+
+        ResponseEntity<DatosErrorRespuesta> response = exceptionHandler.manejarDatosEntradaInvalidos(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(400, response.getBody().status());
+        assertEquals("BAD_REQUEST", response.getBody().error());
+        assertEquals("El servicio de Machine Learning rechazó los datos de entrada (HTTP 422)", response.getBody().mensaje());
+    }
+
+    @Test
+    void cuandoMlRespuestaInvalida_retornaRespuestaUniforme502() {
+        MlRespuestaInvalidaException ex =
+                new MlRespuestaInvalidaException("El servicio Machine Learning devolvió una respuesta inesperada o inválida");
+
+        ResponseEntity<DatosErrorRespuesta> response = exceptionHandler.manejarMlRespuestaInvalida(ex);
+
+        assertEquals(HttpStatus.BAD_GATEWAY, response.getStatusCode());
+        assertEquals(502, response.getBody().status());
+        assertEquals("BAD_GATEWAY", response.getBody().error());
+        assertEquals("El servicio Machine Learning devolvió una respuesta inesperada o inválida", response.getBody().mensaje());
+    }
 }

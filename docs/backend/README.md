@@ -7,7 +7,7 @@ Documentación técnica del desarrollo de la API REST principal encargada de orq
 
 ## 🛠️ Tecnologías y Versiones
 - **Java:** 17+
-- **Framework:** Spring Boot 3.x
+- **Framework:** Spring Boot 4.0.7
 - **Gestor de Dependencias:** Maven
 - **Documentación API:** Swagger UI / OpenAPI 3.0
 

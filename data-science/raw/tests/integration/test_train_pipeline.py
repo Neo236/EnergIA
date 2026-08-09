@@ -72,8 +72,8 @@ class TestConstants:
     def test_num_cols_son_numericas(self):
         for col in NUM_COLS:
             assert col in {
-                "metros_cuadrados", "antiguedad_vivienda", "zona_fria",
-                "consumo_kwh", "uso_horario_pico", "horas_alto_consumo",
+                "metros_cuadrados", "antiguedad_vivienda",
+                "consumo_kwh", "horas_alto_consumo",
                 "cantidad_equipos",
             }
 
@@ -82,4 +82,5 @@ class TestConstants:
             assert col in {
                 "tipo_inmueble", "calidad_aislamiento",
                 "fuente_calefaccion", "fuente_agua_caliente",
+                "zona_fria", "uso_horario_pico",
             }

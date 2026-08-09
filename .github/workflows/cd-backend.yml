@@ -140,7 +140,7 @@ jobs:
           export BACKEND_PORT="$BACKEND_PORT"
           echo "Levantando backend con imagen energiai-backend:${BACKEND_TAG}"
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build backend
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps backend
 
       - name: Verificar salud
         id: salud
@@ -183,8 +183,7 @@ jobs:
           export BACKEND_TAG="$BACKEND_TAG"
           export BACKEND_PORT="$BACKEND_PORT"
           echo "::warning::Deploy fallido. Restaurando la versión ${{ steps.previa.outputs.tag }}"
-          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build backend
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps backend
           echo "Ambiente restaurado."
 
       - name: Marcar el job como fallido si hubo rollback

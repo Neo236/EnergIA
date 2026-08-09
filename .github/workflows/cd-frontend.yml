@@ -177,7 +177,7 @@ jobs:
           export FRONTEND_PORT="$FRONTEND_PORT"
           echo "Levantando frontend con imagen energiai-frontend:${FRONTEND_TAG}"
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps frontend
 
       - name: Verificar salud
         id: salud
@@ -219,8 +219,7 @@ jobs:
           export FRONTEND_TAG="$FRONTEND_TAG"
           export FRONTEND_PORT="$FRONTEND_PORT"
           echo "::warning::Deploy fallido. Restaurando la versión ${{ steps.previa.outputs.tag }}"
-          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps frontend
           echo "Ambiente restaurado."
 
       - name: Marcar el job como fallido si hubo rollback

@@ -82,11 +82,16 @@ jobs:
         run: |
           set -euo pipefail
           TAG="energiai-backend:${{ steps.env.outputs.tag }}"
-          if docker image inspect "$TAG" >/dev/null 2>&1; then
+          if docker image inspect "$TAG" > /dev/null 2>&1; then
             echo "La imagen $TAG ya existe — se reutiliza (rollback)."
           else
             docker build -t "$TAG" ./backend
           fi
+          # Verificar que la imagen quedó correctamente taggeada antes de continuar
+          docker image inspect "$TAG" > /dev/null 2>&1 || {
+            echo "::error::La imagen $TAG no fue encontrada tras el build."
+            exit 1
+          }
 
       - name: Verificar archivo .env en VM
         id: dotenv
@@ -129,21 +134,39 @@ jobs:
           BACKEND_TAG: ${{ steps.env.outputs.tag }}
           BACKEND_PORT: ${{ steps.env.outputs.puerto }}
         run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps backend
+        run: |
+          set -euo pipefail
+          # export explícito: blindar contra cualquier BACKEND_TAG residual del runner
+          export BACKEND_TAG="$BACKEND_TAG"
+          export BACKEND_PORT="$BACKEND_PORT"
+          echo "Levantando backend con imagen energiai-backend:${BACKEND_TAG}"
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build backend
 
       - name: Verificar salud
         id: salud
         continue-on-error: true
         run: |
           set -uo pipefail
+          # 12 x 5 s = 60 s: Spring Boot necesita tiempo para arrancar la JVM
           for i in $(seq 1 12); do
-            if curl -fsS "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health" | grep -q '"status":"UP"'; then
-              echo "Backend (Spring Boot) respondiendo OK en el intento $i."
+            echo "Intento $i/12 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health"
+            HTTP=$(curl -o /tmp/health_resp.txt -w "%{http_code}" -sS \
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health" 2>/tmp/health_err.txt || true)
+            BODY=$(cat /tmp/health_resp.txt 2>/dev/null || true)
+            if echo "$BODY" | grep -q '"status":"UP"'; then
+              echo "Backend (Spring Boot) respondiendo OK (intento $i). HTTP $HTTP"
               exit 0
             fi
-            echo "Esperando arranque de Spring Boot (intento $i/12)…"
+            echo "  HTTP: $HTTP | Body: $BODY"
+            cat /tmp/health_err.txt 2>/dev/null || true
             sleep 5
           done
-          echo "El backend no respondió adecuadamente después de 60 s."
+          echo "El backend no respondió después de 60 s."
+          echo "--- Logs del contenedor backend ---"
+          docker compose -p "${{ steps.env.outputs.proyecto }}" logs --tail=50 backend || true
+          echo "--- Estado de contenedores ---"
+          docker compose -p "${{ steps.env.outputs.proyecto }}" ps || true
           exit 1
 
       - name: Revertir si falló la verificación
@@ -153,6 +176,13 @@ jobs:
           BACKEND_PORT: ${{ steps.env.outputs.puerto }}
         run: |
           set -euo pipefail
+          # Verificar que la imagen de rollback todavía existe (la limpieza conserva 5)
+          if ! docker image inspect "energiai-backend:${{ steps.previa.outputs.tag }}" > /dev/null 2>&1; then
+            echo "::error::Imagen de rollback energiai-backend:${{ steps.previa.outputs.tag }} no encontrada. Rollback automático imposible."
+            exit 1
+          fi
+          export BACKEND_TAG="$BACKEND_TAG"
+          export BACKEND_PORT="$BACKEND_PORT"
           echo "::warning::Deploy fallido. Restaurando la versión ${{ steps.previa.outputs.tag }}"
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps backend
           echo "Ambiente restaurado."

@@ -70,7 +70,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: energiai-frontend:${FRONTEND_TAG:-local}
+    image: energiai-frontend:${FRONTEND_TAG:-latest}
     ports:
       - "127.0.0.1:${FRONTEND_PORT:-3000}:8080"
     restart: unless-stopped

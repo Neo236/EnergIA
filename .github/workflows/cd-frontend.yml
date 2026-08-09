@@ -126,20 +126,46 @@ jobs:
           fi
 
       - name: Verificar archivo .env en VM
+        id: dotenv
         run: |
           set -euo pipefail
-          if [ ! -f .env ]; then
-            echo "::error::.env no encontrado en la VM. Las variables OCI (OCI_NAMESPACE, OCI_BUCKET, etc.) no estarán disponibles y el servicio fallará en runtime."
+          # Los .env viven en ~/energiai-envs/ con nombre por ambiente
+          if [ "${{ steps.env.outputs.ambiente }}" = "produccion" ]; then
+            ENV_FILE="$HOME/energiai-envs/.env.prod"
+          else
+            ENV_FILE="$HOME/energiai-envs/.env.staging"
+          fi
+          echo "env_file=$ENV_FILE" >> "$GITHUB_OUTPUT"
+
+          if [ ! -f "$ENV_FILE" ]; then
+            echo "::error::Archivo de entorno no encontrado: $ENV_FILE"
             exit 1
           fi
-          echo "Variables de entorno presentes en .env:"
-          grep -E "^OCI_|^STORAGE_" .env | sed 's/=.*/=***/' || echo "  (ninguna variable OCI encontrada — revisar .env)"
+          BACKEND=$(grep -E '^STORAGE_BACKEND=' "$ENV_FILE" | cut -d= -f2 || echo 'local')
+          echo "STORAGE_BACKEND detectado: $BACKEND"
+          if [ "$BACKEND" = "par" ]; then
+            PAR_URL=$(grep -E '^OCI_PAR_URL=' "$ENV_FILE" | cut -d= -f2 || echo '')
+            if [ -z "$PAR_URL" ]; then
+              echo "::error::STORAGE_BACKEND=par pero OCI_PAR_URL no está definida en $ENV_FILE"
+              exit 1
+            fi
+            echo "OCI_PAR_URL=*** (presente)"
+          elif [ "$BACKEND" = "oci" ]; then
+            NS=$(grep -E '^OCI_NAMESPACE=' "$ENV_FILE" | cut -d= -f2 || echo '')
+            if [ -z "$NS" ]; then
+              echo "::error::STORAGE_BACKEND=oci pero OCI_NAMESPACE no está definida en $ENV_FILE"
+              exit 1
+            fi
+            echo "OCI_NAMESPACE=*** (presente)"
+          else
+            echo "STORAGE_BACKEND=local: no se requieren credenciales OCI."
+          fi
 
       - name: Levantar
         env:
           FRONTEND_TAG: ${{ steps.env.outputs.tag }}
           FRONTEND_PORT: ${{ steps.env.outputs.puerto }}
-        run: docker compose -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
+        run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
 
       - name: Verificar salud
         id: salud
@@ -165,7 +191,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "::warning::Deploy fallido. Restaurando la versión ${{ steps.previa.outputs.tag }}"
-          docker compose -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
           echo "Ambiente restaurado."
 
       - name: Marcar el job como fallido si hubo rollback

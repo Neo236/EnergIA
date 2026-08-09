@@ -1,0 +1,164 @@
+name: CD Data Science / ML (FastAPI)
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'data-science/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/cd-ml.yml'
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: 'Ambiente de destino'
+        required: true
+        type: choice
+        options: [staging, produccion]
+        default: staging
+      tag:
+        description: 'SHA a desplegar (vacío = HEAD de la rama). Usar para rollback.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-ml-${{ github.event.inputs.ambiente || (github.ref_name == 'main' && 'produccion' || 'staging') }}
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    name: Desplegar ML Service (FastAPI)
+    runs-on: [self-hosted, oci]
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.sha }}
+
+      - name: Resolver ambiente
+        id: env
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.ambiente }}" ]; then
+            AMBIENTE="${{ github.event.inputs.ambiente }}"
+          elif [ "${{ github.ref_name }}" = "main" ]; then
+            AMBIENTE="produccion"
+          else
+            AMBIENTE="staging"
+          fi
+
+          if [ "$AMBIENTE" = "produccion" ]; then
+            echo "proyecto=energiai-prod" >> "$GITHUB_OUTPUT"
+            echo "puerto=8000"            >> "$GITHUB_OUTPUT"
+          else
+            echo "proyecto=energiai-staging" >> "$GITHUB_OUTPUT"
+            echo "puerto=8002"               >> "$GITHUB_OUTPUT"
+          fi
+          echo "ambiente=$AMBIENTE" >> "$GITHUB_OUTPUT"
+          echo "tag=${{ github.event.inputs.tag || github.sha }}" >> "$GITHUB_OUTPUT"
+
+          echo "Ambiente: $AMBIENTE"
+
+      - name: Registrar versión actualmente en ejecución
+        id: previa
+        run: |
+          set -euo pipefail
+          CID=$(docker compose -p "${{ steps.env.outputs.proyecto }}" ps -q ml-service 2>/dev/null || true)
+          if [ -n "$CID" ]; then
+            IMAGEN=$(docker inspect --format '{{.Config.Image}}' "$CID")
+            TAG_PREVIO="${IMAGEN#energiai-ml-service:}"
+            echo "Versión en ejecución: $TAG_PREVIO"
+          else
+            TAG_PREVIO=""
+            echo "No hay ml-service corriendo en este ambiente (primer deploy)."
+          fi
+          echo "tag=$TAG_PREVIO" >> "$GITHUB_OUTPUT"
+
+      - name: Construir imagen
+        run: |
+          set -euo pipefail
+          TAG="energiai-ml-service:${{ steps.env.outputs.tag }}"
+          if docker image inspect "$TAG" >/dev/null 2>&1; then
+            echo "La imagen $TAG ya existe — se reutiliza (rollback)."
+          else
+            docker build -t "$TAG" -f data-science/Dockerfile data-science
+          fi
+
+      - name: Levantar
+        env:
+          ML_TAG: ${{ steps.env.outputs.tag }}
+          ML_PORT: ${{ steps.env.outputs.puerto }}
+        run: docker compose -p "${{ steps.env.outputs.proyecto }}" up -d --no-build ml-service
+
+      - name: Verificar salud
+        id: salud
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          for i in $(seq 1 10); do
+            if curl -fsS "http://127.0.0.1:${{ steps.env.outputs.puerto }}/health" | grep -q '"status":"healthy"'; then
+              echo "ML Service (FastAPI) respondiendo OK en el intento $i."
+              exit 0
+            fi
+            echo "Esperando arranque de FastAPI (intento $i/10)…"
+            sleep 3
+          done
+          echo "El servicio ML no respondió adecuadamente después de 30 s."
+          exit 1
+
+      - name: Revertir si falló la verificación
+        if: steps.salud.outcome == 'failure' && steps.previa.outputs.tag != ''
+        env:
+          ML_TAG: ${{ steps.previa.outputs.tag }}
+          ML_PORT: ${{ steps.env.outputs.puerto }}
+        run: |
+          set -euo pipefail
+          echo "::warning::Deploy fallido. Restaurando la versión ${{ steps.previa.outputs.tag }}"
+          docker compose -p "${{ steps.env.outputs.proyecto }}" up -d --no-build ml-service
+          echo "Ambiente restaurado."
+
+      - name: Marcar el job como fallido si hubo rollback
+        if: steps.salud.outcome == 'failure'
+        run: |
+          echo "::error::El despliegue no superó la verificación de salud."
+          exit 1
+
+      - name: Limpiar imágenes viejas
+        if: always()
+        run: |
+          set -uo pipefail
+          EN_USO=$(docker ps -a --format '{{.Image}}' | sort -u)
+          docker images 'energiai-ml-service' --format '{{.Tag}} {{.CreatedAt}}' \
+            | grep -v '^local ' \
+            | sort -k2 -r \
+            | tail -n +6 \
+            | awk '{print $1}' \
+            | while read -r TAG; do
+                IMG="energiai-ml-service:$TAG"
+                if echo "$EN_USO" | grep -qxF "$IMG"; then
+                  echo "  conservada (en uso): $IMG"
+                else
+                  docker rmi "$IMG" >/dev/null 2>&1 && echo "  borrada: $IMG" || true
+                fi
+              done
+
+      - name: Resumen
+        if: always()
+        run: |
+          {
+            echo "### Despliegue de Data Science / ML (FastAPI)"
+            echo ""
+            echo "| Campo | Valor |"
+            echo "|---|---|"
+            echo "| Ambiente | ${{ steps.env.outputs.ambiente }} |"
+            echo "| Proyecto compose | ${{ steps.env.outputs.proyecto }} |"
+            echo "| Puerto interno | ${{ steps.env.outputs.puerto }} |"
+            echo "| Versión desplegada | \`${{ steps.env.outputs.tag }}\` |"
+            echo "| Versión anterior | \`${{ steps.previa.outputs.tag || '—' }}\` |"
+            echo ""
+            echo "Para volver atrás: *Run workflow* con el SHA de la versión anterior."
+          } >> "$GITHUB_STEP_SUMMARY"

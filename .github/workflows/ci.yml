@@ -103,6 +103,26 @@ jobs:
           docker stop ml-test
           docker rm ml-test
 
+  frontend-ci:
+    name: Build & Test Frontend (Nginx Container)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t energiai-frontend:test ./frontend
+
+      - name: Smoke test container serving static content
+        run: |
+          docker run -d --name front-test -p 3456:80 energiai-frontend:test
+          sleep 3
+          curl -fsS http://localhost:3456/ || exit 1
+          docker stop front-test
+          docker rm front-test
+
   docker-ci:
     name: Build Docker Images
     runs-on: ubuntu-latest

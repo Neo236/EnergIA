@@ -1,0 +1,57 @@
+# Proxy inverso de EnergiAI — VM energiai-app-01 (OCI).
+#
+# Este archivo es la fuente de verdad de /etc/caddy/Caddyfile en la VM.
+# Vive en el repo porque el runbook de OCI lo marca como uno de los pocos
+# archivos que "no se regeneran solos" y que hoy existen únicamente en la
+# instancia. Al actualizarlo hay que copiarlo a la VM y recargar:
+#
+#   sudo cp infra/Caddyfile /etc/caddy/Caddyfile
+#   sudo caddy validate --config /etc/caddy/Caddyfile
+#   sudo systemctl reload caddy
+#
+# Caddy corre NATIVO (systemd), no en Docker: un deploy roto no puede
+# tirar el proxy. HTTPS automático vía Let's Encrypt.
+#
+# Puertos internos que levanta el CD con docker compose (solo 127.0.0.1):
+#   producción → API 8080 · front 3000
+#   staging    → API 8081 · front 3001
+
+(rutas_api) {
+	# La API de la app.
+	handle /api/* {
+		reverse_proxy localhost:{args[0]}
+	}
+
+	# Swagger, la spec OpenAPI y el healthcheck NO cuelgan de /api: los
+	# sirve Spring en la raíz. Sin estos tres handle, el `handle` final
+	# los mandaría al frontend y responderían 404 — rompiendo las URLs de
+	# testeo que documenta docs/oci-cloud/README.md.
+	handle /swagger-ui/* {
+		reverse_proxy localhost:{args[0]}
+	}
+
+	handle /v3/api-docs* {
+		reverse_proxy localhost:{args[0]}
+	}
+
+	handle /actuator/* {
+		reverse_proxy localhost:{args[0]}
+	}
+}
+
+energiai.unixsoluciones.com {
+	import rutas_api 8080
+
+	# Todo lo demás es el frontend. Mismo origen que la API ⇒ sin CORS.
+	handle {
+		reverse_proxy localhost:3000
+	}
+}
+
+energiai-staging.unixsoluciones.com {
+	import rutas_api 8081
+
+	handle {
+		reverse_proxy localhost:3001
+	}
+}

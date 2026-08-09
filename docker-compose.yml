@@ -1,6 +1,18 @@
-version: '3.8'
-
 services:
+  # -------------------------------------------------------------
+  # Frontend - Nginx (Sitio Estático / React-Vite)
+  # -------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: energiai-frontend:${FRONTEND_TAG:-latest}
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:80"
+    restart: unless-stopped
+    networks:
+      - energiai-network
+
   # -------------------------------------------------------------
   # Backend Principal - Spring Boot (Java 17)
   # -------------------------------------------------------------
@@ -8,14 +20,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: energiai-backend
+    image: energiai-backend:${BACKEND_TAG:-latest}
     ports:
-      - "8080:8080"
+      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
     environment:
       - PORT=8080
       - SPRING_PROFILES_ACTIVE=prod
       - ML_SERVICE_URL=http://ml-service:8000
-      # Variables OCI Object Storage (configurar para producción en OCI)
       - OCI_NAMESPACE=${OCI_NAMESPACE}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-santiago-chile-1}
@@ -33,9 +44,9 @@ services:
     build:
       context: ./data-science
       dockerfile: Dockerfile
-    container_name: energiai-ml-service
+    image: energiai-ml-service:${ML_TAG:-latest}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:${ML_PORT:-8000}:8000"
     environment:
       - PORT=8000
       - ENVIRONMENT=production
@@ -44,14 +55,7 @@ services:
       - OCI_NAMESPACE=${OCI_NAMESPACE}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-santiago-chile-1}
-      # Auth: descomentar SOLO una opción
-      # Opción A: instance principal (recomendado para VM OCI)
       - OCI_INSTANCE_PRINCIPAL=${OCI_INSTANCE_PRINCIPAL:-true}
-      # Opción B: API key
-      # - OCI_USER_OCID=${OCI_USER_OCID}
-      # - OCI_TENANCY_OCID=${OCI_TENANCY_OCID}
-      # - OCI_FINGERPRINT=${OCI_FINGERPRINT}
-      # - OCI_PRIVATE_KEY_PATH=/run/secrets/oci_api_key.pem
     restart: unless-stopped
     networks:
       - energiai-network

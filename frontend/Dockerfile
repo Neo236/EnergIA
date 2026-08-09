@@ -49,5 +49,10 @@ COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 8080
 
 # La imagen de Alpine no trae curl; busybox wget sí.
+#
+# 127.0.0.1 y no `localhost`: dentro del contenedor, localhost resuelve
+# primero a ::1 y nginx solo escucha en IPv4 (0.0.0.0:8080), así que el
+# chequeo fallaba con "Connection refused" aunque el sitio respondiera
+# perfecto. El contenedor quedaba marcado unhealthy sin estarlo.
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -q --spider http://localhost:8080/ || exit 1
+  CMD wget -q --spider http://127.0.0.1:8080/ || exit 1

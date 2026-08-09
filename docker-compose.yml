@@ -1,19 +1,5 @@
 services:
   # -------------------------------------------------------------
-  # Frontend - Nginx (Sitio Estático / React-Vite)
-  # -------------------------------------------------------------
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: energiai-frontend:${FRONTEND_TAG:-latest}
-    ports:
-      - "127.0.0.1:${FRONTEND_PORT:-3000}:80"
-    restart: unless-stopped
-    networks:
-      - energiai-network
-
-  # -------------------------------------------------------------
   # Backend Principal - Spring Boot (Java 17)
   # -------------------------------------------------------------
   backend:

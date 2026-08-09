@@ -133,7 +133,6 @@ jobs:
         env:
           ML_TAG: ${{ steps.env.outputs.tag }}
           ML_PORT: ${{ steps.env.outputs.puerto }}
-        run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps ml-service
         run: |
           set -euo pipefail
           # export explícito: blindar contra cualquier ML_TAG residual del runner
@@ -141,7 +140,7 @@ jobs:
           export ML_PORT="$ML_PORT"
           echo "Levantando ml-service con imagen energiai-ml-service:${ML_TAG}"
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build ml-service
+            -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps ml-service
 
       - name: Verificar salud
         id: salud

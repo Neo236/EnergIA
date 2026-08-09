@@ -165,7 +165,7 @@ jobs:
         env:
           FRONTEND_TAG: ${{ steps.env.outputs.tag }}
           FRONTEND_PORT: ${{ steps.env.outputs.puerto }}
-        run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
+        run: docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps frontend
 
       - name: Verificar salud
         id: salud
@@ -191,7 +191,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "::warning::Deploy fallido. Restaurando la versión ${{ steps.previa.outputs.tag }}"
-          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build frontend
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps frontend
           echo "Ambiente restaurado."
 
       - name: Marcar el job como fallido si hubo rollback

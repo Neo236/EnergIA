@@ -13,7 +13,7 @@ services:
       - PORT=8080
       - SPRING_PROFILES_ACTIVE=prod
       - ML_SERVICE_URL=http://ml-service:8000
-      - OCI_NAMESPACE=${OCI_NAMESPACE}
+      - OCI_NAMESPACE=${OCI_NAMESPACE:-}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-santiago-chile-1}
     depends_on:

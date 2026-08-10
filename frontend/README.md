@@ -1,76 +1,110 @@
-# EnergiAI · Front-End mínimo (P-01 / P-02)
+# EnergiAI · Front-End
 
-Mockup navegable de las dos pantallas comprometidas, con **respuestas simuladas en el cliente**.
-Sirve para validar el formulario y los estados antes de conectar la API real.
+Aplicación de las dos pantallas comprometidas: **P-01** (ingreso de datos) y
+**P-02** (resultado del análisis), más una pantalla de no encontrado.
 
-- Sin build, sin dependencias, sin `node_modules`: HTML + CSS + JS.
-- Estructura y proporciones tomadas del wireframe v2.2 en Figma.
-- La paleta es **temporal**: vive completa en `css/tokens.css`.
+**Vite + React 19 + TypeScript.** Compila a estáticos: la imagen de producción
+no lleva Node, solo nginx y los archivos.
 
-## Correr en local
-
-Abrí `index.html` en el navegador. No necesita servidor.
-
-Si preferís servirlo:
+## Arrancar
 
 ```bash
-npx serve .
+npm install
+npm run dev
 ```
+
+Queda en `http://localhost:5173`. Por defecto responde el **mock**, así que
+funciona sin back-end.
+
+### Contra la API real
+
+El front habla con la API en el **mismo origen** (`/api/v1/…`), así que no hay
+URL base ni CORS. En desarrollo, el proxy del dev server hace lo mismo que
+Caddy en la VM.
+
+```bash
+# contra un back-end local en :8080
+VITE_API_MODO=real npm run dev
+
+# contra el back-end de la VM, con un túnel abierto en otra terminal:
+#   ssh -N -L 8082:127.0.0.1:8082 energiai
+VITE_API_MODO=real VITE_API_DESTINO=http://127.0.0.1:8082 npm run dev
+```
+
+Ver [`.env.example`](.env.example).
 
 ## Estructura
 
-| Archivo | Qué contiene |
+```
+src/
+├── main.tsx · App.tsx        arranque y rutas
+├── layout/                   Navbar · Footer · Layout (comunes a todas las rutas)
+├── pages/                    Analizar (P-01) · Resultado (P-02) · NoEncontrado
+├── components/               controles del formulario, desplegable, aviso
+├── lib/
+│   ├── contrato.ts           ← FUENTE ÚNICA del contrato V1.2
+│   ├── api.ts                transporte: real o mock
+│   ├── mock.ts               respuesta simulada
+│   └── formato.ts            moneda, porcentaje, fecha
+└── styles/                   tokens.css (paleta) · app.css
+```
+
+`prototipo-estatico/` guarda la versión anterior en HTML puro. No se construye
+ni se despliega.
+
+## Rutas
+
+| Ruta | Pantalla |
 |---|---|
-| `index.html` | Marcado de P-01 y P-02 |
-| `css/tokens.css` | Neutrales del wireframe + **paleta temporal** |
-| `css/app.css` | Estilos de componentes y layout responsive |
-| `js/schema.js` | **Fuente única del contrato V1.2**: 11 campos, rangos, enums y defaults |
-| `js/api.js` | Transporte. Hoy mock; `MODO = 'real'` lo apunta a la API |
-| `js/app.js` | Estado, render y los ocho estados de pantalla |
+| `/` | P-01 · ingreso de datos |
+| `/resultado` | P-02 · resultado. Sin datos redirige a `/` |
+| `/analisis/:id` | Siempre no encontrado — ver abajo |
+| cualquier otra | No encontrado |
+
+`/analisis/:id` existe a propósito aunque hoy siempre falle: **la API no
+devuelve identificador y no hay persistencia**, así que ningún análisis se
+puede recuperar por enlace. La ruta documenta el hueco en vez de esconderlo.
+El día que la respuesta traiga un id, solo falta implementar la búsqueda.
 
 ## Contrato V1.2
 
-`POST /api/v1/analisis-energetico`
+`POST /api/v1/analisis-energetico` — espejo de `DatosRegistroConsumo` del
+back-end. El front habla con la API de Java, no con el servicio de ML.
 
-**Obligatorios (4):** `consumo_kwh` (1–1000) · `tipo_inmueble` (Casa · Departamento · Comercio · Pyme) ·
-`cantidad_equipos` (1–100) · `horas_alto_consumo` (0–24)
+**Obligatorios (4):** `consumo_kwh` (1–1000) · `tipo_inmueble` · `cantidad_equipos`
+(1–100) · `horas_alto_consumo` (0–24)
 
-**Opcionales (7), con el valor por defecto que se aplica si no se envían:**
+**Opcionales (7)**, con el valor por defecto que aplica el back si no se envían:
+`metros_cuadrados` (1000) · `antiguedad_vivienda` (50) · `zona_fria` (false) ·
+`calidad_aislamiento` (Media) · `fuente_calefaccion` (Electricidad) ·
+`fuente_agua_caliente` (Electricidad) · `uso_horario_pico` (false)
 
-| Campo | Default | Rango / valores |
-|---|---|---|
-| `metros_cuadrados` | `1000` | 26–2000 |
-| `antiguedad_vivienda` | `50` | 0–150 |
-| `zona_fria` | `false` | booleano |
-| `calidad_aislamiento` | `Media` | Muy Alta · Alta · Media · Baja · Muy Baja |
-| `fuente_calefaccion` | `Electricidad` | Solar · Electricidad · Otros |
-| `fuente_agua_caliente` | `Electricidad` | Solar · Electricidad · Otros |
-| `uso_horario_pico` | `false` | booleano |
-
-El formulario arma el **payload mínimo**: manda los 4 obligatorios y solo los opcionales que el
-usuario tocó. Cada campo opcional muestra su valor por defecto en el control.
+El formulario arma el **payload mínimo**: manda los obligatorios y solo los
+opcionales que el usuario tocó. Cada opcional muestra su valor por defecto en
+el propio control.
 
 ## Estados cubiertos
 
-Los ocho del wireframe: inicial · opcionales desplegados · enviando · validación 400 con
-`detalles[campo · mensaje]` · error 500 · servicio no disponible 503 · resultado · resultado sin
-recomendaciones.
+Inicial · opcionales desplegados · enviando · validación 400 con
+`detalles[campo, mensaje]` · error del servidor · servicio no disponible ·
+resultado · resultado sin recomendaciones · no encontrado.
 
-La **barra de demo** de abajo fuerza la próxima respuesta (200, 200 sin recomendaciones, 500, 503).
-Los errores 400 salen solos de la validación real. **Esa barra se elimina al conectar la API.**
+La **barra de demostración** fuerza la próxima respuesta cuando el modo es
+`mock`; con la API real se oculta, porque las respuestas las decide el
+servidor.
 
-## Pasar a la API real
+## Estado de la integración
 
-1. En `js/api.js`, `MODO = 'real'`.
-2. Borrar la barra de demo de `index.html` y su bloque en `app.js`.
+La llamada real funciona: el back-end **acepta el payload mínimo de 4 campos**.
+Lo que hoy falla está aguas abajo — entre el back-end y el servicio de ML — y
+llega al front como un error que la interfaz muestra correctamente. Cuando esa
+integración se resuelva, empieza a llegar el 200 sin cambios acá.
 
-El mock ya devuelve las formas exactas del contrato —incluido `DatosErrorRespuesta` con
-`detalles[]`— así que no hay que tocar `app.js` para el camino feliz.
+## Comandos
 
-## Pendientes conocidos
-
-- El DTO de Spring (`DatosRegistroConsumo`) todavía marca los 11 campos con `@NotNull`, y
-  `schemas.py` del servicio ML exige 9 de 11 y espera `consumo_electrico_kwh` en lugar de
-  `consumo_kwh`. Con eso vigente, el payload mínimo devuelve 400/422.
-- El modelo simulado de `api.js` replica el puntaje con el que data-science etiqueta el dataset,
-  no el RandomForest entrenado.
+| | |
+|---|---|
+| `npm run dev` | Servidor de desarrollo con proxy a la API |
+| `npm run build` | Verifica tipos y compila a `dist/` |
+| `npm run typecheck` | Solo verificación de tipos |
+| `npm run preview` | Sirve `dist/` para revisar el build |

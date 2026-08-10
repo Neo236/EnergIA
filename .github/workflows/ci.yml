@@ -103,6 +103,72 @@ jobs:
           docker stop ml-test
           docker rm ml-test
 
+  frontend-ci:
+    name: Build & Smoke Test Front-End
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # Falla ante un error de tipos antes de gastar tiempo en el build de
+      # la imagen. Es la red que protege el contrato: si contrato.ts deja de
+      # coincidir con cómo lo usan las páginas, se rompe acá.
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Build Docker image
+        run: docker build -t energiai-frontend:test ./frontend
+
+      # El build de la imagen solo comprueba que COMPILA. Este paso comprueba
+      # que además FUNCIONA servida: un typo en nginx.conf o un fallback de
+      # router mal configurado pasan el build y explotarían en el despliegue.
+      - name: Smoke test container
+        run: |
+          set -euo pipefail
+          docker run -d --name front-test -p 8099:8080 energiai-frontend:test
+          trap 'docker rm -f front-test >/dev/null 2>&1 || true' EXIT
+
+          LISTO=0
+          for i in 1 2 3 4 5; do
+            if curl -fsS http://localhost:8099/ -o /dev/null; then
+              echo "El contenedor responde (intento $i)."
+              LISTO=1
+              break
+            fi
+            echo "Esperando... intento $i"
+            sleep 2
+          done
+          if [ "$LISTO" -ne 1 ]; then
+            echo "El contenedor no respondió."
+            docker logs front-test
+            exit 1
+          fi
+
+          echo "Verificando que el HTML referencie el bundle compilado:"
+          curl -fsS http://localhost:8099/ | grep -q '/assets/index-.*\.js' \
+            && echo "  OK bundle referenciado"
+
+          echo "Verificando el fallback del router en rutas del cliente:"
+          for RUTA in /resultado /analisis/123 /una-ruta-inexistente; do
+            CODIGO=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8099$RUTA")
+            [ "$CODIGO" = "200" ] || { echo "  FALLO $RUTA devolvió $CODIGO"; exit 1; }
+            echo "  OK $RUTA"
+          done
+
   docker-ci:
     name: Build Docker Images
     runs-on: ubuntu-latest

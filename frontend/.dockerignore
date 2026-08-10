@@ -1,0 +1,24 @@
+# Todo lo que no necesita viajar al daemon de Docker en cada build.
+# node_modules son cientos de MB: enviarlos en cada build sobre una VM de
+# 2 OCPUs es la diferencia entre un deploy de un minuto y uno de varios.
+
+node_modules/
+dist/
+.vite/
+
+# El prototipo estático queda archivado en el repo como referencia, pero no
+# forma parte de la aplicación ni de la imagen.
+prototipo-estatico/
+
+# Documentación y archivos de construcción: el Dockerfile copia
+# explícitamente lo que necesita.
+README.md
+Dockerfile
+.dockerignore
+
+# Nunca deben terminar en una imagen.
+.env
+.env.*
+!.env.example
+*.log
+*.tmp

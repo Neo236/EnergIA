@@ -135,16 +135,16 @@ Content-Type: application/json
 | Campo | Tipo | Obligatorio | Restricciones |
 |-------|------|:-----------:|---------------|
 | `consumo_kwh` | `Double` | ✅ | Debe ser **1 ≤ valor ≤ 1000** |
-| `uso_horario_pico` | `Boolean` | ✅ | `true` o `false` |
+| `uso_horario_pico` | `Boolean` | Opcional | `true` o `false` |
 | `cantidad_equipos` | `Integer` | ✅ | Debe ser **1 ≤ valor ≤ 100** |
 | `tipo_inmueble` | `String (Enum)` | ✅ | Solo valores: `Casa`, `Departamento`, `Comercio`, `Pyme` |
 | `horas_alto_consumo` | `Integer` | ✅ | Rango: **0 ≤ valor ≤ 24** |
-| `metros_cuadrados` | `Integer` | Por definir | Rango: **26 ≤ valor ≤ 2000** |
-| `antiguedad_vivienda` | `Integer` | Por definir | Rango: **0 ≤ valor ≤ 150** |
-| `zona_fria` | `Boolean` | Por definir | `true o false` |
-| `calidad_aislamiento` | `String (Enum)` | Por definir | `Muy Alta`, `Alta`, `Media`, `Baja`, `Muy Baja` |
-| `fuente_calefaccion` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
-| `fuente_agua_caliente` | `String (Enum)` | Por definir | Solo valores: `Solar`, `Electricidad`, `Otros` |
+| `metros_cuadrados` | `Integer` | Opcional | Rango: **26 ≤ valor ≤ 2000** |
+| `antiguedad_vivienda` | `Integer` | Opcional | Rango: **0 ≤ valor ≤ 150** |
+| `zona_fria` | `Boolean` | Opcional | `true o false` |
+| `calidad_aislamiento` | `String (Enum)` | Opcional | `Muy Alta`, `Alta`, `Media`, `Baja`, `Muy Baja` |
+| `fuente_calefaccion` | `String (Enum)` | Opcional | Solo valores: `Solar`, `Electricidad`, `Otros` |
+| `fuente_agua_caliente` | `String (Enum)` | Opcional | Solo valores: `Solar`, `Electricidad`, `Otros` |
 ---
 
 > Nota: la obligatoriedad definitiva de los campos incorporados en la versión 1.2 se encuentra pendiente de definición funcional. Actualmente, el DTO de Spring Boot utiliza @NotNull en los 11 campos, por lo que la implementación vigente exige su envío. El código deberá ajustarse cuando se congele el contrato definitivo.
@@ -290,25 +290,71 @@ python -m uvicorn interfaces.api.app:app --reload --port 8000
 | Servicio OCI | Uso en el Proyecto | Estado |
 |-------------|-------------------|--------|
 | **OCI Compute** | VM ARM64 con los dos ambientes (producción y staging) detrás de proxy con HTTPS. | infraestructura preparada; despliegue integral pendiente. |
-| **OCI Object Storage** | Almacenamiento del modelo serializado (`.joblib`) y datasets de entrenamiento. | integración implementada; validación productiva pendiente. |
+| **OCI Object Storage** | Almacenamiento del modelo serializado (`.joblib`) y datasets de entrenamiento. | integración implementada y validada via PAR. |
 
 Detalle completo de la infraestructura (red, VM, dominios, seguridad, runbook): [`docs/oci-cloud/`](docs/oci-cloud/README.md).
 
-### Configuración del Object Storage
+### Modos de acceso al Object Storage
 
-> ✅ **Bucket y región confirmados (Sprint 2)** — ver evidencia completa en [`docs/oci-cloud/README.md`](./docs/oci-cloud/README.md).
-> Namespace y archivo de autenticación se configuran por entorno al momento del despliegue (a cargo de Lautaro/Sergio) y no se publican en este ejemplo.
+El microservicio ML soporta tres backends de storage, seleccionables con la variable `STORAGE_BACKEND`:
 
-```yaml
-# application.yml (Spring Boot) - Ejemplo
-oci:
-  object-storage:
-    namespace: [POR CONFIGURAR]
-    bucket-name: g9-energy-test-bucket
-    region: sa-santiago-1 # Chile Central (Santiago)
-  auth:
-    config-file: [POR CONFIGURAR]
+| `STORAGE_BACKEND` | Descripción | Variables requeridas |
+|:-----------------:|-------------|---------------------|
+| `local` *(default)* | Filesystem local. Para dev, CI y tests. No necesita credenciales. | — |
+| `par` ⭐ **Recomendado en producción** | Acceso via **Pre-Authenticated Request URL** de OCI. Sin SDK, sin credenciales, solo HTTP. | `OCI_PAR_URL` |
+| `oci` | SDK oficial de OCI con auth por Instance Principal, config file o API key. | `OCI_NAMESPACE`, `OCI_BUCKET`, `OCI_REGION` + auth |
+
+### Configurar acceso PAR en la VM (producción)
+
+Crear o completar el archivo `.env` en el directorio de trabajo del runner:
+
+```bash
+# .env en la VM de OCI (directorio del runner de GitHub Actions)
+STORAGE_BACKEND=par
+OCI_PAR_URL=https://objectstorage.sa-santiago-1.oraclecloud.com/p/<token>/b/g9-energy-test-bucket/o
 ```
+
+> ⚠️ `OCI_PAR_URL` contiene el token de autenticación embebido. Tratarla como secreto — no commitear en el repositorio.
+
+> 📁 El servicio busca el modelo en `latest/modelo_eficiencia_v1.joblib` dentro del bucket. Verificar que ese path sea accesible con el PAR antes de hacer deploy.
+
+---
+
+## 🔄 CI / CD
+
+El proyecto tiene **4 workflows** en `.github/workflows/`:
+
+| Workflow | Trigger | Runner | Descripción |
+|----------|---------|--------|-------------|
+| `ci.yml` | Push / PR a `main`, `develop` | `ubuntu-latest` (GitHub hosted) | Build + tests de los 3 componentes. Valida que el código compile y los tests pasen antes de mergear. |
+| `cd-backend.yml` | Push a `main`/`develop` en `backend/**` | `self-hosted, oci` | Construye la imagen Docker del backend, la despliega en la VM y verifica `/actuator/health`. Rollback automático si falla. |
+| `cd-ml.yml` | Push a `main`/`develop` en `data-science/**` | `self-hosted, oci` | Construye la imagen Docker del ML service, la despliega y verifica `/health`. Rollback automático si falla. |
+| `cd-frontend.yml` | Push a `main`/`develop` en `frontend/**` | `self-hosted, oci` | Construye y despliega el frontend (nginx). Rollback automático si falla. |
+
+### Ambientes
+
+| Ambiente | Rama | Proyecto Compose | Puertos |
+|----------|------|-----------------|--------|
+| **Staging** | `develop` | `energiai-staging` | Backend: 8081 · ML: 8002 · Frontend: 3001 |
+| **Producción** | `main` | `energiai-prod` | Backend: 8080 · ML: 8000 · Frontend: 3000 |
+
+### Rollback manual
+
+Cada CD registra el SHA de la versión anterior. Para revertir:
+1. Ir a **Actions** → workflow correspondiente → **Run workflow**.
+2. Seleccionar el ambiente y pegar el SHA de la versión anterior en el campo `tag`.
+
+### Requisitos del runner self-hosted
+
+El runner en la VM debe tener un archivo `.env` en su directorio de trabajo con:
+
+```bash
+STORAGE_BACKEND=par                   # o 'oci' si se usa el SDK
+OCI_PAR_URL=https://objectstorage...  # solo si STORAGE_BACKEND=par
+# OCI_NAMESPACE=...                   # solo si STORAGE_BACKEND=oci
+```
+
+Los CDs validan la presencia del `.env` y de las variables requeridas según el backend configurado **antes** de hacer `docker compose up`, fallando con un mensaje claro si faltan.
 
 ---
 

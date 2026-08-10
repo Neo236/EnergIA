@@ -1,0 +1,56 @@
+/* ============================================================
+   EnergiAI · tokens
+   Neutrales: tomados 1:1 del wireframe v2.2 en Figma.
+   Paleta:    TEMPORAL. Cuando llegue la identidad definitiva
+              se cambia solo este archivo.
+   ============================================================ */
+
+:root {
+  /* — neutrales del wireframe — */
+  --ink:            #141414;  /* texto principal, botón primario  */
+  --mid:            #595959;  /* texto secundario, bordes fuertes */
+  --soft:           #6f6f6f;  /* ayudas, placeholders · 5,02:1 sobre blanco (WCAG AA) */
+  --line:           #ccccc7;  /* bordes suaves                    */
+  --surface:        #ffffff;
+  --surface-soft:   #fafaf9;  /* panel de opcionales              */
+  --surface-sel:    #f4f2f0;  /* tarjeta seleccionada             */
+
+  /* — paleta temporal — */
+  --accent:         #12715a;
+  --accent-hover:   #0c5644;
+  --accent-soft:    #e7f2ee;
+  --on-accent:      #ffffff;
+
+  --eficiente:      #1b7f4b;
+  --moderado:       #a16207;
+  --ineficiente:    #b42318;
+
+  --danger:         #b42318;
+  --danger-soft:    #fef4f2;
+
+  /* — forma — */
+  --r:              2px;
+  --r-pill:         999px;
+
+  /* — tipografía — */
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --fs-h1:          22px;
+  --fs-lead:        14px;
+  --fs-label:       13px;
+  --fs-input:       15px;
+  --fs-help:        11.5px;
+  --fs-eyebrow:     10.5px;
+
+  /* — ritmo — */
+  --col:            640px;   /* ancho de columna en escritorio */
+  --gap-section:    18px;
+  --gap-field:      14px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --fs-h1:        24px;
+    --gap-section:  22px;
+    --gap-field:    16px;
+  }
+}

@@ -11,6 +11,7 @@ def get_storage():
 
     STORAGE_BACKEND=local (default) → filesystem
     STORAGE_BACKEND=oci            → OCI Object Storage (requiere vars OCI_*)
+    STORAGE_BACKEND=par            → PARStorage
 
     Variables adicionales:
       STORAGE_LOCAL_ROOT (default '.')  — directorio raíz para LocalStorage
@@ -29,6 +30,12 @@ def get_storage():
         log.info("Storage backend: OCI Object Storage")
         return OciBucketStorage()
 
+    if backend == "par":
+        from infrastructure.storage.par import PARStorage
+
+        log.info("Storage backend: PARStorage")
+        return PARStorage()
+
     raise ValueError(
-        f"STORAGE_BACKEND desconocido: {backend!r}. Usa 'local' u 'oci'."
+        f"STORAGE_BACKEND desconocido: {backend!r}. Usa 'local', 'oci' o 'par'."
     )

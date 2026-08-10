@@ -284,13 +284,21 @@ class AnalisisEnergeticoControllerTest {
     @Test
     @DisplayName("GET /api/v1/analisis-energetico/{id}: Devuelve el analisis cuando existe")
     void testObtenerAnalisisExistenteRetorna200() throws Exception {
-        AnalisisEnergeticoEntity entidad = new AnalisisEnergeticoEntity(
-                LocalDateTime.of(2026, 8, 10, 11, 45),
-                450.5, 8, TipoInmueble.CASA, true, 6, 30, 34, false,
-                null, null, null,
-                CategoriaConsumo.EFICIENTE, 0.25, BigDecimal.valueOf(337.87),
-                List.of("Mantener los hábitos actuales de ahorro.")
-        );
+        AnalisisEnergeticoEntity entidad = AnalisisEnergeticoEntity.builder()
+                .fecha(LocalDateTime.of(2026, 8, 10, 11, 45))
+                .consumoKwh(450.5)
+                .cantidadEquipos(8)
+                .tipoInmueble(TipoInmueble.CASA)
+                .usoHorarioPico(true)
+                .horasAltoConsumo(6)
+                .metrosCuadrados(30)
+                .antiguedadVivienda(34)
+                .zonaFria(false)
+                .categoria(CategoriaConsumo.EFICIENTE)
+                .probabilidad(0.25)
+                .costoEstimadoMensual(BigDecimal.valueOf(337.87))
+                .recomendaciones(List.of("Mantener los hábitos actuales de ahorro."))
+                .build();
         ReflectionTestUtils.setField(entidad, "id", 1L);
 
         when(repository.findById(1L)).thenReturn(Optional.of(entidad));

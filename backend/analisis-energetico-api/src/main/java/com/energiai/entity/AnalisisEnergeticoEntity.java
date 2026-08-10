@@ -23,12 +23,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 // Persiste tanto los datos de entrada como el resultado de cada analisis.
 // Los enums se guardan como texto (EnumType.STRING) para que la tabla no
 // dependa del orden de declaracion en el codigo.
+//
+// El constructor es privado y solo se llega a el via el builder (Lombok):
+// con 15 campos, varios del mismo tipo (Boolean, Integer), un constructor
+// posicional es un riesgo real de mezclar valores en el orden equivocado
+// sin que el compilador lo note.
 @Entity
 @Table(name = "analisis_energetico")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // Requerido por JPA.
 public class AnalisisEnergeticoEntity {
 
     @Id
@@ -90,13 +101,10 @@ public class AnalisisEnergeticoEntity {
     @CollectionTable(name = "analisis_energetico_recomendaciones", joinColumns = @JoinColumn(name = "analisis_id"))
     @OrderColumn(name = "orden")
     @Column(name = "recomendacion", nullable = false, length = 255)
-    private List<String> recomendaciones = new ArrayList<>();
+    private List<String> recomendaciones;
 
-    protected AnalisisEnergeticoEntity() {
-        // Requerido por JPA.
-    }
-
-    public AnalisisEnergeticoEntity(LocalDateTime fecha, Double consumoKwh, Integer cantidadEquipos,
+    @Builder
+    private AnalisisEnergeticoEntity(LocalDateTime fecha, Double consumoKwh, Integer cantidadEquipos,
             TipoInmueble tipoInmueble, Boolean usoHorarioPico, Integer horasAltoConsumo, Integer metrosCuadrados,
             Integer antiguedadVivienda, Boolean zonaFria, CalidadAislamiento calidadAislamiento,
             FuenteEnergia fuenteCalefaccion, FuenteEnergia fuenteAguaCaliente, CategoriaConsumo categoria,
@@ -117,73 +125,5 @@ public class AnalisisEnergeticoEntity {
         this.probabilidad = probabilidad;
         this.costoEstimadoMensual = costoEstimadoMensual;
         this.recomendaciones = recomendaciones == null ? new ArrayList<>() : new ArrayList<>(recomendaciones);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public Double getConsumoKwh() {
-        return consumoKwh;
-    }
-
-    public Integer getCantidadEquipos() {
-        return cantidadEquipos;
-    }
-
-    public TipoInmueble getTipoInmueble() {
-        return tipoInmueble;
-    }
-
-    public Boolean getUsoHorarioPico() {
-        return usoHorarioPico;
-    }
-
-    public Integer getHorasAltoConsumo() {
-        return horasAltoConsumo;
-    }
-
-    public Integer getMetrosCuadrados() {
-        return metrosCuadrados;
-    }
-
-    public Integer getAntiguedadVivienda() {
-        return antiguedadVivienda;
-    }
-
-    public Boolean getZonaFria() {
-        return zonaFria;
-    }
-
-    public CalidadAislamiento getCalidadAislamiento() {
-        return calidadAislamiento;
-    }
-
-    public FuenteEnergia getFuenteCalefaccion() {
-        return fuenteCalefaccion;
-    }
-
-    public FuenteEnergia getFuenteAguaCaliente() {
-        return fuenteAguaCaliente;
-    }
-
-    public CategoriaConsumo getCategoria() {
-        return categoria;
-    }
-
-    public Double getProbabilidad() {
-        return probabilidad;
-    }
-
-    public BigDecimal getCostoEstimadoMensual() {
-        return costoEstimadoMensual;
-    }
-
-    public List<String> getRecomendaciones() {
-        return recomendaciones;
     }
 }

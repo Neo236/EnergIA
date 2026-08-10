@@ -8,6 +8,8 @@
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.7-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Machine Learning](https://img.shields.io/badge/Data_Science-ML-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-Vite-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![OCI](https://img.shields.io/badge/Oracle_Cloud-OCI-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
@@ -34,53 +36,78 @@ Millones de hogares y pequeñas empresas reciben mensualmente facturas de energ�
 
 ---
 
+## 📚 Documentación
+
+Este README es el punto de entrada. El detalle de cada área vive en [`docs/`](./docs/README.md):
+
+| Área | Qué encontrar ahí |
+|------|-------------------|
+| [📅 Avances Semanales](./docs/avances/README.md) | Seguimiento del progreso por sprint |
+| [🏛️ Arquitectura](./docs/architecture/README.md) | Diagramas del sistema, flujo de datos y decisiones de integración |
+| [☕ Back-End](./docs/backend/README.md) | Contrato de la API, Swagger y endpoints |
+| [🖥️ Front-End](./docs/frontend/README.md) | Arquitectura de la aplicación, decisiones de despliegue e informes por sprint |
+| [🐍 Data Science](./docs/data-science/README.md) | EDA, modelos y métricas |
+| [☁️ OCI Cloud](./docs/oci-cloud/README.md) | Red, VM, dominios, Object Storage y runbook |
+| [⚙️ Gobernanza & GitHub](./docs/github-config.md) | Protección de ramas, GitFlow y flujo de CI/CD |
+
+---
+
 ## 🛠️ Stack Tecnológico y Estrategia de Integración
 
-El proyecto se divide en dos áreas principales: Backend (Java) y Data Science (Python). 
+El proyecto se divide en tres áreas: Front-End (TypeScript), Back-End (Java) y Data Science (Python).
 
 | Capa | Tecnología | Rol |
 |------|-----------|-----|
+| **Front-End** | Vite / React 19 / TypeScript | Interfaz de ingreso de datos y presentación del resultado. Compila a estáticos, servidos por nginx. |
 | **Back-End** | Java 17+ / Spring Boot 4.0.7 | API REST principal, orquestación y validaciones. |
-| **Data Science** | Python 3.10+ / Pandas / Scikit-Learn | Análisis de datos (EDA), entrenamiento del modelo ML y generación de reglas. |
-| **Infraestructura** | Oracle Cloud (OCI) + Docker | Almacenamiento (Object Storage) y Despliegue (Compute). |
+| **Data Science** | Python 3.10+ / Pandas / Scikit-Learn | Análisis de datos (EDA), entrenamiento del modelo ML y servicio de inferencia (FastAPI). |
+| **Infraestructura** | Oracle Cloud (OCI) + Docker + Caddy | Almacenamiento (Object Storage), despliegue (Compute) y proxy inverso con HTTPS. |
 
-### Alternativas de Integración (Python ↔ Java)
-El equipo decidirá entre las siguientes opciones para integrar el modelo ML con la API:
-- **Alternativa A (Microservicios):** Desplegar el modelo Python como una API independiente usando **FastAPI** o **Flask** (comunicación vía HTTP interno).
-- **Alternativa B (Embebido):** Exportar el modelo entrenado a formato **ONNX** y ejecutarlo directamente dentro de la aplicación Spring Boot en Java.
+### Integración Python ↔ Java
+
+Se evaluaron dos alternativas:
+
+- **Alternativa A (Microservicios)** — el modelo Python expuesto como API independiente con **FastAPI**, invocada por el back-end vía HTTP dentro de la red interna de Docker.
+- **Alternativa B (Embebido)** — exportar el modelo a **ONNX** y ejecutarlo dentro de la aplicación Spring Boot.
+
+> ✅ **Implementada: la alternativa A.** El back-end llama al `ml-service` a través de [`MlClient`](./backend/analisis-energetico-api/src/main/java/com/energiai/client/MlClient.java), con la URL y los timeouts configurados en `application.properties` (`ml.service.url`, por defecto `http://localhost:8000`). La alternativa B queda registrada como opción descartada, no como decisión pendiente.
 
 ---
 
 ## 📐 Arquitectura de la Solución (MVP)
 
-```text
-[Cliente / App / Postman]
-       │
-       ▼ (POST /api/v1/analisis-energetico)
-       │
-┌───────────────────────────────────────────┐
-│        API Spring Boot (Backend)          │
-│  - Validaciones de entrada                │
-│  - Orquestación de la respuesta           │
-└──────────────────┬────────────────────────┘
-                   │
-                   ▼ (Consulta al Modelo ML)
-                   │
-┌───────────────────────────────────────────┐
-│          Módulo Machine Learning          │
-│  (Vía API FastAPI o Modelo ONNX Embebido) │
-│  - Clasificación de eficiencia            │
-│  - Generación de recomendaciones          │
-└──────────────────┬────────────────────────┘
-                   │
-                   ▼ (Lectura/Escritura)
-                   │
-┌───────────────────────────────────────────┐
-│       OCI (Oracle Cloud Infrastructure)   │
-│  - Object Storage (Datasets / Modelos)    │
-│  - OCI Compute (Despliegue Docker)        │
-└───────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    U(["Navegador · Postman"])
+
+    subgraph VM["OCI Compute · energiai-app-01 (ARM, Ubuntu 24.04)"]
+        CADDY["Caddy — proxy inverso<br/>único punto de entrada · HTTPS automático"]
+
+        subgraph AMB["Ambiente Docker (prod y staging son copias aisladas)"]
+            F["Front-End<br/>React compilado, servido por nginx"]
+            B["API Spring Boot<br/>validaciones · orquestación"]
+            ML["ml-service · FastAPI<br/>clasificación · recomendaciones"]
+        end
+    end
+
+    OS[("OCI Object Storage<br/>datasets y modelo entrenado")]
+
+    U -- "GET / — carga la app" --> CADDY
+    U -- "POST /api/v1/analisis-energetico" --> CADDY
+
+    CADDY -- "raíz del dominio" --> F
+    CADDY -- "/api/* · /swagger-ui/* · /v3/api-docs* · /actuator/*" --> B
+    B -- "HTTP en la red interna de Docker" --> ML
+    ML -- "descarga el modelo al arrancar" --> OS
 ```
+
+**Cómo leerlo:**
+
+- **Caddy es el único punto de entrada.** Rutea por path con el patrón *same-origin*: la raíz sirve el front-end y `/api/*` va al back-end. Como la interfaz y la API comparten dominio, **la aplicación no necesita CORS**.
+- **La llamada al ML nunca sale de la VM**: viaja contenedor a contenedor por la red interna de Docker, sin pasar por el proxy ni por internet.
+- **Producción y staging son copias completas del stack**, aisladas en proyectos de Compose distintos sobre la misma VM.
+
+> Detalle de la infraestructura (red, firewall, dominios, runbook) en [`docs/oci-cloud/`](./docs/oci-cloud/README.md); decisiones de arquitectura en [`docs/architecture/`](./docs/architecture/README.md).
 
 ---
 
@@ -153,9 +180,13 @@ Content-Type: application/json
 
 | Servicio | Puerto Local | Puerto Producción (OCI) |
 |----------|:------------:|:-----------------------:|
+| Proxy inverso (Caddy) | — | `80` / `443` — los únicos puertos abiertos al exterior |
 | API Spring Boot | `8080` | `443` (HTTPS) vía proxy inverso |
-| Frontend (en desarrollo) | `3000` | raíz del dominio vía proxy (same-origin) |
+| Front-End (nginx, contenedor) | `3000` | raíz del dominio vía proxy (same-origin) |
+| Front-End (`npm run dev`, sin Docker) | `5173` | — solo desarrollo local |
 | Microservicio ML / FastAPI | `8000` | interno (solo red Docker) |
+
+> Los puertos de los contenedores se publican en `127.0.0.1`, no en `0.0.0.0`: desde afuera de la VM **solo** se llega a través del proxy. Staging corre en paralelo con los suyos (ver [CI/CD](#-ci--cd)).
 
 ---
 
@@ -176,21 +207,31 @@ Una vez levantado el back-end, la documentación estará accesible en:
 
 ## 🌿 Estrategia de Ramas (Git Workflow)
 
-```text
-main          ◀── Producción / Evaluación Hackathon (protegida)
-  │
-  └── develop ◀── Rama base de integración (merges vía PR)
-        │
-        ├── feature/setup-spring-boot-base
-        ├── feature/energy-controller-endpoint
-        ├── feature/dto-validation
-        ├── feature/python-eda-notebook
-        ├── feature/ml-model-training
-        ├── feature/fastapi-inference-service
-        ├── feature/docker-compose-integration
-        ├── feature/docs
-        └── feature/oci-object-storage-config
+```mermaid
+gitGraph
+    commit id: "base del repo"
+    branch develop
+    checkout develop
+    commit id: "integración"
+    branch feature/mi-cambio
+    checkout feature/mi-cambio
+    commit id: "trabajo aislado"
+    commit id: "review del equipo"
+    checkout develop
+    merge feature/mi-cambio tag: "PR → staging"
+    checkout main
+    merge develop tag: "PR → producción"
 ```
+
+El diagrama muestra el **flujo esperado**, no las ramas que existen hoy: `feature/mi-cambio` es un ejemplo. Cada rama tiene un destino de despliegue — **un merge no es solo un merge, es un deploy**.
+
+| Rama | Rol | Al mergear se despliega en |
+|------|-----|---------------------------|
+| `feature/*` · `fix/*` · `chore/*` | Trabajo aislado de una persona o tema | — (solo corre el CI) |
+| `develop` | Integración del equipo | **Staging** — `energiai-staging.unixsoluciones.com` |
+| `main` | Producción / evaluación del Hackathon (protegida) | **Producción** — `energiai.unixsoluciones.com` |
+
+**Convención de nombres:** `<tipo>/<tema-en-kebab-case>` — `feature/` para funcionalidad nueva, `fix/` para correcciones, `chore/` para mantenimiento. El tema describe el cambio, no a la persona: `feature/dto-validation`, no `feature/juan-2`.
 
 > [!IMPORTANT]
 > 1. **Nunca hacer push directo a `main`** — Solo mediante Pull Request desde `develop`.

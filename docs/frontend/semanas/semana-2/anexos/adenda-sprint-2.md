@@ -6,10 +6,12 @@ Esta adenda actualiza la Etapa 3 tras la re-auditoría del PM (28/07) y el merge
 
 **Versión:** 1.1-sprint2 · **Fecha:** 30 de julio de 2026 · **Revisión:** 31/07 — incorpora los PRs [#18](https://github.com/No-Country-simulation/G9-LATAM-TEAM-09/pull/18) a [#21](https://github.com/No-Country-simulation/G9-LATAM-TEAM-09/pull/21), posteriores a la Sprint Demo
 
-**Wireframe v2 (Figma):** https://www.figma.com/design/CQNvYzt1HSeKODlx63hQPc
+**Wireframe v2 (Figma) — copia congelada del Sprint 2:** https://www.figma.com/design/D6MoRPJIYxUlPG2GFS0iPR
 **Flujo Sprint 2 (FigJam):** https://www.figma.com/board/kkarAUOiHV2DnjOzAmnfoC
 **Wireframe v1 (referencia):** https://energiai-wireframe.vercel.app/
 **Documento madre — Etapas del diseño frontend:** [`../../semana-1/anexos/etapas-diseno-frontend.md`](../../semana-1/anexos/etapas-diseno-frontend.md)
+
+> ℹ️ El archivo de Figma original siguió evolucionando en los sprints siguientes, así que el enlace de arriba apunta a una **copia congelada** del estado del Sprint 2 — de modo que este documento siga describiendo lo que efectivamente se entregó. El archivo vivo está enlazado desde el [Informe Semana 3](../../semana-3/informe.md).
 
 ---
 

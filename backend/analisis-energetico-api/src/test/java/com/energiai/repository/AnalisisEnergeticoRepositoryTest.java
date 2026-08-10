@@ -30,24 +30,21 @@ class AnalisisEnergeticoRepositoryTest {
     private AnalisisEnergeticoRepository repository;
 
     private AnalisisEnergeticoEntity nuevoAnalisis() {
-        return new AnalisisEnergeticoEntity(
-                LocalDateTime.of(2026, 8, 10, 11, 45),
-                450.5,
-                8,
-                TipoInmueble.CASA,
-                true,
-                6,
-                30,
-                34,
-                false,
-                null,
-                null,
-                null,
-                CategoriaConsumo.EFICIENTE,
-                0.25,
-                BigDecimal.valueOf(337.87),
-                List.of("Mantener los hábitos actuales de ahorro.")
-        );
+        return AnalisisEnergeticoEntity.builder()
+                .fecha(LocalDateTime.of(2026, 8, 10, 11, 45))
+                .consumoKwh(450.5)
+                .cantidadEquipos(8)
+                .tipoInmueble(TipoInmueble.CASA)
+                .usoHorarioPico(true)
+                .horasAltoConsumo(6)
+                .metrosCuadrados(30)
+                .antiguedadVivienda(34)
+                .zonaFria(false)
+                .categoria(CategoriaConsumo.EFICIENTE)
+                .probabilidad(0.25)
+                .costoEstimadoMensual(BigDecimal.valueOf(337.87))
+                .recomendaciones(List.of("Mantener los hábitos actuales de ahorro."))
+                .build();
     }
 
     @Test

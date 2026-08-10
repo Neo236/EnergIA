@@ -5,13 +5,13 @@
 -- de redondeo con dinero; DOUBLE PRECISION para las mediciones/probabilidad
 -- (Double en la entidad, igual que ya se usa en el resto del contrato);
 -- TIMESTAMP para fechas; VARCHAR para los enums (guardados como texto, no
--- como ordinal); y el id generado por secuencia explicita (no
--- IDENTITY/auto-increment) porque es el mismo modelo que usa Oracle.
-
-CREATE SEQUENCE analisis_energetico_seq START WITH 1 INCREMENT BY 1;
+-- como ordinal); y UUID (v7, generado en la app - ver UuidV7Generator) para
+-- el id, en vez de un id secuencial: no es adivinable (hoy no hay
+-- autenticacion) y no depende de una secuencia central de la base, lo que
+-- ademas hace que migrar de motor no dependa de tener secuencias nativas.
 
 CREATE TABLE analisis_energetico (
-    id                      BIGINT PRIMARY KEY,
+    id                      UUID PRIMARY KEY,
     fecha                   TIMESTAMP NOT NULL,
 
     -- Datos de entrada (espejo de DatosRegistroConsumo)
@@ -34,7 +34,7 @@ CREATE TABLE analisis_energetico (
 );
 
 CREATE TABLE analisis_energetico_recomendaciones (
-    analisis_id     BIGINT NOT NULL REFERENCES analisis_energetico(id),
+    analisis_id     UUID NOT NULL REFERENCES analisis_energetico(id),
     orden           INTEGER NOT NULL,
     recomendacion   VARCHAR(255) NOT NULL,
     PRIMARY KEY (analisis_id, orden)

@@ -3,6 +3,7 @@ package com.energiai.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +48,7 @@ public class AnalisisEnergeticoService {
     // conexion a la DB ocupada mas tiempo del necesario) y open-in-view se
     // puede desactivar sin romper nada.
     @Transactional(readOnly = true)
-    public DatosRegistroAnalisis obtenerAnalisisPorId(Long id) {
+    public DatosRegistroAnalisis obtenerAnalisisPorId(UUID id) {
         AnalisisEnergeticoEntity entidad = repository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Analisis no encontrado con ID " + id));
         return paraDto(entidad);

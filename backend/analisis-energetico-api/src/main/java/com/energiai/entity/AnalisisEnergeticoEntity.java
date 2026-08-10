@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.energiai.dto.CalidadAislamiento;
 import com.energiai.dto.CategoriaConsumo;
@@ -17,16 +18,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 // Persiste tanto los datos de entrada como el resultado de cada analisis.
 // Los enums se guardan como texto (EnumType.STRING) para que la tabla no
@@ -42,10 +42,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // Requerido por JPA.
 public class AnalisisEnergeticoEntity {
 
+    // UUID v7, no un id secuencial: no es adivinable (hoy no hay
+    // autenticacion, asi que un id numerico dejaria cualquier analisis
+    // accesible con solo probar /1, /2, /3...) y se genera en la app sin
+    // depender de una secuencia central de la base. Ver UuidV7Generator.
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "analisis_energetico_seq")
-    @SequenceGenerator(name = "analisis_energetico_seq", sequenceName = "analisis_energetico_seq", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(generator = "uuid-v7")
+    @GenericGenerator(name = "uuid-v7", type = UuidV7Generator.class)
+    private UUID id;
 
     @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha;

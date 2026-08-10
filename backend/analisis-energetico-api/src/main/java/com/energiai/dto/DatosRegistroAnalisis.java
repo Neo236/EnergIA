@@ -2,6 +2,7 @@ package com.energiai.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -10,9 +11,9 @@ import lombok.Builder;
 public record DatosRegistroAnalisis( //response = salida
 
     @Schema(
-        description = "Identificador unico del analisis, asignado al persistirlo",
-        example = "1")
-    Long id,
+        description = "Identificador unico del analisis (UUID v7), asignado al persistirlo",
+        example = "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10")
+    UUID id,
 
     @Schema(
         description = "Fecha y hora en que se realizo el analisis",

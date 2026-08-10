@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,6 @@ class AnalisisEnergeticoRepositoryTest {
 
     @Test
     void devuelveVacioCuandoElIdNoExiste() {
-        assertTrue(repository.findById(999999L).isEmpty());
+        assertTrue(repository.findById(UUID.randomUUID()).isEmpty());
     }
 }

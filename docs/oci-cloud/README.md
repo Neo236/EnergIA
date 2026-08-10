@@ -11,7 +11,7 @@ El proyecto corre sobre **Oracle Cloud Infrastructure**: una VM Ampere (ARM64) a
 | Servicio OCI | Uso / Propósito | Estado |
 |--------------|------------------|--------|
 | **OCI Object Storage** | Almacenamiento del dataset de entrenamiento y modelo `.pkl` / `.onnx`. | 🟡 Bucket de prueba + acceso de equipo vía PAR (Sprint 2) — integración con la app pendiente |
-| **OCI Compute** | Instancia de Máquina Virtual para el despliegue Docker en producción. | ✅ Infraestructura productiva desde el 27/07 (VM, HTTPS, runner de CD) — primer deploy de la app pendiente |
+| **OCI Compute** | Instancia de Máquina Virtual para el despliegue Docker en producción. | ✅ Infraestructura productiva desde el 27/07 (VM, HTTPS, runner de CD) · aplicación desplegada en los dos ambientes desde el 09/08 |
 
 ---
 

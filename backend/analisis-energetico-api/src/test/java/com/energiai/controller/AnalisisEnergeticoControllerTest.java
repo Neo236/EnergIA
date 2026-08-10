@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +39,7 @@ class AnalisisEnergeticoControllerTest {
     private MockMvc mockMvc;
     private MlClient mlClient;
     private AnalisisEnergeticoRepository repository;
+    private UUID idGuardado;
 
     @BeforeEach
     void setUp() {
@@ -56,10 +58,11 @@ class AnalisisEnergeticoControllerTest {
 
         when(mlClient.predecir(any())).thenReturn(analisisMock);
 
+        idGuardado = UUID.randomUUID();
         // Simula lo que hace un save real: le asigna un id al objeto guardado.
         when(repository.save(any())).thenAnswer(invocation -> {
             AnalisisEnergeticoEntity entidad = invocation.getArgument(0);
-            ReflectionTestUtils.setField(entidad, "id", 1L);
+            ReflectionTestUtils.setField(entidad, "id", idGuardado);
             return entidad;
         });
 
@@ -156,7 +159,7 @@ class AnalisisEnergeticoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(idGuardado.toString()))
                 .andExpect(jsonPath("$.fecha").exists());
     }
 
@@ -310,6 +313,7 @@ class AnalisisEnergeticoControllerTest {
     @Test
     @DisplayName("GET /api/v1/analisis-energetico/{id}: Devuelve el analisis cuando existe")
     void testObtenerAnalisisExistenteRetorna200() throws Exception {
+        UUID id = UUID.randomUUID();
         AnalisisEnergeticoEntity entidad = AnalisisEnergeticoEntity.builder()
                 .fecha(LocalDateTime.of(2026, 8, 10, 11, 45))
                 .consumoKwh(450.5)
@@ -325,13 +329,13 @@ class AnalisisEnergeticoControllerTest {
                 .costoEstimadoMensual(BigDecimal.valueOf(337.87))
                 .recomendaciones(List.of("Mantener los hábitos actuales de ahorro."))
                 .build();
-        ReflectionTestUtils.setField(entidad, "id", 1L);
+        ReflectionTestUtils.setField(entidad, "id", id);
 
-        when(repository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(repository.findById(id)).thenReturn(Optional.of(entidad));
 
-        mockMvc.perform(get("/api/v1/analisis-energetico/1"))
+        mockMvc.perform(get("/api/v1/analisis-energetico/" + id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.categoria").value("Eficiente"))
                 .andExpect(jsonPath("$.recomendaciones[0]").value("Mantener los hábitos actuales de ahorro."));
     }
@@ -339,9 +343,10 @@ class AnalisisEnergeticoControllerTest {
     @Test
     @DisplayName("GET /api/v1/analisis-energetico/{id}: Retorna 404 cuando no existe")
     void testObtenerAnalisisInexistenteRetorna404() throws Exception {
-        when(repository.findById(eq(999L))).thenReturn(Optional.empty());
+        UUID idInexistente = UUID.randomUUID();
+        when(repository.findById(eq(idInexistente))).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/v1/analisis-energetico/999"))
+        mockMvc.perform(get("/api/v1/analisis-energetico/" + idInexistente))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }

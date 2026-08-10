@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,10 +70,11 @@ class AnalisisEnergeticoServiceIntegrationTest {
 
     @Test
     void obtenerAnalisisPorId_lanzaRecursoNoEncontradoCuandoNoExiste() {
-        assertTrue(repository.findById(999999L).isEmpty());
+        UUID idInexistente = UUID.randomUUID();
+        assertTrue(repository.findById(idInexistente).isEmpty());
 
         RecursoNoEncontradoException ex = assertThrows(RecursoNoEncontradoException.class,
-                () -> service.obtenerAnalisisPorId(999999L));
-        assertEquals("Analisis no encontrado con ID 999999", ex.getMessage());
+                () -> service.obtenerAnalisisPorId(idInexistente));
+        assertEquals("Analisis no encontrado con ID " + idInexistente, ex.getMessage());
     }
 }

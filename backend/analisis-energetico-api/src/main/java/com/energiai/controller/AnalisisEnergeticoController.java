@@ -1,5 +1,7 @@
 package com.energiai.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +50,7 @@ public class AnalisisEnergeticoController {
                     examples = @ExampleObject(
                         value = """
                         {
-                            "id": 1,
+                            "id": "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10",
                             "fecha": "2026-08-10T11:45:00",
                             "categoria": "Eficiente",
                             "probabilidad": 0.25,
@@ -185,7 +187,7 @@ public class AnalisisEnergeticoController {
                     examples = @ExampleObject(
                         value = """
                         {
-                            "id": 1,
+                            "id": "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10",
                             "fecha": "2026-08-10T11:45:00",
                             "categoria": "Eficiente",
                             "probabilidad": 0.25,
@@ -212,7 +214,7 @@ public class AnalisisEnergeticoController {
                           "timestamp": "2026-08-10T11:45:00",
                           "status": 404,
                           "error": "NOT_FOUND",
-                          "mensaje": "Analisis no encontrado con ID 999"
+                          "mensaje": "Analisis no encontrado con ID 018f4e2a-0000-7000-8000-000000000000"
                         }
                         """
                     )
@@ -239,7 +241,8 @@ public class AnalisisEnergeticoController {
         })
     @GetMapping("/{id}")
     public ResponseEntity<DatosRegistroAnalisis> obtenerAnalisis(
-            @Parameter(description = "Identificador del analisis", example = "1") @PathVariable Long id) {
+            @Parameter(description = "Identificador del analisis", example = "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10")
+            @PathVariable UUID id) {
         DatosRegistroAnalisis resultado = analisisService.obtenerAnalisisPorId(id);
         return ResponseEntity.ok(resultado);
     }

@@ -282,6 +282,32 @@ class AnalisisEnergeticoControllerTest {
     }
 
     @Test
+    @DisplayName("POST /api/v1/analisis-energetico: Retorna 502 cuando el ML responde 200 pero sin costo_estimado_mensual")
+    void testMlRespuestaIncompletaRetorna502() throws Exception {
+        DatosRegistroAnalisis analisisIncompleto = DatosRegistroAnalisis.builder()
+                .categoria(CategoriaConsumo.EFICIENTE)
+                .probabilidad(0.25)
+                .costo_estimado_mensual(null)
+                .recomendaciones(List.of("Buen consumo."))
+                .build();
+        when(mlClient.predecir(any())).thenReturn(analisisIncompleto);
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "consumo_kwh": 450.5,
+                      "cantidad_equipos": 8,
+                      "tipo_inmueble": "Casa",
+                      "horas_alto_consumo": 6
+                    }
+                    """))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.status").value(502))
+                .andExpect(jsonPath("$.error").value("BAD_GATEWAY"));
+    }
+
+    @Test
     @DisplayName("GET /api/v1/analisis-energetico/{id}: Devuelve el analisis cuando existe")
     void testObtenerAnalisisExistenteRetorna200() throws Exception {
         AnalisisEnergeticoEntity entidad = AnalisisEnergeticoEntity.builder()

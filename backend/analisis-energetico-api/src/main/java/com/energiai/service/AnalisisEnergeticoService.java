@@ -11,6 +11,7 @@ import com.energiai.client.MlClient;
 import com.energiai.dto.DatosRegistroAnalisis;
 import com.energiai.dto.DatosRegistroConsumo;
 import com.energiai.entity.AnalisisEnergeticoEntity;
+import com.energiai.exception.MlRespuestaInvalidaException;
 import com.energiai.exception.RecursoNoEncontradoException;
 import com.energiai.exception.ServicioMlNoDisponibleException;
 import com.energiai.repository.AnalisisEnergeticoRepository;
@@ -53,6 +54,17 @@ public class AnalisisEnergeticoService {
     }
 
     private AnalisisEnergeticoEntity paraEntidad(DatosRegistroConsumo datos, DatosRegistroAnalisis resultadoMl) {
+        // MlClient solo valida que la respuesta sea JSON deserializable, no que
+        // traiga los campos obligatorios completos. Un JSON valido pero con
+        // "costo_estimado_mensual": null pasaria sin error hasta aca y despues
+        // tiraria NullPointerException al desempaquetar el Double (o violaria
+        // el NOT NULL de la columna al guardar) - en ambos casos, un 500
+        // generico que parece un bug propio en vez de un problema del ML.
+        if (resultadoMl.categoria() == null || resultadoMl.probabilidad() == null
+                || resultadoMl.costo_estimado_mensual() == null) {
+            throw new MlRespuestaInvalidaException(
+                    "El servicio Machine Learning no devolvió los campos obligatorios del análisis");
+        }
         return AnalisisEnergeticoEntity.builder()
                 .fecha(LocalDateTime.now())
                 .consumoKwh(datos.consumo_kwh())

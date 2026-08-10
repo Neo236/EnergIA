@@ -217,6 +217,24 @@ public class AnalisisEnergeticoController {
                         """
                     )
                 )
+            ),
+            @ApiResponse(
+                responseCode = "500",
+                description = "Error interno del servidor.",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = DatosErrorRespuesta.class),
+                    examples = @ExampleObject(
+                        value = """
+                        {
+                          "timestamp": "2026-08-10T11:45:00",
+                          "status": 500,
+                          "error": "INTERNAL_SERVER_ERROR",
+                          "mensaje": "Ocurrio un error interno en el servidor. Por favor, intente mas tarde."
+                        }
+                        """
+                    )
+                )
             )
         })
     @GetMapping("/{id}")

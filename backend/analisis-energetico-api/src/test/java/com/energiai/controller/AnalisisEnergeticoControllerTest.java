@@ -1,16 +1,21 @@
 package com.energiai.controller;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,21 +24,26 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.energiai.client.MlClient;
 import com.energiai.dto.CategoriaConsumo;
 import com.energiai.dto.DatosRegistroAnalisis;
+import com.energiai.dto.TipoInmueble;
+import com.energiai.entity.AnalisisEnergeticoEntity;
 import com.energiai.exception.DatosEntradaInvalidosException;
 import com.energiai.exception.GlobalExceptionHandler;
 import com.energiai.exception.MlRespuestaInvalidaException;
 import com.energiai.exception.ServicioMlNoDisponibleException;
+import com.energiai.repository.AnalisisEnergeticoRepository;
 import com.energiai.service.AnalisisEnergeticoService;
 
 class AnalisisEnergeticoControllerTest {
 
     private MockMvc mockMvc;
     private MlClient mlClient;
+    private AnalisisEnergeticoRepository repository;
 
     @BeforeEach
     void setUp() {
         mlClient = mock(MlClient.class);
-        AnalisisEnergeticoService service = new AnalisisEnergeticoService(mlClient);
+        repository = mock(AnalisisEnergeticoRepository.class);
+        AnalisisEnergeticoService service = new AnalisisEnergeticoService(mlClient, repository);
         AnalisisEnergeticoController controller = new AnalisisEnergeticoController();
         ReflectionTestUtils.setField(controller, "analisisService", service);
 
@@ -45,6 +55,13 @@ class AnalisisEnergeticoControllerTest {
                 .build();
 
         when(mlClient.predecir(any())).thenReturn(analisisMock);
+
+        // Simula lo que hace un save real: le asigna un id al objeto guardado.
+        when(repository.save(any())).thenAnswer(invocation -> {
+            AnalisisEnergeticoEntity entidad = invocation.getArgument(0);
+            ReflectionTestUtils.setField(entidad, "id", 1L);
+            return entidad;
+        });
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
@@ -121,6 +138,26 @@ class AnalisisEnergeticoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/analisis-energetico: guarda el analisis y devuelve id y fecha")
+    void testAnalizarConsumoPersisteYDevuelveIdYFecha() throws Exception {
+        String json = """
+            {
+              "consumo_kwh": 450.5,
+              "cantidad_equipos": 8,
+              "tipo_inmueble": "Casa",
+              "horas_alto_consumo": 6
+            }
+            """;
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.fecha").exists());
     }
 
     @Test
@@ -242,5 +279,36 @@ class AnalisisEnergeticoControllerTest {
                 .andExpect(status().isBadGateway())
                 .andExpect(jsonPath("$.status").value(502))
                 .andExpect(jsonPath("$.error").value("BAD_GATEWAY"));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/analisis-energetico/{id}: Devuelve el analisis cuando existe")
+    void testObtenerAnalisisExistenteRetorna200() throws Exception {
+        AnalisisEnergeticoEntity entidad = new AnalisisEnergeticoEntity(
+                LocalDateTime.of(2026, 8, 10, 11, 45),
+                450.5, 8, TipoInmueble.CASA, true, 6, 30, 34, false,
+                null, null, null,
+                CategoriaConsumo.EFICIENTE, 0.25, BigDecimal.valueOf(337.87),
+                List.of("Mantener los hábitos actuales de ahorro.")
+        );
+        ReflectionTestUtils.setField(entidad, "id", 1L);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(entidad));
+
+        mockMvc.perform(get("/api/v1/analisis-energetico/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.categoria").value("Eficiente"))
+                .andExpect(jsonPath("$.recomendaciones[0]").value("Mantener los hábitos actuales de ahorro."));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/analisis-energetico/{id}: Retorna 404 cuando no existe")
+    void testObtenerAnalisisInexistenteRetorna404() throws Exception {
+        when(repository.findById(eq(999L))).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/v1/analisis-energetico/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
     }
 }

@@ -1,5 +1,31 @@
 services:
   # -------------------------------------------------------------
+  # Base de datos - PostgreSQL (persistencia de analisis)
+  #
+  # DB local pensada para portar a Oracle mas adelante: motor
+  # cliente-servidor real (no embebido), con volumen para que el
+  # historial sobreviva a un restart del contenedor.
+  # -------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-energiai}
+      - POSTGRES_USER=${POSTGRES_USER:-energiai}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-energiai}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-energiai} -d ${POSTGRES_DB:-energiai}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - energiai-network
+
+  # -------------------------------------------------------------
   # Backend Principal - Spring Boot (Java 17)
   # -------------------------------------------------------------
   backend:
@@ -13,12 +39,17 @@ services:
       - PORT=8080
       - SPRING_PROFILES_ACTIVE=prod
       - ML_SERVICE_URL=http://ml-service:8000
+      - DB_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-energiai}
+      - DB_USER=${POSTGRES_USER:-energiai}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-energiai}
       - OCI_NAMESPACE=${OCI_NAMESPACE:-}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-santiago-chile-1}
     depends_on:
       ml-service:
         condition: service_started
+      db:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - energiai-network
@@ -105,3 +136,6 @@ services:
 networks:
   energiai-network:
     driver: bridge
+
+volumes:
+  db-data:

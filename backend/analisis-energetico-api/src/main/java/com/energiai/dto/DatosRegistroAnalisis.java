@@ -1,5 +1,6 @@
 package com.energiai.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,6 +8,16 @@ import lombok.Builder;
 
 @Builder
 public record DatosRegistroAnalisis( //response = salida
+
+    @Schema(
+        description = "Identificador unico del analisis, asignado al persistirlo",
+        example = "1")
+    Long id,
+
+    @Schema(
+        description = "Fecha y hora en que se realizo el analisis",
+        example = "2026-08-10T11:45:00")
+    LocalDateTime fecha,
 
     @Schema(
         description = "Categoria del consumo (Eficiente, Moderado, Ineficiente)",
@@ -26,7 +37,7 @@ public record DatosRegistroAnalisis( //response = salida
     Double costo_estimado_mensual,
 
     @Schema(
-    description = "Lista de recomendaciones sugeridas por el sistema", 
+    description = "Lista de recomendaciones sugeridas por el sistema",
     example = """
         [
           "Reducir el uso de equipos durante los horarios pico",

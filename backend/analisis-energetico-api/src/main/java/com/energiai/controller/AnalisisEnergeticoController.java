@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.energiai.dto.DatosErrorRespuesta;
 import com.energiai.dto.DatosRegistroAnalisis;
 import com.energiai.dto.DatosRegistroConsumo;
+import com.energiai.security.VerificadorSonda;
 import com.energiai.service.AnalisisEnergeticoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +36,9 @@ public class AnalisisEnergeticoController {
 
     @Autowired
     private AnalisisEnergeticoService analisisService;
+
+    @Autowired
+    private VerificadorSonda verificadorSonda;
 
     @Operation(
         summary = "Realizar analisis de consumo energetico",
@@ -168,8 +173,17 @@ public class AnalisisEnergeticoController {
         })
 
     @PostMapping
-    public ResponseEntity<DatosRegistroAnalisis> analizarConsumo(@Valid @RequestBody DatosRegistroConsumo request) {
-            DatosRegistroAnalisis resultado = analisisService.realizarAnalisis(request);
+    public ResponseEntity<DatosRegistroAnalisis> analizarConsumo(
+            @Valid @RequestBody DatosRegistroConsumo request,
+            // Uso interno (verificacion automatica de CI/CD): no se documenta en
+            // Swagger a proposito, para no invitar a un cliente publico a
+            // "probar suerte" con el nombre de la cabecera. La seguridad real no
+            // depende de que el nombre sea secreto, sino del valor del token
+            // (ver VerificadorSonda) - esto es solo para no darle ideas a nadie.
+            @Parameter(hidden = true)
+            @RequestHeader(value = "X-EnergiAI-Sonda", required = false) String cabeceraSonda) {
+            boolean esSonda = verificadorSonda.esSonda(cabeceraSonda);
+            DatosRegistroAnalisis resultado = analisisService.realizarAnalisis(request, esSonda);
             return ResponseEntity.ok(resultado);
     }
 

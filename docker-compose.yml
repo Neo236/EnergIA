@@ -45,6 +45,10 @@ services:
       - OCI_NAMESPACE=${OCI_NAMESPACE:-}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-santiago-chile-1}
+      # Token de la sonda de verificacion de CI/CD (ver docs/cicd/README.md y
+      # com.energiai.security.VerificadorSonda). Vacio por defecto: en local
+      # no hay nada que lo mande, asi que la deteccion de sonda queda inerte.
+      - TOKEN_SONDA_SALUD=${TOKEN_SONDA_SALUD:-}
     depends_on:
       ml-service:
         condition: service_started

@@ -9,9 +9,12 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -32,9 +35,12 @@ import com.energiai.exception.GlobalExceptionHandler;
 import com.energiai.exception.MlRespuestaInvalidaException;
 import com.energiai.exception.ServicioMlNoDisponibleException;
 import com.energiai.repository.AnalisisEnergeticoRepository;
+import com.energiai.security.VerificadorSonda;
 import com.energiai.service.AnalisisEnergeticoService;
 
 class AnalisisEnergeticoControllerTest {
+
+    private static final String TOKEN_SONDA_TEST = "secreto-de-test-no-usar-en-serio";
 
     private MockMvc mockMvc;
     private MlClient mlClient;
@@ -48,6 +54,7 @@ class AnalisisEnergeticoControllerTest {
         AnalisisEnergeticoService service = new AnalisisEnergeticoService(mlClient, repository);
         AnalisisEnergeticoController controller = new AnalisisEnergeticoController();
         ReflectionTestUtils.setField(controller, "analisisService", service);
+        ReflectionTestUtils.setField(controller, "verificadorSonda", new VerificadorSonda(TOKEN_SONDA_TEST));
 
         DatosRegistroAnalisis analisisMock = DatosRegistroAnalisis.builder()
                 .categoria(CategoriaConsumo.EFICIENTE)
@@ -161,6 +168,52 @@ class AnalisisEnergeticoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(idGuardado.toString()))
                 .andExpect(jsonPath("$.fecha").exists());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/analisis-energetico: con la cabecera de sonda valida, llama al ML pero no persiste")
+    void testAnalizarConsumoConCabeceraSondaValidaNoPersiste() throws Exception {
+        String json = """
+            {
+              "consumo_kwh": 450.5,
+              "cantidad_equipos": 8,
+              "tipo_inmueble": "Casa",
+              "horas_alto_consumo": 6
+            }
+            """;
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .header("X-EnergiAI-Sonda", TOKEN_SONDA_TEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.categoria").value("Eficiente"))
+                .andExpect(jsonPath("$.id").value(nullValue()))
+                .andExpect(jsonPath("$.fecha").value(nullValue()));
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/analisis-energetico: con una cabecera de sonda incorrecta, persiste como una peticion real")
+    void testAnalizarConsumoConCabeceraSondaInvalidaSiPersiste() throws Exception {
+        String json = """
+            {
+              "consumo_kwh": 450.5,
+              "cantidad_equipos": 8,
+              "tipo_inmueble": "Casa",
+              "horas_alto_consumo": 6
+            }
+            """;
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .header("X-EnergiAI-Sonda", "no-es-el-token-correcto")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(idGuardado.toString()));
+
+        verify(repository).save(any());
     }
 
     @Test

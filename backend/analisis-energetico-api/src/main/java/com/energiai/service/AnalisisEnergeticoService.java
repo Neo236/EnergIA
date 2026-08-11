@@ -28,7 +28,13 @@ public class AnalisisEnergeticoService {
         this.repository = repository;
     }
 
-    public DatosRegistroAnalisis realizarAnalisis(DatosRegistroConsumo datos) {
+    // esSonda: true cuando la peticion trae la cabecera secreta X-EnergiAI-Sonda
+    // valida (verificada en el controller). Identifica una verificacion
+    // automatica de CI/CD (ver docs/cicd/README.md), no un analisis real: se
+    // sigue llamando al ML de verdad -es la unica forma de validar el circuito
+    // completo- pero el resultado no se persiste ni queda con id/fecha, para
+    // no ensuciar la base con datos sinteticos.
+    public DatosRegistroAnalisis realizarAnalisis(DatosRegistroConsumo datos, boolean esSonda) {
         if (mlClient == null) {
             throw new ServicioMlNoDisponibleException("El servicio Machine Learning no se encuentra disponible");
         }
@@ -36,6 +42,12 @@ public class AnalisisEnergeticoService {
         // (repository.save la abre y la cierra sola): no tiene sentido mantener
         // una conexion de base de datos abierta mientras se espera la red.
         DatosRegistroAnalisis resultadoMl = mlClient.predecir(datos);
+        validarRespuestaMl(resultadoMl);
+
+        if (esSonda) {
+            return resultadoMl;
+        }
+
         AnalisisEnergeticoEntity guardado = repository.save(paraEntidad(datos, resultadoMl));
         return paraDto(guardado);
     }
@@ -54,18 +66,24 @@ public class AnalisisEnergeticoService {
         return paraDto(entidad);
     }
 
-    private AnalisisEnergeticoEntity paraEntidad(DatosRegistroConsumo datos, DatosRegistroAnalisis resultadoMl) {
-        // MlClient solo valida que la respuesta sea JSON deserializable, no que
-        // traiga los campos obligatorios completos. Un JSON valido pero con
-        // "costo_estimado_mensual": null pasaria sin error hasta aca y despues
-        // tiraria NullPointerException al desempaquetar el Double (o violaria
-        // el NOT NULL de la columna al guardar) - en ambos casos, un 500
-        // generico que parece un bug propio en vez de un problema del ML.
+    // MlClient solo valida que la respuesta sea JSON deserializable, no que
+    // traiga los campos obligatorios completos. Un JSON valido pero con
+    // "costo_estimado_mensual": null pasaria sin error hasta aca y despues
+    // tiraria NullPointerException al desempaquetar el Double (o violaria
+    // el NOT NULL de la columna al guardar) - en ambos casos, un 500
+    // generico que parece un bug propio en vez de un problema del ML. Se
+    // valida tambien para las peticiones sonda: son la unica prueba que
+    // recorre API -> ml-service -> modelo de punta a punta, y perderia el
+    // sentido si no detectara una respuesta incompleta.
+    private void validarRespuestaMl(DatosRegistroAnalisis resultadoMl) {
         if (resultadoMl.categoria() == null || resultadoMl.probabilidad() == null
                 || resultadoMl.costo_estimado_mensual() == null) {
             throw new MlRespuestaInvalidaException(
                     "El servicio Machine Learning no devolvió los campos obligatorios del análisis");
         }
+    }
+
+    private AnalisisEnergeticoEntity paraEntidad(DatosRegistroConsumo datos, DatosRegistroAnalisis resultadoMl) {
         return AnalisisEnergeticoEntity.builder()
                 .fecha(LocalDateTime.now())
                 .consumoKwh(datos.consumo_kwh())

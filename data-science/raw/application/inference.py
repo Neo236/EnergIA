@@ -1,3 +1,6 @@
+import logging
+from functools import lru_cache
+
 import numpy as np
 import pandas as pd
 
@@ -12,6 +15,27 @@ from interfaces.api.schemas import (
     DEFAULT_HORAS_ALTO_CONSUMO,
     DEFAULT_METROS_CUADRADOS,
 )
+
+log = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=1)
+def _load_model_cached(model_path: str):
+    """Carga el modelo una sola vez por path. joblib.load cuesta ~250ms;
+    lo cacheamos en memoria del proceso para no pagarlo por cada request.
+
+    El cache vive a nivel de modulo. Para tests que crean paths nuevos
+    por test, el maxsize=1 hace que el modelo viejo se evicte automaticamente
+    cuando se carga el nuevo. Si se necesita reset explicito (ej. tras
+    reentrenar el modelo en runtime), usar clear_model_cache().
+    """
+    log.info("joblib.load model desde %s", model_path)
+    return load_model(model_path)
+
+
+def clear_model_cache() -> None:
+    """Limpia el cache de modelos. Util en tests o tras reentrenar."""
+    _load_model_cached.cache_clear()
 
 # El orden/identidad de las features se deriva del training pipeline para
 # garantizar que la inferencia use exactamente el mismo set que el modelo
@@ -28,19 +52,28 @@ DEFAULTS = {
     "tipo_inmueble": "Casa",
     "metros_cuadrados": DEFAULT_METROS_CUADRADOS,
     "antiguedad_vivienda": DEFAULT_ANTIGUEDAD_VIVIENDA,
-    "zona_fria": "No",
+    "zona_fria": False,
     "calidad_aislamiento": DEFAULT_CALIDAD_AISLAMIENTO,
     "fuente_calefaccion": "Electricidad",
     "fuente_agua_caliente": "Electricidad",
     "consumo_kwh": 500.0,
-    "uso_horario_pico": "No",
+    "uso_horario_pico": False,
     "horas_alto_consumo": DEFAULT_HORAS_ALTO_CONSUMO,
     "cantidad_equipos": DEFAULT_CANTIDAD_EQUIPOS,
 }
 
 
 def _coerce_si_no(value, default: str) -> str:
-    """Normaliza valores Si/No. Acepta 'Si'/'No', bool True/False, int 0/1."""
+    """Convierte un valor a "Si"/"No" para alimentar al modelo entrenado.
+
+    El modelo (RandomForestClassifier con OneHotEncoder) fue entrenado sobre
+    un dataset donde `zona_fria` y `uso_horario_pico` son strings "Si"/"No"
+    (paridad con el colab). Por eso, aunque la API publica usa bool,
+    necesitamos convertir bool/int/str -> "Si"/"No" justo antes del modelo.
+
+    Acepta bool, int 0/1, y string 'Si'/'No'/'si'/'sí'/'true'/'false'/'0'/'1'/''.
+    Si el valor es None o cualquier otra cosa, retorna `default` ("Si"/"No").
+    """
     if isinstance(value, bool):
         return "Si" if value else "No"
     if isinstance(value, (int, np.integer)) and not isinstance(value, bool):
@@ -56,6 +89,8 @@ def _coerce_si_no(value, default: str) -> str:
 
 def _a_fila_modelo(input_data: dict) -> pd.DataFrame:
     row = {feat: input_data.get(feat, DEFAULTS[feat]) for feat in MODELO_FEATURES}
+    # API publica usa bool; el modelo espera "Si"/"No". Convertimos en el
+    # boundary para mantener la paridad con el dataset de entrenamiento.
     row["zona_fria"] = _coerce_si_no(row["zona_fria"], DEFAULTS["zona_fria"])
     row["uso_horario_pico"] = _coerce_si_no(
         row["uso_horario_pico"], DEFAULTS["uso_horario_pico"]
@@ -74,7 +109,7 @@ def _normalizar_categoria(raw: str) -> str:
 
 
 def procesar_solicitud_api(input_data: dict, model_path: str) -> dict:
-    modelo = load_model(model_path)
+    modelo = _load_model_cached(model_path)
 
     X = _a_fila_modelo(input_data)
     probs = modelo.predict_proba(X)[0]
@@ -101,12 +136,12 @@ def _demo_request() -> dict:
         "tipo_inmueble": "Casa",
         "metros_cuadrados": 1269,
         "antiguedad_vivienda": 61,
-        "zona_fria": "No",
+        "zona_fria": False,
         "calidad_aislamiento": "Muy Baja",
         "fuente_calefaccion": "Solar",
         "fuente_agua_caliente": "Electricidad",
         "consumo_kwh": 363.4,
-        "uso_horario_pico": "Si",
+        "uso_horario_pico": True,
         "horas_alto_consumo": 14,
         "cantidad_equipos": 19,
     }

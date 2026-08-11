@@ -18,20 +18,34 @@ class TestAFilaModelo:
     def test_usa_defaults_cuando_faltan_keys(self):
         fila = _a_fila_modelo({})
         for feat in MODELO_FEATURES:
-            assert fila[feat].iloc[0] == DEFAULTS[feat]
+            if feat in ("zona_fria", "uso_horario_pico"):
+                # La API usa bool (DEFAULTS); el modelo recibe "Si"/"No".
+                # El default bool False se traduce a "No" en la fila.
+                expected = "Si" if DEFAULTS[feat] else "No"
+                assert fila[feat].iloc[0] == expected
+            else:
+                assert fila[feat].iloc[0] == DEFAULTS[feat]
 
-    def test_input_completo_pasa_tal_cual(self):
-        # Carga un payload valido: features numericas con un escalar distinto,
-        # categoricas con strings validos.
+    def test_input_completo_bool_se_coerce_a_si_no_para_modelo(self):
+        """La API publica usa bool para zona_fria/uso_horario_pico. El modelo
+        fue entrenado con strings "Si"/"No" (paridad con colab), asi que
+        _a_fila_modelo convierte bool -> "Si"/"No" antes del modelo.
+        """
         payload = {feat: float(i) for i, feat in enumerate(MODELO_FEATURES)}
         payload["tipo_inmueble"] = "Casa"
-        payload["zona_fria"] = "Si"
-        payload["uso_horario_pico"] = "No"
+        payload["zona_fria"] = True
+        payload["uso_horario_pico"] = False
         payload["calidad_aislamiento"] = "Media"
         payload["fuente_calefaccion"] = "Electricidad"
         payload["fuente_agua_caliente"] = "Electricidad"
         fila = _a_fila_modelo(payload)
+        # bool de input se traduce a "Si"/"No" en la fila para el modelo
+        assert fila["zona_fria"].iloc[0] == "Si"
+        assert fila["uso_horario_pico"].iloc[0] == "No"
+        # El resto pasa tal cual
         for feat in MODELO_FEATURES:
+            if feat in ("zona_fria", "uso_horario_pico"):
+                continue  # ya assertado arriba con el valor coerced
             assert fila[feat].iloc[0] == payload[feat]
 
 
@@ -41,12 +55,12 @@ class TestProcesarSolicitudApi:
             "tipo_inmueble": "Casa",
             "metros_cuadrados": 1200,
             "antiguedad_vivienda": 50,
-            "zona_fria": "No",
+            "zona_fria": False,
             "calidad_aislamiento": "Alta",
             "fuente_calefaccion": "Solar",
             "fuente_agua_caliente": "Solar",
             "consumo_kwh": 250.0,
-            "uso_horario_pico": "No",
+            "uso_horario_pico": False,
             "horas_alto_consumo": 5,
             "cantidad_equipos": 20,
         }

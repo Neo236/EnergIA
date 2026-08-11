@@ -25,7 +25,12 @@ class Config:
     TIPO_INMUEBLE = ("Casa", "Departamento", "Comercio", "Pyme")
     TIPO_INMUEBLE_PROBS = (0.35, 0.30, 0.20, 0.15)
 
-    CALIDAD_AISLAMIENTO = ("Muy Alta", "Alta", "Media", "Baja", "Muy Baja")
+    # Orden EXACTO del colab (notebooks/data_colab.ipynb cell 2 y 4):
+    # a=['Muy Baja','Baja','Media','Alta','Muy Alta'] con p=[0.12,0.23,0.35,0.18,0.12].
+    # El scoring.py usa la KEY del map, asi que el orden solo afecta la
+    # distribucion del dataset (no las reglas IEE). Cualquier cambio aqui
+    # requiere regenerar database_beta.json y reentrenar el modelo.
+    CALIDAD_AISLAMIENTO = ("Muy Baja", "Baja", "Media", "Alta", "Muy Alta")
     CALIDAD_AISLAMIENTO_PROBS = (0.12, 0.23, 0.35, 0.18, 0.12)
 
     FUENTE = ("Electricidad", "Solar", "Otros")

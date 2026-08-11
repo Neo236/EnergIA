@@ -15,12 +15,18 @@ import pytest
 import scripts.sync_colab_notebook as sync_mod
 from scripts.sync_colab_notebook import (
     COLAB_NOTEBOOK_URL,
+    CellDiff,
+    _code_cell_sources,
     _extract_code_cells,
     _extract_file_id,
     _fetch_notebook,
     _looks_like_notebook,
     code_hash,
     code_hash_file,
+    diff_code_cells,
+    diff_summary,
+    format_diff_json,
+    format_diff_text,
     sync,
 )
 
@@ -331,6 +337,226 @@ class TestSync:
         session.get.return_value = _resp(b"<html>no</html>", status=200)
         with patch.object(sync_mod.requests, "Session", return_value=session):
             assert sync(local_path=local) == 2
+
+
+class TestDiffCodeCells:
+    """Tests del diff celda-por-celda entre el notebook remoto y el local."""
+
+    def test_notebooks_identicos_sin_diffs(self):
+        nb = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        assert diff_code_cells(nb, nb) == []
+
+    def test_outputs_distintos_mismo_codigo_sin_diffs(self):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = 1\n"], "metadata": {},
+             "outputs": [{"output_type": "stream", "text": ["R"]}],
+             "execution_count": 5},
+        ])
+        local = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = 1\n"], "metadata": {},
+             "outputs": [{"output_type": "stream", "text": ["L"]}],
+             "execution_count": 99},
+        ])
+        # El diff ignora outputs, solo compara codigo.
+        assert diff_code_cells(remote, local) == []
+
+    def test_codigo_cambiado_devuelve_changed(self):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = REMOTO\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = LOCAL\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        diffs = diff_code_cells(remote, local)
+        assert len(diffs) == 1
+        assert diffs[0].status == "changed"
+        assert diffs[0].index == 0
+        assert "x = REMOTO" in diffs[0].unified_diff
+        assert "x = LOCAL" in diffs[0].unified_diff
+
+    def test_celda_solo_en_remoto_es_added(self):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["a = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+            {"cell_type": "code", "source": ["b = 2\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["a = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        diffs = diff_code_cells(remote, local)
+        assert len(diffs) == 1
+        assert diffs[0].status == "added"
+        assert diffs[0].index == 1
+        assert diffs[0].local_source is None
+        assert "b = 2" in diffs[0].unified_diff
+
+    def test_celda_solo_en_local_es_removed(self):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["a = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["a = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+            {"cell_type": "code", "source": ["b = 2\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        diffs = diff_code_cells(remote, local)
+        assert len(diffs) == 1
+        assert diffs[0].status == "removed"
+        assert diffs[0].index == 1
+        assert diffs[0].remote_source is None
+        assert "b = 2" in diffs[0].unified_diff
+
+    def test_celda_markdown_se_ignora(self):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "markdown", "source": ["# titulo remoto\n"]},
+            {"cell_type": "code", "source": ["x = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = _make_notebook_bytes(cells=[
+            {"cell_type": "markdown", "source": ["# titulo local\n"]},
+            {"cell_type": "code", "source": ["x = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        # Markdown cambia, pero solo diff de code cells -> sin diffs.
+        assert diff_code_cells(remote, local) == []
+
+    def test_multiples_celdas_distintas(self):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["a = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+            {"cell_type": "code", "source": ["b = 2\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+            {"cell_type": "code", "source": ["c = 3\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["a = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+            {"cell_type": "code", "source": ["b = 999\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        diffs = diff_code_cells(remote, local)
+        # cell 1: changed (b=2 vs b=999). cell 2: present in remote only -> added.
+        assert len(diffs) == 2
+        assert diffs[0].index == 1 and diffs[0].status == "changed"
+        assert diffs[1].index == 2 and diffs[1].status == "added"
+
+
+class TestDiffSummary:
+    def test_cuenta_por_status(self):
+        diffs = [
+            CellDiff(index=0, status="changed", remote_source="a",
+                     local_source="b", unified_diff=""),
+            CellDiff(index=1, status="added", remote_source="c",
+                     local_source=None, unified_diff=""),
+            CellDiff(index=2, status="added", remote_source="d",
+                     local_source=None, unified_diff=""),
+            CellDiff(index=3, status="removed", remote_source=None,
+                     local_source="e", unified_diff=""),
+        ]
+        assert diff_summary(diffs) == {"added": 2, "removed": 1, "changed": 1}
+
+    def test_lista_vacia(self):
+        assert diff_summary([]) == {"added": 0, "removed": 0, "changed": 0}
+
+
+class TestFormatDiff:
+    def test_text_vacio(self):
+        out = format_diff_text([])
+        assert "sin diferencias" in out
+
+    def test_text_incluye_headers_por_celda(self):
+        diffs = [
+            CellDiff(index=2, status="changed", remote_source="a = 1\n",
+                     local_source="a = 2\n",
+                     unified_diff="--- cell[2] remote\n+++ cell[2] local\n"),
+        ]
+        out = format_diff_text(diffs)
+        assert "1 celda" in out
+        assert "cell[2] changed" in out
+        assert "--- cell[2] remote" in out
+
+    def test_json_valido_con_estructura_esperada(self):
+        diffs = [
+            CellDiff(index=0, status="added", remote_source="x = 1\n",
+                     local_source=None, unified_diff="--- remote\n+++ /dev/null\n-x = 1\n"),
+        ]
+        out = format_diff_json(diffs)
+        parsed = json.loads(out)
+        assert parsed["diff_count"] == 1
+        assert parsed["cells"][0]["index"] == 0
+        assert parsed["cells"][0]["status"] == "added"
+        assert parsed["cells"][0]["unified_diff"].startswith("--- remote")
+
+
+class TestSyncWithJsonOutput:
+    """Verifica que sync() imprime el diff cuando difieren."""
+
+    def test_diff_imprime_en_modo_text(self, tmp_path, capsys):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = REMOTO\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = tmp_path / "data_colab.ipynb"
+        local.write_bytes(_make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = LOCAL\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ]))
+        session = MagicMock()
+        session.get.return_value = _resp(remote)
+        with patch.object(sync_mod.requests, "Session", return_value=session):
+            rc = sync(local_path=local, apply=False, json_output=False)
+        assert rc == 1
+        captured = capsys.readouterr()
+        assert "x = REMOTO" in captured.out
+        assert "x = LOCAL" in captured.out
+        assert "cell[0] changed" in captured.out
+
+    def test_diff_imprime_en_modo_json(self, tmp_path, capsys):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = tmp_path / "data_colab.ipynb"
+        local.write_bytes(_make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["x = 2\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ]))
+        session = MagicMock()
+        session.get.return_value = _resp(remote)
+        with patch.object(sync_mod.requests, "Session", return_value=session):
+            rc = sync(local_path=local, apply=False, json_output=True)
+        assert rc == 1
+        captured = capsys.readouterr()
+        parsed = json.loads(captured.out)
+        assert parsed["diff_count"] == 1
+        assert parsed["cells"][0]["status"] == "changed"
+
+    def test_local_inexistente_json_muestra_added(self, tmp_path, capsys):
+        remote = _make_notebook_bytes(cells=[
+            {"cell_type": "code", "source": ["a = 1\n"], "metadata": {},
+             "outputs": [], "execution_count": None},
+        ])
+        local = tmp_path / "no_existe.ipynb"
+        session = MagicMock()
+        session.get.return_value = _resp(remote)
+        with patch.object(sync_mod.requests, "Session", return_value=session):
+            rc = sync(local_path=local, apply=False, json_output=True)
+        assert rc == 1
+        captured = capsys.readouterr()
+        parsed = json.loads(captured.out)
+        # El placeholder local b"{}" no tiene code cells -> todas son "added"
+        assert parsed["diff_count"] >= 1
+        assert all(c["status"] == "added" for c in parsed["cells"])
 
 
 class TestNotebookLocal:

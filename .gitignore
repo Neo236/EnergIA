@@ -80,6 +80,12 @@ ipython_config.py
 data/raw/
 data/processed/
 data-science/raw/data/
+# Simulacion local del bucket OCI (STORAGE_BACKEND=local): se regenera con
+# `make pipeline` o `python -m interfaces.cli.train`. NO commitear.
+data-science/raw/latest/
+# Historico de rotacion del bucket: snapshots previos cuando cambia el
+# code_version del training pipeline. Se regenera automaticamente. NO commitear.
+data-science/raw/archive/
 *.csv
 *.parquet
 *.json.gz

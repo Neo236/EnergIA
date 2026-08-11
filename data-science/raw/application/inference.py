@@ -1,3 +1,6 @@
+import logging
+from functools import lru_cache
+
 import numpy as np
 import pandas as pd
 
@@ -12,6 +15,27 @@ from interfaces.api.schemas import (
     DEFAULT_HORAS_ALTO_CONSUMO,
     DEFAULT_METROS_CUADRADOS,
 )
+
+log = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=1)
+def _load_model_cached(model_path: str):
+    """Carga el modelo una sola vez por path. joblib.load cuesta ~250ms;
+    lo cacheamos en memoria del proceso para no pagarlo por cada request.
+
+    El cache vive a nivel de modulo. Para tests que crean paths nuevos
+    por test, el maxsize=1 hace que el modelo viejo se evicte automaticamente
+    cuando se carga el nuevo. Si se necesita reset explicito (ej. tras
+    reentrenar el modelo en runtime), usar clear_model_cache().
+    """
+    log.info("joblib.load model desde %s", model_path)
+    return load_model(model_path)
+
+
+def clear_model_cache() -> None:
+    """Limpia el cache de modelos. Util en tests o tras reentrenar."""
+    _load_model_cached.cache_clear()
 
 # El orden/identidad de las features se deriva del training pipeline para
 # garantizar que la inferencia use exactamente el mismo set que el modelo
@@ -85,7 +109,7 @@ def _normalizar_categoria(raw: str) -> str:
 
 
 def procesar_solicitud_api(input_data: dict, model_path: str) -> dict:
-    modelo = load_model(model_path)
+    modelo = _load_model_cached(model_path)
 
     X = _a_fila_modelo(input_data)
     probs = modelo.predict_proba(X)[0]

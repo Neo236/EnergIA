@@ -39,4 +39,4 @@
 Este informe referencia **dos documentos**, en la carpeta [`anexos/`](./anexos/):
 
 1. [**Etapas del diseño frontend (1–5) — snapshot Semana 1**](./anexos/etapas-diseno-frontend.md) — las cuatro etapas documentadas, centralizadas en un solo documento y preservadas tal como estaban en ese momento (la etapa 4 no tiene documento propio: es el prototipo desplegado en Vercel).
-2. [**EnergiAI — Propuesta Técnica**](./anexos/propuesta-tecnica.md) — la propuesta inicial del 21/07, previa a la integración del Software Engineer al equipo.
+2. [**EnergiAI — Propuesta Técnica (obsoleta desde el 31/07)**](./anexos/propuesta-tecnica-obsoleta-31-07-26.md) — la propuesta inicial del 21/07, previa a la integración del Software Engineer al equipo; marcada obsoleta al quedar establecido el stack definitivo.

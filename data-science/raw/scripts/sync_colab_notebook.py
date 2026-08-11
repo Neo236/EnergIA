@@ -20,11 +20,13 @@ Requisitos: requests (en requirements.txt).
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import json
 import logging
 import re
 import sys
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
 
@@ -126,27 +128,34 @@ def _fetch_notebook(url: str) -> bytes:
     )
 
 
-def _extract_code_cells(notebook_bytes: bytes) -> str:
-    """Devuelve la concatenacion de las celdas de codigo (sin outputs).
+def _normalize_source(src: str) -> str:
+    """Quita trailing whitespace por linea (tolerante a export Drive vs Colab)."""
+    return "\n".join(re.sub(r"\s+$", "", line) for line in src.split("\n"))
 
-    Esto es lo que usamos como 'fuente de verdad' del notebook, porque los
-    outputs y execution_count cambian entre ejecuciones pero la logica es
-    la misma.
-    """
-    nb = json.loads(notebook_bytes)
-    cells = nb.get("cells", [])
-    parts = []
-    for cell in cells:
+
+def _code_cell_sources(nb: dict) -> list[str]:
+    """Devuelve la lista de fuentes normalizadas de las celdas de codigo,
+    preservando el orden (incluyendo huecos para celdas no-code)."""
+    out: list[str] = []
+    for cell in nb.get("cells", []):
         if cell.get("cell_type") != "code":
             continue
         src = cell.get("source", [])
         if isinstance(src, list):
             src = "".join(src)
-        parts.append(src)
-    # Normaliza whitespace al final de cada linea para tolerar trailing
-    # espacios que pueden variar entre exportacion Drive y Colab UI.
-    normalized = "\n".join(re.sub(r"\s+$", "", line) for line in "\n".join(parts).split("\n"))
-    return normalized
+        out.append(_normalize_source(src))
+    return out
+
+
+def _extract_code_cells(notebook_bytes: bytes) -> str:
+    """Devuelve la concatenacion de las celdas de codigo (sin outputs).
+
+    Esto es lo que usamos como 'fuente de verdad' del notebook, porque los
+    outputs y execution_count cambian entre ejecuciones pero la logica es la
+    misma.
+    """
+    nb = json.loads(notebook_bytes)
+    return "\n".join(_code_cell_sources(nb))
 
 
 def code_hash(notebook_bytes: bytes) -> str:
@@ -158,9 +167,120 @@ def code_hash_file(path: Path) -> str:
     return code_hash(path.read_bytes())
 
 
+@dataclass(frozen=True)
+class CellDiff:
+    """Diferencia entre una celda de codigo del notebook remoto y la local.
+
+    Attributes:
+        index: posicion de la celda dentro de las celdas de codigo (0-based).
+        status: 'added' (solo en remoto), 'removed' (solo en local),
+            'changed' (existe en ambos pero con contenido distinto).
+        remote_source: codigo remoto normalizado, o None si la celda no existe.
+        local_source: codigo local normalizado, o None si la celda no existe.
+        unified_diff: diff unificado estilo 'diff -u' (sin colores).
+    """
+    index: int
+    status: str
+    remote_source: str | None
+    local_source: str | None
+    unified_diff: str
+
+
+def _cell_unified_diff(index: int,
+                       remote_source: str | None,
+                       local_source: str | None) -> str:
+    """Genera un diff unificado para una celda, estilo 'diff -u'."""
+    remote_label = f"cell[{index}] remote"
+    local_label = f"cell[{index}] local"
+    remote_lines = (remote_source or "").splitlines(keepends=True)
+    local_lines = (local_source or "").splitlines(keepends=True)
+    # Garantiza que la ultima linea tenga newline para difflib.
+    if remote_lines and not remote_lines[-1].endswith("\n"):
+        remote_lines[-1] += "\n"
+    if local_lines and not local_lines[-1].endswith("\n"):
+        local_lines[-1] += "\n"
+    diff = difflib.unified_diff(
+        remote_lines, local_lines,
+        fromfile=remote_label, tofile=local_label,
+        lineterm="\n",
+    )
+    return "".join(diff)
+
+
+def diff_code_cells(remote_bytes: bytes,
+                    local_bytes: bytes) -> list[CellDiff]:
+    """Compara celda por celda entre el notebook remoto y el local.
+
+    Devuelve SOLO las celdas que difieren (added/removed/changed). Las celdas
+    identicas no aparecen en el resultado.
+    """
+    remote_nb = json.loads(remote_bytes)
+    local_nb = json.loads(local_bytes)
+    remote_sources = _code_cell_sources(remote_nb)
+    local_sources = _code_cell_sources(local_nb)
+    n = max(len(remote_sources), len(local_sources))
+    diffs: list[CellDiff] = []
+    for i in range(n):
+        rs = remote_sources[i] if i < len(remote_sources) else None
+        ls = local_sources[i] if i < len(local_sources) else None
+        if rs is None and ls is not None:
+            status = "removed"
+        elif ls is None and rs is not None:
+            status = "added"
+        elif rs == ls:
+            continue
+        else:
+            status = "changed"
+        diffs.append(CellDiff(
+            index=i,
+            status=status,
+            remote_source=rs,
+            local_source=ls,
+            unified_diff=_cell_unified_diff(i, rs, ls),
+        ))
+    return diffs
+
+
+def format_diff_text(diffs: list[CellDiff]) -> str:
+    """Devuelve un reporte legible para humanos con todos los diffs."""
+    if not diffs:
+        return "(sin diferencias)\n"
+    parts = [f"Diferencias encontradas: {len(diffs)} celda(s)\n"]
+    for d in diffs:
+        header = f"--- cell[{d.index}] {d.status} ---"
+        parts.append(header + "\n")
+        parts.append(d.unified_diff or "(diff vacio)\n")
+    return "".join(parts)
+
+
+def format_diff_json(diffs: list[CellDiff]) -> str:
+    """Devuelve un reporte JSON parseable con todos los diffs."""
+    payload = {
+        "diff_count": len(diffs),
+        "cells": [
+            {
+                "index": d.index,
+                "status": d.status,
+                "unified_diff": d.unified_diff,
+            }
+            for d in diffs
+        ],
+    }
+    return json.dumps(payload, indent=2, ensure_ascii=False)
+
+
+def diff_summary(diffs: list[CellDiff]) -> dict[str, int]:
+    """Cuenta celdas por status, util para logs/resumenes."""
+    summary = {"added": 0, "removed": 0, "changed": 0}
+    for d in diffs:
+        summary[d.status] = summary.get(d.status, 0) + 1
+    return summary
+
+
 def sync(url: str = COLAB_NOTEBOOK_URL,
          local_path: Path = DEFAULT_LOCAL_PATH,
          apply: bool = False,
+         json_output: bool = False,
          logger: logging.Logger | None = None) -> int:
     """Compara el codigo del notebook remoto vs local.
 
@@ -189,6 +309,11 @@ def sync(url: str = COLAB_NOTEBOOK_URL,
             local_path.write_bytes(remote_bytes)
             log.info("Archivo local creado desde la version remota.")
             return 0
+        diffs = diff_code_cells(remote_bytes, b"{}")
+        if json_output:
+            print(format_diff_json(diffs))
+        else:
+            print(format_diff_text(diffs))
         log.info("Use --apply para crearlo desde la version remota.")
         return 1
 
@@ -199,10 +324,18 @@ def sync(url: str = COLAB_NOTEBOOK_URL,
         log.info("OK - el codigo del notebook coincide con la version remota.")
         return 0
 
+    diffs = diff_code_cells(remote_bytes, local_path.read_bytes())
+    summary = diff_summary(diffs)
     log.warning(
         "DIFERENCIA detectada en el codigo del notebook. "
-        "Revisar el diff antes de aplicar."
+        "added=%d removed=%d changed=%d. "
+        "Revisar el diff antes de aplicar.",
+        summary["added"], summary["removed"], summary["changed"],
     )
+    if json_output:
+        print(format_diff_json(diffs))
+    else:
+        print(format_diff_text(diffs))
     if apply:
         local_path.write_bytes(remote_bytes)
         log.info("Archivo local sobrescrito con la version remota.")
@@ -219,6 +352,8 @@ def _build_arg_parser() -> argparse.ArgumentParser:
                    help="Ruta local del archivo .ipynb")
     p.add_argument("--apply", action="store_true",
                    help="Sobrescribe el archivo local si hay diferencias")
+    p.add_argument("--json", action="store_true", dest="json_output",
+                   help="Imprime el diff en formato JSON (parseable)")
     p.add_argument("--print", action="store_true", dest="print_hash",
                    help="Solo imprime el hash de codigo remoto y sale")
     p.add_argument("-v", "--verbose", action="store_true")
@@ -244,7 +379,8 @@ def main(argv: list[str] | None = None) -> int:
         print(code_hash(body))
         return 0
 
-    return sync(url=args.url, local_path=args.local, apply=args.apply, logger=log)
+    return sync(url=args.url, local_path=args.local,
+                apply=args.apply, json_output=args.json_output, logger=log)
 
 
 if __name__ == "__main__":

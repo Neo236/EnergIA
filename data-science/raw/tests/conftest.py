@@ -86,3 +86,18 @@ def fastapi_client(monkeypatch, trained_model):
     from fastapi.testclient import TestClient
 
     return TestClient(app_module.app)
+
+
+@pytest.fixture(autouse=True)
+def _reset_model_cache():
+    """Limpia el cache de modelos antes de cada test.
+
+    El cache vive a nivel de modulo (lru_cache en application.inference).
+    Sin este fixture, el primer test carga el modelo, los siguientes
+    tests con paths distintos pueden recibir respuestas stale si el
+    cache hit por error. Reset explicito garantiza aislamiento.
+    """
+    from application.inference import clear_model_cache
+    clear_model_cache()
+    yield
+    clear_model_cache()

@@ -112,13 +112,30 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # Falla ante un error de tipos antes de gastar tiempo en el build de
+      # la imagen. Es la red que protege el contrato: si contrato.ts deja de
+      # coincidir con cómo lo usan las páginas, se rompe acá.
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck
+
       - name: Build Docker image
         run: docker build -t energiai-frontend:test ./frontend
 
-      # `docker compose build` solo comprueba que la imagen se CONSTRUYE.
-      # Este paso comprueba que además FUNCIONA: un typo en nginx.conf, un
-      # COPY que se olvidó de un directorio o un puerto mal configurado
-      # pasan el build y explotarían recién en el despliegue.
+      # El build de la imagen solo comprueba que COMPILA. Este paso comprueba
+      # que además FUNCIONA servida: un typo en nginx.conf o un fallback de
+      # router mal configurado pasan el build y explotarían en el despliegue.
       - name: Smoke test container
         run: |
           set -euo pipefail
@@ -141,9 +158,14 @@ jobs:
             exit 1
           fi
 
-          echo "Verificando que los recursos de P-01/P-02 se sirvan:"
-          for RUTA in /index.html /css/tokens.css /css/app.css /js/schema.js /js/api.js /js/app.js; do
-            curl -fsS "http://localhost:8099$RUTA" -o /dev/null
+          echo "Verificando que el HTML referencie el bundle compilado:"
+          curl -fsS http://localhost:8099/ | grep -q '/assets/index-.*\.js' \
+            && echo "  OK bundle referenciado"
+
+          echo "Verificando el fallback del router en rutas del cliente:"
+          for RUTA in /resultado /analisis/123 /una-ruta-inexistente; do
+            CODIGO=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8099$RUTA")
+            [ "$CODIGO" = "200" ] || { echo "  FALLO $RUTA devolvió $CODIGO"; exit 1; }
             echo "  OK $RUTA"
           done
 

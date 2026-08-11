@@ -3,7 +3,7 @@ import os
 
 from fastapi import FastAPI, HTTPException
 
-from application.inference import procesar_solicitud_api
+from application.inference import _load_model_cached, procesar_solicitud_api
 from infrastructure.config import Config
 from infrastructure.storage.sync import ensure_artifacts
 from interfaces.api.schemas import AnalisisRequest
@@ -18,10 +18,33 @@ MODEL_PATH = os.getenv("MODEL_PATH", Config.OUTPUT_MODEL_PATH)
 
 @app.on_event("startup")
 def _startup():
+    """Startup del servicio ML.
+
+    Orden:
+      1. ensure_artifacts(): pull desde el bucket (OCI / PAR / local). El
+         bucket es la fuente de verdad; lo que estaba bakeado en el Docker
+         image se sobrescribe con la version vigente. Si el bucket no es
+         alcanzable, mantenemos lo local como fallback.
+      2. Pre-cargar el modelo en memoria del proceso. Asi el primer POST
+         no paga el joblib.load (~250ms). El cache es por-path via
+         @lru_cache; tests con paths unicos se siguen cargando fresh.
+    """
+    # 1. Pull desde el bucket (source of truth)
     try:
         ensure_artifacts()
     except Exception as e:
-        log.warning("ensure_artifacts falló al startup: %s", e)
+        log.warning("ensure_artifacts falló al startup: %s. Usando local.", e)
+
+    # 2. Warm model cache
+    try:
+        _load_model_cached(MODEL_PATH)
+        log.info("Modelo pre-cargado en memoria: %s", MODEL_PATH)
+    except FileNotFoundError:
+        log.warning(
+            "Modelo no encontrado en %s. "
+            "Requests devolverán 503 hasta que se ejecute `make pipeline`.",
+            MODEL_PATH,
+        )
 
 
 @app.get("/")
@@ -57,7 +80,6 @@ def analisis_energetico(req: AnalisisRequest):
             status_code=503,
             detail=(
                 f"Modelo no encontrado en {MODEL_PATH}. "
-                "Si STORAGE_BACKEND=oci, ejecuta 'make pipeline' con STORAGE_BACKEND=oci "
-                "para subir el modelo al bucket."
+                "Ejecuta `make pipeline` o sube el modelo al bucket."
             ),
         )

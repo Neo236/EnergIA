@@ -59,8 +59,8 @@ class AnalisisRequest(BaseModel):
     # --- OBLIGATORIOS (alineados con backend @NotNull) ---
     consumo_kwh: float = Field(
         ...,
-        ge=0,
-        le=1000,
+        ge=1,                    # alineado con backend @DecimalMin("1.0")
+        le=1000,                 # alineado con backend @DecimalMax("1000.0")
         description="Consumo mensual en kWh (de la factura).",
     )
     tipo_inmueble: TipoInmueble = Field(

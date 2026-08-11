@@ -165,3 +165,16 @@ hueco del contrato en vez de esconderlo.
 
 Detalle completo del código, cómo correr en local y conectar contra la API
 real: [`frontend/README.md`](../../frontend/README.md).
+
+---
+
+## 📅 Informes por sprint
+
+Participación, decisiones y evidencias de cada período. Cada informe es
+autocontenido y lleva sus documentos como anexos.
+
+| Sprint | Informe | Contenido principal |
+|---|---|---|
+| Semana 1 | [`semanas/semana-1/`](./semanas/semana-1/informe.md) | Etapas del diseño, wireframe v1 |
+| Semana 2 | [`semanas/semana-2/`](./semanas/semana-2/informe.md) | Wireframe v2 acotado a P-01/P-02, contrato V1.1, infraestructura de OCI |
+| Semana 3 | [`semanas/semana-3/`](./semanas/semana-3/informe.md) | Contrato V1.2, front desplegado, despliegue continuo, migración a Vite |

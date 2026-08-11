@@ -42,7 +42,7 @@
 
 ## 🔗 Evidencia
 
-- Wireframe v2 (Figma): https://www.figma.com/design/CQNvYzt1HSeKODlx63hQPc · Flujo (FigJam): https://www.figma.com/board/kkarAUOiHV2DnjOzAmnfoC
+- Wireframe v2 (Figma) — copia congelada del estado del Sprint 2: https://www.figma.com/design/D6MoRPJIYxUlPG2GFS0iPR · Flujo (FigJam): https://www.figma.com/board/kkarAUOiHV2DnjOzAmnfoC
 - CI/Actions: https://github.com/No-Country-simulation/G9-LATAM-TEAM-09/actions
 - Dominios: http://energiai.unixsoluciones.com · http://energiai-staging.unixsoluciones.com
 - Doc OCI en el repo: [`docs/oci-cloud/`](https://github.com/No-Country-simulation/G9-LATAM-TEAM-09/blob/develop/docs/oci-cloud/README.md)

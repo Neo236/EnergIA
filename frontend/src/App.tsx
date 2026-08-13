@@ -1,36 +1,30 @@
-import { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import { Layout } from './layout/Layout'
 import { Analizar } from './pages/Analizar'
+import { Historial } from './pages/Historial'
 import { Resultado } from './pages/Resultado'
 import { NoEncontrado } from './pages/NoEncontrado'
-import { BarraDemo } from './components/BarraDemo'
-import { MODO_INICIAL, type ModoApi } from './lib/api'
-import type { ModoDemo } from './lib/mock'
 
+/**
+ * Cuatro rutas, una por pantalla del diseño:
+ *   /              P-01 ingreso de datos
+ *   /analisis/:id  P-02 resultado, con URL propia y compartible
+ *   /historial     P-03 historial local de análisis
+ *   *              P-04 la dirección no existe
+ *
+ * El caso «el análisis no está» no es una ruta aparte: es un estado de
+ * /analisis/:id, porque la URL es válida y lo que falta es el contenido.
+ */
 export function App() {
-  // Viven acá y no en la página para que sobrevivan a la navegación.
-  const [modoApi, setModoApi] = useState<ModoApi>(MODO_INICIAL)
-  const [modoDemo, setModoDemo] = useState<ModoDemo>('ok')
-
   return (
-    <>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route index element={<Analizar modoApi={modoApi} modoDemo={modoDemo} />} />
-          <Route path="resultado" element={<Resultado />} />
-          <Route path="analisis/:id" element={<NoEncontrado />} />
-          <Route path="*" element={<NoEncontrado />} />
-        </Route>
-      </Routes>
-
-      <BarraDemo
-        modoApi={modoApi}
-        onCambiarModoApi={setModoApi}
-        modoDemo={modoDemo}
-        onCambiarModoDemo={setModoDemo}
-      />
-    </>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<Analizar />} />
+        <Route path="analisis/:id" element={<Resultado />} />
+        <Route path="historial" element={<Historial />} />
+        <Route path="*" element={<NoEncontrado />} />
+      </Route>
+    </Routes>
   )
 }

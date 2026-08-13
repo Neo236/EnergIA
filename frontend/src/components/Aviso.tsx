@@ -1,52 +1,40 @@
-import { textoDeAviso } from '../lib/mensajes'
-import type { RespuestaError } from '../lib/contrato'
+/* ============================================================
+   Tarjeta de aviso.
+
+   Sirve en dos situaciones que el diseño resuelve con la misma pieza:
+   encabezando el formulario cuando el envío falló (Error 500 / 503), y
+   como pantalla completa cuando no hay nada que mostrar (404, análisis
+   inexistente).
+
+   El tono lo decide `advertencia`: ámbar para lo pasajero — no hay
+   conexión, el servicio no responde — y rojo para lo que falló de verdad.
+   Nunca se comunica solo con color: el icono cambia de forma junto con él.
+   ============================================================ */
+
+import type { ReactNode } from 'react'
+
+import { IconoAlerta, IconoCirculo } from './Iconos'
 
 interface Props {
-  respuesta: RespuestaError
-  onReintentar: () => void
+  titulo: string
+  texto: string
+  advertencia?: boolean
+  children?: ReactNode
 }
 
-/**
- * Aviso para los errores que no son de validación por campo.
- *
- * Muestra un texto escrito para el usuario y deja el mensaje crudo de la
- * API en un detalle plegable: durante la integración, poder ver qué
- * respondió el back-end sin abrir las herramientas del navegador ahorra
- * mucho ida y vuelta con el equipo.
- */
-export function Aviso({ respuesta, onReintentar }: Props) {
-  const { titulo, texto, advertencia } = textoDeAviso(respuesta.status)
+export function Aviso({ titulo, texto, advertencia = false, children }: Props) {
+  const Icono = advertencia ? IconoCirculo : IconoAlerta
 
   return (
-    <div className={advertencia ? 'aviso is-warning' : 'aviso'} role="alert">
-      <div className="aviso__head">
-        <span className="aviso__icon" aria-hidden="true">!</span>
-        <h2 className="aviso__title">{titulo}</h2>
+    <section className={`aviso${advertencia ? ' aviso--advertencia' : ''}`} role="alert">
+      <div className="aviso__cabecera">
+        <span className="aviso__icono">
+          <Icono />
+        </span>
+        <h2 className="aviso__titulo">{titulo}</h2>
       </div>
-
-      <p className="aviso__text">{texto}</p>
-
-      <button type="button" className="btn btn--compact" onClick={onReintentar}>
-        Reintentar
-      </button>
-
-      {respuesta.mensaje && (
-        <details className="detalle-tecnico">
-          <summary>Detalle técnico</summary>
-          <dl>
-            <dt>Estado</dt>
-            <dd>{respuesta.status}{respuesta.error ? ` · ${respuesta.error}` : ''}</dd>
-            <dt>Mensaje de la API</dt>
-            <dd>{respuesta.mensaje}</dd>
-            {respuesta.timestamp && (
-              <>
-                <dt>Momento</dt>
-                <dd>{respuesta.timestamp}</dd>
-              </>
-            )}
-          </dl>
-        </details>
-      )}
-    </div>
+      <p className="aviso__texto">{texto}</p>
+      {children}
+    </section>
   )
 }

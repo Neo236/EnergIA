@@ -1,22 +1,27 @@
 /* ============================================================
-   Respuesta simulada. Permite demostrar P-01/P-02 sin depender de que
-   el back-end y el servicio de ML estén integrados.
+   Respuesta simulada, para desarrollar sin back-end.
 
-   ⚠️ El puntaje NO es el del modelo real: es un sustituto para que el
+   No es una demostración: no hay interruptor en pantalla y el modo se
+   fija al compilar. Existe para que `npm run dev` funcione con la API
+   apagada y para que el flujo completo — incluida la URL del resultado
+   y la recarga — se pueda recorrer entero.
+
+   ⚠️ El puntaje NO es el del modelo real. Es un sustituto para que el
    veredicto reaccione a lo que se carga en vez de devolver siempre lo
-   mismo. El modelo entrenado usa una lógica IEE distinta, así que las
+   mismo. El modelo entrenado usa una lógica distinta, así que las
    categorías pueden no coincidir con las de la API real.
    ============================================================ */
 
 import {
-  CAMPOS_OPCIONALES, TARIFA_KWH, ErrorApi,
+  CAMPOS, CAMPOS_OPCIONALES, TARIFA_KWH, ErrorApi,
   type Analisis, type Categoria, type DetalleError, type Solicitud,
 } from './contrato'
-import { CAMPOS } from './contrato'
+import { registrarEnHistorial } from './historial'
 
 const LATENCIA_MS = 900
 
-export type ModoDemo = 'ok' | 'sin-recomendaciones' | '400' | '500' | '503'
+/** Los análisis simulados viven en la pestaña, así /analisis/:id sobrevive a una recarga. */
+const ALMACEN = 'energiai:analisis-simulados'
 
 const PESO_AISLAMIENTO: Record<string, number> = {
   'Muy Alta': 10, Alta: 6, Media: 0, Baja: -5, 'Muy Baja': -10,
@@ -64,31 +69,31 @@ function recomendaciones(v: Record<string, unknown>): string[] {
   const consumo = Number(v.consumo_kwh)
 
   if (consumo > 700) {
-    r.push('Tu consumo eléctrico es muy elevado. Revisá los electrodomésticos de alto consumo y la aislación térmica.')
+    r.push('Tu consumo eléctrico es muy elevado. Revisa los electrodomésticos de alto consumo y la aislación térmica.')
   } else if (consumo > 450) {
-    r.push('Tu consumo está por encima del promedio. Auditá el uso de calefacción y de equipos en horario pico.')
+    r.push('Tu consumo está por encima del promedio. Revisa el uso de calefacción y de los equipos en horario pico.')
   }
   if (v.calidad_aislamiento === 'Muy Baja') {
     r.push('Mejorar el aislamiento térmico reducirá drásticamente la necesidad de climatización.')
   } else if (v.calidad_aislamiento === 'Baja') {
-    r.push('Reforzá puertas y ventanas: pasar a una aislación media reduce cerca del 30 % del gasto en climatización.')
+    r.push('Reforzar puertas y ventanas recorta cerca del 30 % del gasto en climatización.')
   }
   if (v.fuente_calefaccion === 'Electricidad') {
-    r.push('Evaluá migrar la calefacción a solar: la electricidad es la fuente más cara del análisis.')
+    r.push('Migrar la calefacción a una fuente solar reduce el gasto: la electricidad es la más cara del análisis.')
   } else if (v.fuente_calefaccion === 'Otros') {
-    r.push('Considerá un sistema de calefacción más eficiente, como solar o bomba de calor.')
+    r.push('Considera un sistema de calefacción más eficiente, como solar o bomba de calor.')
   }
-  if (v.zona_fria) r.push('Vivir en zona fría incrementa el consumo. Priorizá aislación y calefacción eficiente.')
+  if (v.zona_fria) r.push('Vivir en zona fría incrementa el consumo. Prioriza aislación y calefacción eficiente.')
   if (Number(v.horas_alto_consumo) > 14) {
-    r.push('Tenés más de 14 h diarias de alto consumo. Centralizá el uso en horarios de menor demanda.')
+    r.push('Tienes más de 14 h diarias de alto consumo. Centraliza el uso en horarios de menor demanda.')
   }
   if (Number(v.cantidad_equipos) > 70) {
-    r.push('Tenés muchos equipos conectados. Reemplazar los más antiguos por clase A+ se paga solo a cinco años.')
+    r.push('Reemplazar los electrodomésticos más antiguos por clase A+ se amortiza en unos cinco años.')
   }
   if (Number(v.antiguedad_vivienda) > 80) {
-    r.push('Vivienda de más de 80 años: revisá la instalación eléctrica y la aislación, suele haber pérdidas ocultas.')
+    r.push('Vivienda de más de 80 años: revisa la instalación eléctrica y la aislación, suele haber pérdidas ocultas.')
   }
-  if (r.length === 0) r.push('Tu hogar está bien calibrado. Mantené los hábitos de consumo actuales.')
+  if (r.length === 0) r.push('Tu hogar está bien calibrado. Mantén los hábitos de consumo actuales.')
   return r.slice(0, 5)
 }
 
@@ -104,7 +109,7 @@ function validar(solicitud: Solicitud): DetalleError[] {
       if (campo.requerido) detalles.push({ campo: campo.nombre, mensaje: 'No puede estar vacío' })
       continue
     }
-    if (campo.tipo === 'numero') {
+    if (campo.tipo === 'numero' || campo.tipo === 'contador' || campo.tipo === 'deslizador') {
       const n = Number(valor)
       if (Number.isNaN(n)) detalles.push({ campo: campo.nombre, mensaje: 'Debe ser un número' })
       else if (n < campo.min || n > campo.max) {
@@ -125,34 +130,60 @@ function error(status: number, error: string, mensaje: string, detalles?: Detall
   })
 }
 
-export function analizarSimulado(solicitud: Solicitud, modo: ModoDemo): Promise<Analisis> {
+function leerAlmacen(): Record<string, Analisis> {
+  try {
+    return JSON.parse(sessionStorage.getItem(ALMACEN) ?? '{}') as Record<string, Analisis>
+  } catch {
+    return {}
+  }
+}
+
+function guardar(analisis: Analisis): void {
+  try {
+    const todos = leerAlmacen()
+    todos[analisis.id] = analisis
+    sessionStorage.setItem(ALMACEN, JSON.stringify(todos))
+  } catch {
+    // Modo privado o almacenamiento lleno: el análisis igual se devuelve,
+    // solo no se va a poder recuperar por URL. No es motivo para fallar.
+  }
+}
+
+export function analizarSimulado(solicitud: Solicitud): Promise<Analisis> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const detalles = validar(solicitud)
       if (detalles.length > 0) {
-        return reject(error(400, 'BAD_REQUEST', 'Errores de validacion en los datos de entrada', detalles))
-      }
-      if (modo === '400') {
-        return reject(error(400, 'BAD_REQUEST',
-          'El servicio de Machine Learning rechazó los datos de entrada (HTTP 422)'))
-      }
-      if (modo === '500') {
-        return reject(error(500, 'INTERNAL_SERVER_ERROR', 'Ocurrió un error inesperado en el servidor'))
-      }
-      if (modo === '503') {
-        return reject(error(503, 'SERVICE_UNAVAILABLE', 'El servicio de análisis no está disponible'))
+        return reject(error(400, 'BAD_REQUEST', 'Errores de validación en los datos de entrada', detalles))
       }
 
       const v = completar(solicitud)
       const p = puntaje(v)
       const categoria = clasificar(p)
 
-      resolve({
+      const analisis: Analisis = {
+        id: crypto.randomUUID(),
+        fecha: new Date().toISOString().slice(0, 19),
         categoria,
         probabilidad: confianza(p, categoria),
         costo_estimado_mensual: Math.round(Number(v.consumo_kwh) * TARIFA_KWH * 100) / 100,
-        recomendaciones: modo === 'sin-recomendaciones' ? [] : recomendaciones(v),
-      })
+        recomendaciones: recomendaciones(v),
+      }
+      guardar(analisis)
+      registrarEnHistorial(analisis)
+      resolve(analisis)
     }, LATENCIA_MS)
+  })
+}
+
+export function obtenerSimulado(id: string): Promise<Analisis> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const analisis = leerAlmacen()[id]
+      if (!analisis) {
+        return reject(error(404, 'NOT_FOUND', 'No existe un análisis con ese identificador'))
+      }
+      resolve(analisis)
+    }, 200)
   })
 }

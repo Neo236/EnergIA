@@ -148,13 +148,21 @@ jobs:
         # que "Verificar salud" no detecta un modelo faltante. El 503 real
         # aparece recién en el POST de inferencia, cuando ensure_artifacts()
         # no pudo traer el modelo del bucket. Entrenarlo acá, en el contenedor
-        # recién levantado, deja artefactos locales en data/ que no dependen
-        # de que OCI/PAR esté configurado ni disponible.
+        # recién levantado, deja artefactos locales que no dependen de que
+        # OCI/PAR esté configurado ni disponible.
+        #
+        # --dry-run es obligatorio: sin él, interfaces.cli.train también SUBE
+        # los artefactos al bucket configurado en STORAGE_BACKEND (ver
+        # interfaces/cli/train.py, _safe_upload_with_rotation). Staging y
+        # producción comparten el mismo OCI_PAR_URL, así que un entrenamiento
+        # "de respaldo" sin --dry-run reescribiría en cada deploy el modelo
+        # oficial que ambos ambientes leen al arrancar — exactamente lo que
+        # este paso NO debe hacer.
         run: |
           set -euo pipefail
-          echo "Entrenando modelo de respaldo en el contenedor..."
+          echo "Entrenando modelo de respaldo en el contenedor (sin publicar al bucket)..."
           docker compose -p "${{ steps.env.outputs.proyecto }}" \
-            exec -T ml-service bash -c "cd /app && make pipeline"
+            exec -T ml-service bash -c "cd /app && python3 -m interfaces.cli.train --dry-run"
 
       - name: Verificar salud
         id: salud

@@ -142,29 +142,15 @@ jobs:
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
             -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps ml-service
 
-      - name: Entrenar modelo
-        # /health del servicio ML responde "healthy" pase lo que pase (ver
-        # interfaces/api/app.py): no depende de que el modelo haya cargado, así
-        # que "Verificar salud" no detecta un modelo faltante. El 503 real
-        # aparece recién en el POST de inferencia, cuando ensure_artifacts()
-        # no pudo traer el modelo del bucket. Entrenarlo acá, en el contenedor
-        # recién levantado, deja artefactos locales que no dependen de que
-        # OCI/PAR esté configurado ni disponible.
-        #
-        # --dry-run es obligatorio: sin él, interfaces.cli.train también SUBE
-        # los artefactos al bucket configurado en STORAGE_BACKEND (ver
-        # interfaces/cli/train.py, _safe_upload_with_rotation). Staging y
-        # producción comparten el mismo OCI_PAR_URL, así que un entrenamiento
-        # "de respaldo" sin --dry-run reescribiría en cada deploy el modelo
-        # oficial que ambos ambientes leen al arrancar — exactamente lo que
-        # este paso NO debe hacer.
-        run: |
-          set -euo pipefail
-          echo "Entrenando modelo de respaldo en el contenedor (sin publicar al bucket)..."
-          docker compose -p "${{ steps.env.outputs.proyecto }}" \
-            exec -T ml-service bash -c "cd /app && python3 -m interfaces.cli.train --dry-run"
-
       - name: Verificar salud
+        # /health ahora prueba que el modelo cargó (ver interfaces/api/app.py),
+        # no solo que el proceso responde. El respaldo local cuando el bucket
+        # no está disponible también vive ahí, en el startup del servicio —
+        # se ejecuta solo, en cualquier ambiente, sin depender de un paso
+        # aparte acá. Si ambos fallan (bucket caído Y el entrenamiento de
+        # respaldo también falla), este chequeo lo detecta de verdad y
+        # dispara el rollback de más abajo, en vez de reportar "healthy" a
+        # ciegas como pasaba antes.
         id: salud
         continue-on-error: true
         run: |

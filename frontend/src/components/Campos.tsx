@@ -82,9 +82,12 @@ interface PropsTexto {
   ayuda?: string
   error?: string
   decimal?: boolean
+  /** Valor por defecto del back, mostrado en gris mientras el campo está vacío.
+      No es el valor: si no se toca, se sigue enviando sin este campo. */
+  placeholder?: string
 }
 
-export function CampoTexto({ etiqueta, valor, onCambio, unidad, requerido, ayuda, error, decimal }: PropsTexto) {
+export function CampoTexto({ etiqueta, valor, onCambio, unidad, requerido, ayuda, error, decimal, placeholder }: PropsTexto) {
   const id = useId()
   return (
     <Envoltura id={id} etiqueta={etiqueta} requerido={requerido} ayuda={ayuda} error={error}>
@@ -96,6 +99,7 @@ export function CampoTexto({ etiqueta, valor, onCambio, unidad, requerido, ayuda
              que en el diseño no existen, y en móvil abre el teclado correcto. */
           inputMode={decimal ? 'decimal' : 'numeric'}
           value={valor}
+          placeholder={placeholder}
           onChange={(e) => onCambio(e.target.value)}
           {...propsAuxiliares(id, ayuda, error)}
         />

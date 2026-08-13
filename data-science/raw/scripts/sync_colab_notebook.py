@@ -35,7 +35,7 @@ import requests
 # URL publica del notebook fuente de verdad (semana 1 - Constanza / Nahuel).
 COLAB_NOTEBOOK_URL = (
     "https://colab.research.google.com/drive/"
-    "1LiisJEOadkTdBZ8nLMKb_T2a3El3nLJi?usp=drive_link"
+    "1-vJVVndXAngkMmPkeBoVU2pDtBY2SF4y?usp=drive_link"
 )
 
 # Ruta destino: el archivo que el test de paridad consume.

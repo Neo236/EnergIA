@@ -17,6 +17,7 @@ import { Boton } from '../components/Boton'
 import { Acordeon } from '../components/Campos'
 import { IconoAlerta, IconoTilde } from '../components/Iconos'
 import { obtenerAnalisis } from '../lib/api'
+import { registrarEnHistorial } from '../lib/historial'
 import { TARIFA_KWH, ErrorApi, type Analisis, type Categoria } from '../lib/contrato'
 import { fechaLegible, pesos, porcentaje } from '../lib/formato'
 import { textoDeAnalisisAusente, type TextoAviso } from '../lib/mensajes'
@@ -60,6 +61,12 @@ export function Resultado() {
 
     return () => { vigente = false }
   }, [id, analisis])
+
+  /* Registrar en historial local cada vez que tengamos el análisis,
+     independientemente de si llegó por precarga o por fetch. */
+  useEffect(() => {
+    if (analisis) registrarEnHistorial(analisis)
+  }, [analisis])
 
   if (cargando) {
     return (
@@ -167,6 +174,7 @@ export function Resultado() {
             </p>
 
             <Link to="/"><Boton tipo="secundario" ancho>Nuevo análisis</Boton></Link>
+            <Link to="/historial"><Boton tipo="terciario" ancho>Ver historial</Boton></Link>
           </div>
         </div>
       </div>

@@ -939,3 +939,203 @@ button { font: inherit; color: inherit; }
 @media (min-width: 768px) {
   .resultado__aviso { text-align: left; }
 }
+
+/* ================= P-03 · Historial de análisis ================= */
+
+.historial {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-8);
+}
+
+.historial__cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-1);
+}
+
+.historial__lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-3);
+}
+
+/* --- item --- */
+
+/* Cada item es también una .tarjeta (blanco + borde + radio).
+   En móvil: columna — datos arriba, acciones abajo separadas por un borde.
+   En 768+:  fila — datos a la izquierda, acciones a la derecha. */
+.historial__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-4);
+}
+
+.historial__item-principal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--e-2);
+}
+
+.historial__item-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding-top: var(--e-4);
+  border-top: 1px solid var(--borde-separador);
+}
+
+@media (min-width: 768px) {
+  .historial__item {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--e-6);
+  }
+
+  .historial__item-principal {
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--e-5);
+  }
+
+  .historial__item-acciones {
+    flex-shrink: 0;
+    padding-top: 0;
+    border-top: none;
+    gap: var(--e-3);
+  }
+}
+
+/* --- badge de categoría --- */
+
+.historial__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px var(--e-3);
+  border-radius: var(--radio-redondo);
+  font-size: var(--tam-ayuda);
+  font-weight: var(--peso-semibold);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.historial__badge--eficiente {
+  background: var(--verde-menta);
+  color: var(--verde-bosque);
+}
+
+.historial__badge--moderado {
+  background: var(--advertencia-fondo);
+  color: var(--advertencia-texto);
+}
+
+.historial__badge--ineficiente {
+  background: var(--error-fondo);
+  color: var(--error-texto);
+}
+
+/* --- metadatos del item --- */
+
+.historial__fecha {
+  font-size: var(--tam-etiqueta);
+  color: var(--gris-medio);
+}
+
+.historial__costo {
+  font-size: var(--tam-etiqueta);
+  font-weight: var(--peso-semibold);
+  color: var(--negro-suave);
+  /* Empuja el costo al extremo derecho de la fila en escritorio. */
+  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .historial__costo { margin-left: 0; }
+}
+
+/* --- botón de borrado individual (icono X) --- */
+
+.historial__borrar-entrada {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radio-control);
+  color: var(--gris-medio);
+  transition: color var(--transicion-rapida), background var(--transicion-rapida);
+}
+
+.historial__borrar-entrada:hover {
+  color: var(--error-texto);
+  background: var(--error-fondo);
+}
+
+.historial__borrar-entrada:focus-visible {
+  outline: var(--anillo-foco) solid var(--verde-bosque);
+  outline-offset: var(--anillo-separacion);
+}
+
+/* --- confirmaciones inline (individual y borrar todo) --- */
+
+.historial__inline-confirmacion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  flex-wrap: wrap;
+}
+
+.historial__confirmacion-texto {
+  font-size: var(--tam-etiqueta);
+  color: var(--error-texto);
+  font-weight: var(--peso-medio);
+}
+
+/* Texto-botón sin estilo de sistema, solo tipografía. */
+.historial__accion-texto {
+  all: unset;
+  cursor: pointer;
+  font-size: var(--tam-etiqueta);
+  color: var(--gris-medio);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transicion-rapida);
+}
+
+.historial__accion-texto:hover { color: var(--gris-oscuro); }
+
+.historial__accion-texto:focus-visible {
+  outline: var(--anillo-foco) solid var(--verde-bosque);
+  outline-offset: var(--anillo-separacion);
+  border-radius: 2px;
+}
+
+.historial__accion-texto--destructivo { color: var(--error-texto); }
+.historial__accion-texto--destructivo:hover { color: var(--error); }
+
+/* --- pie del historial (borrar todo) --- */
+
+.historial__pie {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--e-3);
+  flex-wrap: wrap;
+  padding-top: var(--e-5);
+  border-top: 1px solid var(--borde-separador);
+}
+
+.historial__borrar-todo { text-decoration: none; }
+.historial__borrar-todo:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+.historial__inline-confirmacion--pie {
+  justify-content: flex-end;
+  width: 100%;
+}
+

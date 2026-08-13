@@ -122,7 +122,10 @@ jobs:
           if docker image inspect "$TAG" > /dev/null 2>&1; then
             echo "La imagen $TAG ya existe — se reutiliza (rollback)."
           else
-            docker build -t "$TAG" ./frontend
+            # VITE_API_MODO se resuelve en build-time (ver frontend/Dockerfile). Sin
+            # este build-arg, la imagen queda en el default "mock" del Dockerfile y
+            # el sitio desplegado simula respuestas en vez de hablar con la API real.
+            docker build --build-arg VITE_API_MODO=real -t "$TAG" ./frontend
           fi
           # Verificar que la imagen quedó correctamente taggeada antes de continuar
           docker image inspect "$TAG" > /dev/null 2>&1 || {

@@ -142,6 +142,20 @@ jobs:
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
             -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps ml-service
 
+      - name: Entrenar modelo
+        # /health del servicio ML responde "healthy" pase lo que pase (ver
+        # interfaces/api/app.py): no depende de que el modelo haya cargado, así
+        # que "Verificar salud" no detecta un modelo faltante. El 503 real
+        # aparece recién en el POST de inferencia, cuando ensure_artifacts()
+        # no pudo traer el modelo del bucket. Entrenarlo acá, en el contenedor
+        # recién levantado, deja artefactos locales en data/ que no dependen
+        # de que OCI/PAR esté configurado ni disponible.
+        run: |
+          set -euo pipefail
+          echo "Entrenando modelo de respaldo en el contenedor..."
+          docker compose -p "${{ steps.env.outputs.proyecto }}" \
+            exec -T ml-service bash -c "cd /app && make pipeline"
+
       - name: Verificar salud
         id: salud
         continue-on-error: true

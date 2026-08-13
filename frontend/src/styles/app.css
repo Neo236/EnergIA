@@ -102,6 +102,11 @@ button { font: inherit; color: inherit; }
 }
 .navegacion__enlace:hover { text-decoration: underline; }
 
+/* Agrupa los enlaces en el lado derecho del navbar para que el layout
+   sea [Logo ··· Analizar Historial] y no [Logo · Analizar · Historial]
+   distribuidos equidistantes por space-between. */
+.navegacion__links { display: flex; align-items: center; }
+
 .pie {
   display: flex;
   flex-wrap: wrap;

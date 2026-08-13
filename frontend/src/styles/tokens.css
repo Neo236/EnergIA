@@ -1,56 +1,154 @@
 /* ============================================================
    EnergiAI · tokens
-   Neutrales: tomados 1:1 del wireframe v2.2 en Figma.
-   Paleta:    TEMPORAL. Cuando llegue la identidad definitiva
-              se cambia solo este archivo.
+
+   Portados uno a uno desde las colecciones de variables del Figma
+   (archivo XmeNDLjiO1zwyZNSHSLJof). Los nombres replican los del
+   diseño para que un cambio allá se pueda rastrear acá sin traducir.
+
+   Si un valor de esta hoja no coincide con el Figma, el Figma manda.
+   Las tres excepciones deliberadas están marcadas con «A11Y:» y
+   documentadas en frontend/README.md.
    ============================================================ */
 
 :root {
-  /* — neutrales del wireframe — */
-  --ink:            #141414;  /* texto principal, botón primario  */
-  --mid:            #595959;  /* texto secundario, bordes fuertes */
-  --soft:           #6f6f6f;  /* ayudas, placeholders · 5,02:1 sobre blanco (WCAG AA) */
-  --line:           #ccccc7;  /* bordes suaves                    */
-  --surface:        #ffffff;
-  --surface-soft:   #fafaf9;  /* panel de opcionales              */
-  --surface-sel:    #f4f2f0;  /* tarjeta seleccionada             */
+  /* ---------- Color · marca ---------- */
+  --verde-bosque:      #2d6a4f;
+  --verde-principal:   #40916c;
+  --verde-medio:       #52b788;
+  --verde-claro:       #74c69d;
+  --verde-pastel:      #b7e4c7;
+  --verde-menta:       #d8f3dc;
+  --verde-hover:       #245741;
 
-  /* — paleta temporal — */
-  --accent:         #12715a;
-  --accent-hover:   #0c5644;
-  --accent-soft:    #e7f2ee;
-  --on-accent:      #ffffff;
+  /* ---------- Color · neutros ---------- */
+  --negro-suave:       #1a1a1a;
+  --gris-oscuro:       #374151;
+  --gris-medio:        #6b7280;
+  --gris-claro:        #d1d5db;
+  --gris-fondo:        #f3f4f6;
+  --blanco-calido:     #fafaf8;
+  --blanco:            #ffffff;
+  --velo:              rgb(26 26 26 / 45%);
 
-  --eficiente:      #1b7f4b;
-  --moderado:       #a16207;
-  --ineficiente:    #b42318;
+  /* ---------- Color · semánticos ---------- */
+  --error:             #dc2626;
+  --error-fondo:       #fee2e2;
+  --error-texto:       #991b1b;
+  --advertencia:       #f59e0b;
+  --advertencia-fondo: #fef3c7;
+  --advertencia-texto: #92400e;
+  --exito:             #059669;
+  --info:              #2563eb;
 
-  --danger:         #b42318;
-  --danger-soft:    #fef4f2;
+  /* ---------- Bordes ----------
+     El diseño usa --gris-claro para todo borde. Contra blanco da 1,47:1,
+     por debajo del 3:1 que WCAG 1.4.11 exige para los límites de un
+     control. La distinción que aplicamos: si el borde delimita algo con
+     lo que se interactúa, sube a --gris-medio (4,83:1); si solo separa
+     visualmente, se queda en --gris-claro, que no está sujeto al mínimo.
 
-  /* — forma — */
-  --r:              2px;
-  --r-pill:         999px;
+     A11Y: divergencia deliberada respecto del Figma. */
+  --borde-control:     var(--gris-medio);
+  --borde-separador:   var(--gris-claro);
+  --borde-tarjeta:     var(--gris-claro);
 
-  /* — tipografía — */
-  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --fs-h1:          22px;
-  --fs-lead:        14px;
-  --fs-label:       13px;
-  --fs-input:       15px;
-  --fs-help:        11.5px;
-  --fs-eyebrow:     10.5px;
+  /* ---------- Tipografía ----------
+     Los siete tamaños son la colección «Tipografía» del Figma, en su
+     modo Móvil. El modo Escritorio se aplica más abajo por consulta de
+     medios: es el mismo token resolviendo distinto, igual que en Figma. */
+  --fuente: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
-  /* — ritmo — */
-  --col:            640px;   /* ancho de columna en escritorio */
-  --gap-section:    18px;
-  --gap-field:      14px;
+  --tam-hero:      22px;
+  --tam-monto:     24px;
+  --tam-veredicto: 20px;
+  --tam-marca:     18px;
+  --tam-cuerpo:    16px;
+  --tam-etiqueta:  14px;
+  --tam-ayuda:     12px;
+
+  /* Tamaño mínimo de cualquier campo donde se escribe. Por debajo de 16px
+     iOS Safari hace zoom automático al enfocar y descuadra el viewport.
+     El Figma usa --tam-etiqueta (14px) en el desplegable y en el valor del
+     contador.  A11Y: divergencia deliberada. */
+  --tam-campo: var(--tam-cuerpo);
+
+  --peso-regular:   400;
+  --peso-medio:     500;
+  --peso-semibold:  600;
+  --peso-bold:      700;
+
+  --interlineado-apretado: 1.25;
+  --interlineado-normal:   1.5;
+
+  /* ---------- Forma ----------
+     Notas de diseño: 10px controles · 12px contenedores secundarios ·
+     16px tarjetas principales · redondo completo en círculos y badges. */
+  --radio-control:     10px;
+  --radio-contenedor:  12px;
+  --radio-tarjeta:     16px;
+  --radio-redondo:     999px;
+
+  /* ---------- Elevación ---------- */
+  --sombra-elevacion: 0 1px 3px rgb(0 0 0 / 8%);
+  --sombra-tarjeta:   0 8px 20px rgb(0 0 0 / 8%);
+  --sombra-modal:     0 8px 24px rgb(0 0 0 / 12%);
+
+  /* ---------- Espaciado ----------
+     Escala de múltiplos de 4 declarada en las notas de diseño. */
+  --e-1:  4px;
+  --e-2:  8px;
+  --e-3:  12px;
+  --e-4:  16px;
+  --e-5:  20px;
+  --e-6:  24px;
+  --e-8:  32px;
+  --e-10: 40px;
+  --e-12: 48px;
+  --e-16: 64px;
+  --e-20: 80px;
+
+  /* ---------- Anchos de columna ----------
+     Los del diseño, tal cual. P-02 es más ancha que P-01 porque a partir
+     de tablet reparte el resultado en dos columnas. */
+  --columna-formulario: 800px;
+  --columna-resultado:  1000px;
+  --columna-aviso:      640px;
+  --margen-lateral:     16px;
+
+  /* ---------- Interacción ----------
+     Blanco mínimo de un control táctil. El Figma deja los botones en 43px
+     y los chips en 41px.  A11Y: divergencia deliberada. */
+  --blanco-tactil: 44px;
+
+  /* El anillo de foco del botón primario en Figma es del mismo verde que su
+     relleno, así que no se ve. Acá se dibuja por fuera con `outline` +
+     `outline-offset`, de modo que contrasta contra el fondo de página
+     (6,38:1) en vez de contra el relleno del botón. */
+  --anillo-foco:        2px;
+  --anillo-separacion:  2px;
+  --halo-foco:          0 0 0 4px rgb(45 106 79 / 25%);
+
+  --transicion-rapida: 150ms ease-out;
+  --transicion-media:  250ms ease-out;
 }
 
+/* Modo Escritorio de la colección «Tipografía».
+   El corte en 768px es el mismo que separa MÓVIL de TABLET en el Figma:
+   tablet y escritorio comparten modo. */
 @media (min-width: 768px) {
   :root {
-    --fs-h1:        24px;
-    --gap-section:  22px;
-    --gap-field:    16px;
+    --tam-hero:      32px;
+    --tam-monto:     28px;
+    --tam-veredicto: 22px;
+    --tam-marca:     20px;
+    --margen-lateral: var(--e-10);
+  }
+}
+
+/* Quien pidió menos movimiento no debería recibir ninguno. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transicion-rapida: 1ms;
+    --transicion-media:  1ms;
   }
 }

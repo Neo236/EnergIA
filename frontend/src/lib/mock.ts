@@ -16,6 +16,7 @@ import {
   CAMPOS, CAMPOS_OPCIONALES, TARIFA_KWH, ErrorApi,
   type Analisis, type Categoria, type DetalleError, type Solicitud,
 } from './contrato'
+import { registrarEnHistorial } from './historial'
 
 const LATENCIA_MS = 900
 
@@ -169,6 +170,7 @@ export function analizarSimulado(solicitud: Solicitud): Promise<Analisis> {
         recomendaciones: recomendaciones(v),
       }
       guardar(analisis)
+      registrarEnHistorial(analisis)
       resolve(analisis)
     }, LATENCIA_MS)
   })

@@ -3,19 +3,15 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 
 import { App } from './App'
-import { LimiteDeError } from './components/LimiteDeError'
-import './styles/tokens.css'
 import './styles/app.css'
 
-const contenedor = document.getElementById('root')
-if (!contenedor) throw new Error('No se encontró el elemento #root')
+const raiz = document.getElementById('root')
+if (!raiz) throw new Error('Falta el elemento #root en index.html')
 
-createRoot(contenedor).render(
+createRoot(raiz).render(
   <StrictMode>
-    <LimiteDeError>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </LimiteDeError>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>,
 )

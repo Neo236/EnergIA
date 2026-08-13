@@ -27,8 +27,10 @@ function Navegacion() {
         <span className="navegacion__logo" aria-hidden="true"><IconoRayo tamano={16} /></span>
         <span>Energi<span className="navegacion__marca-ai">AI</span></span>
       </Link>
-      <Link className="navegacion__enlace" to="/">Analizar</Link>
-      <Link className="navegacion__enlace" to="/historial">Historial</Link>
+      <nav className="navegacion__links">
+        <Link className="navegacion__enlace" to="/">Analizar</Link>
+        <Link className="navegacion__enlace" to="/historial">Historial</Link>
+      </nav>
     </header>
   )
 }

@@ -69,8 +69,14 @@ export function registrarEnHistorial(analisis: Analisis): void {
 export function useHistorial() {
   const [entradas, setEntradas] = useState<EntradaHistorial[]>(leer)
 
-  function borrarEntrada(id: string): void {
-    const siguientes = entradas.filter((e) => e.id !== id)
+  /** Borra una o varias entradas de una sola pasada.
+      Ojo si se te ocurre "simplificar" esto llamando a esta función en un
+      loop por cada id: cada llamada leería `entradas` del mismo closure
+      obsoleto, y solo la última sobrevive — se pierden todas las
+      anteriores salvo la última del lote. Por eso el filtro es uno solo,
+      contra el Set completo. */
+  function borrarSeleccionadas(ids: Set<string>): void {
+    const siguientes = entradas.filter((e) => !ids.has(e.id))
     escribir(siguientes)
     setEntradas(siguientes)
   }
@@ -80,5 +86,5 @@ export function useHistorial() {
     setEntradas([])
   }
 
-  return { entradas, borrarEntrada, borrarTodo }
+  return { entradas, borrarSeleccionadas, borrarTodo }
 }

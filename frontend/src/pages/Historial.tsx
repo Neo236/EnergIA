@@ -3,7 +3,12 @@
 
    Lista los análisis guardados en localStorage, ordenados del más
    reciente al más antiguo. Cada entrada tiene un link directo al
-   resultado (/analisis/:id) y un botón para eliminarla del historial.
+   resultado (/analisis/:id) y una casilla para seleccionarla.
+
+   Borrado unificado en un solo mecanismo: seleccionar (o no) y confirmar.
+   Sin selección, "Borrar historial" borra todo. Con selección, se
+   convierte en "Borrar (N)" y borra solo lo tildado. Las dos rutas piden
+   confirmación de la misma manera.
 
    El historial es local al browser: si el usuario cambia de dispositivo
    o limpia el almacenamiento, desaparece. La URL del resultado sigue
@@ -25,72 +30,65 @@ const BADGE_CLASE: Record<Categoria, string> = {
   Ineficiente: 'historial__badge historial__badge--ineficiente',
 }
 
-function IconoX() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M11 3L3 11M3 3l8 8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-    </svg>
-  )
-}
-
 interface ItemProps {
   entrada: EntradaHistorial
-  onBorrar: () => void
+  seleccionado: boolean
+  onCambiarSeleccion: () => void
 }
 
-function ItemHistorial({ entrada, onBorrar }: ItemProps) {
-  const [confirmando, setConfirmando] = useState(false)
-
+function ItemHistorial({ entrada, seleccionado, onCambiarSeleccion }: ItemProps) {
   return (
     <li className="tarjeta historial__item">
-      <div className="historial__item-principal">
-        <span className={BADGE_CLASE[entrada.categoria]}>{entrada.categoria}</span>
-        <span className="historial__fecha">{fechaRelativa(entrada.fecha)}</span>
-        <span className="historial__costo">{pesos(entrada.costo_estimado_mensual)} / mes</span>
+      <div className="historial__item-contenido">
+        <label className="historial__seleccionar">
+          <input
+            type="checkbox"
+            className="historial__casilla"
+            checked={seleccionado}
+            onChange={onCambiarSeleccion}
+            aria-label={`Seleccionar análisis del ${fechaLegible(entrada.fecha)}`}
+          />
+        </label>
+
+        <div className="historial__item-principal">
+          <span className={BADGE_CLASE[entrada.categoria]}>{entrada.categoria}</span>
+          <span className="historial__fecha">{fechaRelativa(entrada.fecha)}</span>
+          <span className="historial__costo">{pesos(entrada.costo_estimado_mensual)} / mes</span>
+        </div>
       </div>
 
       <div className="historial__item-acciones">
         <Link to={`/analisis/${entrada.id}`}>
           <Boton tipo="secundario">Ver resultado</Boton>
         </Link>
-
-        {confirmando ? (
-          <span className="historial__inline-confirmacion">
-            <button
-              type="button"
-              className="historial__accion-texto historial__accion-texto--destructivo"
-              onClick={() => { onBorrar(); setConfirmando(false) }}
-            >
-              Eliminar
-            </button>
-            <span aria-hidden="true"> · </span>
-            <button
-              type="button"
-              className="historial__accion-texto"
-              onClick={() => setConfirmando(false)}
-            >
-              Cancelar
-            </button>
-          </span>
-        ) : (
-          <button
-            type="button"
-            className="historial__borrar-entrada"
-            aria-label={`Eliminar del historial: análisis del ${fechaLegible(entrada.fecha)}`}
-            title="Eliminar del historial"
-            onClick={() => setConfirmando(true)}
-          >
-            <IconoX />
-          </button>
-        )}
       </div>
     </li>
   )
 }
 
 export function Historial() {
-  const { entradas, borrarEntrada, borrarTodo } = useHistorial()
-  const [confirmandoBorrarTodo, setConfirmandoBorrarTodo] = useState(false)
+  const { entradas, borrarSeleccionadas, borrarTodo } = useHistorial()
+  const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set())
+  const [confirmando, setConfirmando] = useState(false)
+
+  function alternarSeleccion(id: string): void {
+    setSeleccionados((previos) => {
+      const siguientes = new Set(previos)
+      if (siguientes.has(id)) siguientes.delete(id)
+      else siguientes.add(id)
+      return siguientes
+    })
+  }
+
+  function confirmar(): void {
+    if (seleccionados.size > 0) {
+      borrarSeleccionadas(seleccionados)
+      setSeleccionados(new Set())
+    } else {
+      borrarTodo()
+    }
+    setConfirmando(false)
+  }
 
   if (entradas.length === 0) {
     return (
@@ -105,6 +103,9 @@ export function Historial() {
       </div>
     )
   }
+
+  const cantidadSeleccionada = seleccionados.size
+  const haySeleccion = cantidadSeleccionada > 0
 
   return (
     <div className="columna">
@@ -121,27 +122,32 @@ export function Historial() {
             <ItemHistorial
               key={entrada.id}
               entrada={entrada}
-              onBorrar={() => borrarEntrada(entrada.id)}
+              seleccionado={seleccionados.has(entrada.id)}
+              onCambiarSeleccion={() => alternarSeleccion(entrada.id)}
             />
           ))}
         </ul>
 
         <div className="historial__pie">
-          {confirmandoBorrarTodo ? (
+          {confirmando ? (
             <span className="historial__inline-confirmacion historial__inline-confirmacion--pie">
-              <span className="historial__confirmacion-texto">¿Borrar todo el historial?</span>
+              <span className="historial__confirmacion-texto">
+                {haySeleccion
+                  ? `¿Borrar ${cantidadSeleccionada} ${cantidadSeleccionada === 1 ? 'análisis seleccionado' : 'análisis seleccionados'}?`
+                  : '¿Borrar todo el historial?'}
+              </span>
               <button
                 type="button"
                 className="historial__accion-texto historial__accion-texto--destructivo"
-                onClick={() => { borrarTodo(); setConfirmandoBorrarTodo(false) }}
+                onClick={confirmar}
               >
-                Sí, borrar todo
+                {haySeleccion ? 'Sí, borrar' : 'Sí, borrar todo'}
               </button>
               <span aria-hidden="true"> · </span>
               <button
                 type="button"
                 className="historial__accion-texto"
-                onClick={() => setConfirmandoBorrarTodo(false)}
+                onClick={() => setConfirmando(false)}
               >
                 Cancelar
               </button>
@@ -150,9 +156,9 @@ export function Historial() {
             <button
               type="button"
               className="historial__accion-texto historial__borrar-todo"
-              onClick={() => setConfirmandoBorrarTodo(true)}
+              onClick={() => setConfirmando(true)}
             >
-              Borrar historial
+              {haySeleccion ? `Borrar (${cantidadSeleccionada})` : 'Borrar historial'}
             </button>
           )}
         </div>

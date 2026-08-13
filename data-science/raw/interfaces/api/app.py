@@ -3,7 +3,7 @@ import os
 
 from fastapi import FastAPI, HTTPException
 
-from application.inference import _load_model_cached, procesar_solicitud_api
+from application.inference import _load_model_cached, clear_model_cache, procesar_solicitud_api
 from infrastructure.config import Config
 from infrastructure.storage.sync import ensure_artifacts
 from interfaces.api.schemas import AnalisisRequest
@@ -14,6 +14,26 @@ log = logging.getLogger(__name__)
 
 app = FastAPI(title="EnergiAI - Analisis Energetico", version="1.2.0")
 MODEL_PATH = os.getenv("MODEL_PATH", Config.OUTPUT_MODEL_PATH)
+
+
+def _entrenar_respaldo_local() -> None:
+    """Entrena un modelo de respaldo en este mismo proceso, sin publicarlo.
+
+    Reutiliza interfaces.cli.train tal cual (mismo dataset sintetico, misma
+    RANDOM_SEED), asi que el resultado es el mismo modelo que produciria
+    `make pipeline` a mano. La flag --dry-run es la parte que importa: sin
+    ella, train.main() tambien SUBE los artefactos al bucket configurado en
+    STORAGE_BACKEND (ver _safe_upload_with_rotation), y Staging y Produccion
+    comparten el mismo OCI_PAR_URL - una corrida de respaldo no debe
+    reescribir el modelo "oficial" que ambos ambientes leen al arrancar.
+    Import local: interfaces.cli.train solo hace falta en este camino de
+    excepcion, no en el arranque normal con el bucket disponible.
+    """
+    from interfaces.cli.train import main as entrenar_dataset_y_modelo
+
+    codigo = entrenar_dataset_y_modelo(["--dry-run"])
+    if codigo != 0:
+        raise RuntimeError(f"interfaces.cli.train devolvió código {codigo}")
 
 
 @app.on_event("startup")
@@ -28,6 +48,11 @@ def _startup():
       2. Pre-cargar el modelo en memoria del proceso. Asi el primer POST
          no paga el joblib.load (~250ms). El cache es por-path via
          @lru_cache; tests con paths unicos se siguen cargando fresh.
+      3. Último recurso: si tras el paso 1 seguimos sin modelo (bucket
+         inalcanzable y sin artefacto bakeado en la imagen), entrenar uno
+         de respaldo local. Sin este paso, el servicio queda respondiendo
+         503 hasta el próximo restart, aunque nadie corra `make pipeline`
+         a mano - que es exactamente lo que pasó en Staging.
     """
     # 1. Pull desde el bucket (source of truth)
     try:
@@ -39,11 +64,26 @@ def _startup():
     try:
         _load_model_cached(MODEL_PATH)
         log.info("Modelo pre-cargado en memoria: %s", MODEL_PATH)
+        return
     except FileNotFoundError:
         log.warning(
-            "Modelo no encontrado en %s. "
-            "Requests devolverán 503 hasta que se ejecute `make pipeline`.",
+            "Modelo no encontrado en %s tras ensure_artifacts(). "
+            "Entrenando un respaldo local antes de aceptar tráfico...",
             MODEL_PATH,
+        )
+
+    # 3. Entrenar de respaldo y reintentar la carga.
+    try:
+        _entrenar_respaldo_local()
+        clear_model_cache()
+        _load_model_cached(MODEL_PATH)
+        log.info("Modelo de respaldo entrenado y cargado: %s", MODEL_PATH)
+    except Exception as e:
+        log.error(
+            "No se pudo entrenar el modelo de respaldo (%s). El servicio "
+            "responderá 503 hasta que el bucket esté disponible o se "
+            "reinicie el contenedor.",
+            e,
         )
 
 
@@ -54,6 +94,22 @@ def root():
 
 @app.get("/health")
 def health():
+    """Vivo Y con modelo cargado - no solo que el proceso responde.
+
+    _load_model_cached está cacheado (@lru_cache): una vez que el modelo
+    carga, esta llamada es un lookup en memoria, no vuelve a pagar el
+    joblib.load. Mientras siga faltando, cada poll reintenta la carga -
+    barato porque la alternativa (reportar "healthy" a ciegas) es la razón
+    por la que este endpoint nunca detectó el 503 real en Staging: ni el
+    HEALTHCHECK de Docker ni el "Verificar salud" del CD miran otra cosa.
+    """
+    try:
+        _load_model_cached(MODEL_PATH)
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Modelo no encontrado en {MODEL_PATH}. El servicio no puede responder inferencias.",
+        )
     return {"status": "healthy"}
 
 

@@ -143,6 +143,14 @@ jobs:
             -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps ml-service
 
       - name: Verificar salud
+        # /health ahora prueba que el modelo cargó (ver interfaces/api/app.py),
+        # no solo que el proceso responde. El respaldo local cuando el bucket
+        # no está disponible también vive ahí, en el startup del servicio —
+        # se ejecuta solo, en cualquier ambiente, sin depender de un paso
+        # aparte acá. Si ambos fallan (bucket caído Y el entrenamiento de
+        # respaldo también falla), este chequeo lo detecta de verdad y
+        # dispara el rollback de más abajo, en vez de reportar "healthy" a
+        # ciegas como pasaba antes.
         id: salud
         continue-on-error: true
         run: |

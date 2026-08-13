@@ -23,7 +23,7 @@ import {
 import { analizar } from '../lib/api'
 import {
   CALIDADES_AISLAMIENTO, CAMPOS_OPCIONALES, CAMPOS_REQUERIDOS, FUENTES_ENERGIA,
-  TIPOS_INMUEBLE, VALORES_INICIALES, ErrorApi,
+  TIPOS_INMUEBLE, VALORES_INICIALES, ErrorApi, defectoComoPlaceholder,
   type CalidadAislamiento, type FuenteEnergia, type Solicitud, type TipoInmueble,
 } from '../lib/contrato'
 import { mensajeDeCampo, textoDeAviso, type TextoAviso } from '../lib/mensajes'
@@ -222,12 +222,14 @@ export function Analizar() {
                 <CampoTexto
                   etiqueta="Metros cuadrados"
                   valor={metros} onCambio={setMetros} unidad="m²"
+                  placeholder={defectoComoPlaceholder('metros_cuadrados')}
                   ayuda={campoPorNombre('metros_cuadrados').ayuda}
                   error={errores.metros_cuadrados}
                 />
                 <CampoTexto
                   etiqueta="Antigüedad de la vivienda"
                   valor={antiguedad} onCambio={setAntiguedad} unidad="años"
+                  placeholder={defectoComoPlaceholder('antiguedad_vivienda')}
                   ayuda={campoPorNombre('antiguedad_vivienda').ayuda}
                   error={errores.antiguedad_vivienda}
                 />

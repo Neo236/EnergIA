@@ -28,8 +28,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, p, ul { margin: 0; }
-ul { padding: 0; list-style: none; }
+h1, h2, h3, p, ul, ol { margin: 0; }
+/* «Cómo funciona» es un <ol>: sin este reset, el navegador le agrega su
+   sangría por defecto (padding-inline-start: 40px) y la fila de pasos
+   queda indentada respecto del formulario, con la que debe compartir
+   borde izquierdo. */
+ul, ol { padding: 0; list-style: none; }
 
 button { font: inherit; color: inherit; }
 
@@ -461,11 +465,13 @@ button { font: inherit; color: inherit; }
 
 /* ================= interruptor sí / no ================= */
 
+/* Ocupa todo el ancho de su fila, igual que Entrada y Opciones — sin este
+   control se quedaba con un tope de 220px, dejando un hueco vacío a la
+   derecha en vez de repartir Sí/No en dos mitades. */
 .interruptor {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--e-2);
-  max-width: 220px;
 }
 
 .interruptor__opcion {

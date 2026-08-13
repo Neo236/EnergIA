@@ -188,3 +188,14 @@ export function conDefectos(solicitud: Solicitud): Record<string, unknown> {
   }
   return completo
 }
+
+/**
+ * El defecto de un campo numérico opcional, como texto para usar de
+ * placeholder: se ve en gris mientras el campo está vacío, sin ocupar el
+ * `value` — dejarlo vacío de verdad sigue siendo la opción válida.
+ */
+export function defectoComoPlaceholder(nombre: keyof Solicitud): string | undefined {
+  const campo = CAMPOS.find((c) => c.nombre === nombre)
+  if (!campo || (campo.tipo !== 'numero' && campo.tipo !== 'contador')) return undefined
+  return campo.defecto !== undefined ? String(campo.defecto) : undefined
+}

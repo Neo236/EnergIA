@@ -1069,8 +1069,11 @@ button { font: inherit; color: inherit; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  /* Blanco táctil mínimo (44×44), igual que el resto de los controles
+     aislados del sistema (contador, chips, botón) — no solo los que
+     vinieron del diseño original. */
+  width: var(--blanco-tactil);
+  height: var(--blanco-tactil);
   flex-shrink: 0;
   border-radius: var(--radio-control);
   color: var(--gris-medio);

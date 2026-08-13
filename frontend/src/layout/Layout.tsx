@@ -28,6 +28,7 @@ function Navegacion() {
         <span>Energi<span className="navegacion__marca-ai">AI</span></span>
       </Link>
       <Link className="navegacion__enlace" to="/">Analizar</Link>
+      <Link className="navegacion__enlace" to="/historial">Historial</Link>
     </header>
   )
 }

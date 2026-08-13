@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 
 import { Aviso } from '../components/Aviso'
 import { Boton } from '../components/Boton'
-import { fechaLegible, pesos } from '../lib/formato'
+import { fechaLegible, fechaRelativa, pesos } from '../lib/formato'
 import { useHistorial, type EntradaHistorial } from '../lib/historial'
 import type { Categoria } from '../lib/contrato'
 
@@ -45,7 +45,7 @@ function ItemHistorial({ entrada, onBorrar }: ItemProps) {
     <li className="tarjeta historial__item">
       <div className="historial__item-principal">
         <span className={BADGE_CLASE[entrada.categoria]}>{entrada.categoria}</span>
-        <span className="historial__fecha">{fechaLegible(entrada.fecha)}</span>
+        <span className="historial__fecha">{fechaRelativa(entrada.fecha)}</span>
         <span className="historial__costo">{pesos(entrada.costo_estimado_mensual)} / mes</span>
       </div>
 

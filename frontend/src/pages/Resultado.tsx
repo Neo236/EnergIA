@@ -19,7 +19,7 @@ import { IconoAlerta, IconoTilde } from '../components/Iconos'
 import { obtenerAnalisis } from '../lib/api'
 import { registrarEnHistorial } from '../lib/historial'
 import { TARIFA_KWH, ErrorApi, type Analisis, type Categoria } from '../lib/contrato'
-import { fechaLegible, pesos, porcentaje } from '../lib/formato'
+import { fechaRelativa, pesos, porcentaje } from '../lib/formato'
 import { textoDeAnalisisAusente, type TextoAviso } from '../lib/mensajes'
 
 const CLASE_POR_CATEGORIA: Record<Categoria, string> = {
@@ -170,7 +170,7 @@ export function Resultado() {
             <DatosUsados />
 
             <p className="resultado__aviso">
-              {fechaLegible(analisis.fecha)} · Guarda el enlace de esta página para volver al resultado
+              {fechaRelativa(analisis.fecha)} · Guarda el enlace de esta página para volver al resultado
             </p>
 
             <Link to="/"><Boton tipo="secundario" ancho>Nuevo análisis</Boton></Link>

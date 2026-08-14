@@ -1,5 +1,7 @@
+import hashlib
 import logging
 import os
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException
 
@@ -111,6 +113,55 @@ def health():
             detail=f"Modelo no encontrado en {MODEL_PATH}. El servicio no puede responder inferencias.",
         )
     return {"status": "healthy"}
+
+
+@app.get("/model-info")
+def model_info():
+    """Identidad del modelo activo: hash SHA-256, tamaño, mtime y estado de cache.
+
+    Util para confirmar desde fuera de la VM que el modelo que sirve la API
+    es el que se entrenó y publicó en el bucket, sin necesidad de acceso SSH.
+    El hash se calcula leyendo el archivo en chunks (impacto de memoria bajo).
+
+    Campos de respuesta:
+      model_path       — path relativo usado por el proceso
+      sha256           — hash SHA-256 del .joblib en disco
+      size_bytes       — tamaño en bytes
+      mtime_utc        — ultima modificacion del archivo en UTC ISO-8601
+      loaded           — True si el modelo ya esta en el cache @lru_cache
+      storage_backend  — valor de STORAGE_BACKEND (local | oci | par)
+    """
+    path = MODEL_PATH
+    if not os.path.exists(path):
+        raise HTTPException(
+            status_code=503,
+            detail=f"Archivo de modelo no encontrado en {path}. "
+                   "Ejecuta `make pipeline` o espera el startup del servicio.",
+        )
+
+    # Hash SHA-256 en chunks para no cargar el archivo completo en memoria
+    sha256 = hashlib.sha256()
+    size = 0
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            sha256.update(chunk)
+            size += len(chunk)
+
+    mtime = os.path.getmtime(path)
+    mtime_utc = datetime.fromtimestamp(mtime, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Verificar si el modelo está en el lru_cache sin intentar cargarlo
+    cache_info = _load_model_cached.cache_info()
+    loaded = cache_info.currsize > 0
+
+    return {
+        "model_path": path,
+        "sha256": sha256.hexdigest(),
+        "size_bytes": size,
+        "mtime_utc": mtime_utc,
+        "loaded": loaded,
+        "storage_backend": os.getenv("STORAGE_BACKEND", "local"),
+    }
 
 
 @app.post("/analisis-energetico")

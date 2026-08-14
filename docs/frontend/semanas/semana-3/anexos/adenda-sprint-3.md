@@ -79,7 +79,7 @@ Había quedado registrado que los mensajes de validación llegaban en inglés (`
 
 - **`tipo_inmueble` no influye en el resultado.** Verificado el 04/08 contra `develop@8514084`: no aparecía en la generación del dataset ni en el cálculo del puntaje. **Pendiente de re-verificar** — Data Science reescribió esa lógica el 05/08 y no volví a comprobarlo. Se anota como pregunta abierta, no como hecho.
 - **Sin identificador en la respuesta (PA-19).** Mientras siga así, no hay enlaces compartibles ni pantalla «mis análisis». La ruta `/analisis/:id` existe en el front y siempre cae en «no encontrado», documentando el hueco en vez de esconderlo.
-- **Región de OCI mal escrita.** `santiago-chile-1` en `docker-compose.yml` y en la documentación; la región correcta es `sa-santiago-1`. No rompe hoy porque el storage local no la usa.
+- **Región de OCI mal escrita.** ~~`santiago-chile-1` en `docker-compose.yml` y en la documentación; la región correcta es `sa-santiago-1`. No rompe hoy porque el storage local no la usa.~~ → **Corregido** en `fix/oci-region-identifiers`: `sa-santiago-1` en todos los archivos de configuración, código y documentación.
 
 ---
 

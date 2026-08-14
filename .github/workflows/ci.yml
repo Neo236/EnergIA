@@ -130,6 +130,13 @@ jobs:
         working-directory: frontend
         run: npm run typecheck
 
+      # El smoke test de más abajo solo prueba que el contenedor sirve HTML:
+      # no ve si fechaRelativa interpreta bien la zona horaria, ni si borrar
+      # una selección del historial deja los ids correctos. Esto sí.
+      - name: Run unit tests
+        working-directory: frontend
+        run: npm run test
+
       - name: Build Docker image
         run: docker build -t energiai-frontend:test ./frontend
 

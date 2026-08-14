@@ -39,10 +39,18 @@ const MESES = [
  * zona horaria esté — es como funciona Date en JS: guarda un instante
  * absoluto, y son los getters no-UTC los que lo traducen a la zona del
  * dispositivo. No hace falta detectarla a mano.
+ *
+ * La columna `fecha` en Postgres es TIMESTAMP (precisión de microsegundos),
+ * así que el backend puede mandar más de 3 dígitos decimales en los
+ * segundos (".123456"). El formato Date Time String de ECMA-262 solo
+ * garantiza soporte para 3 — más que eso es comportamiento no
+ * estandarizado, aunque V8 (Chrome/Node) lo trunca sin fallar. Se recorta
+ * acá para no depender de esa lenidad en motores que no la tengan.
  */
 function comoFechaUtc(iso: string): Date | null {
   const CON_ZONA = /(Z|[+-]\d{2}:?\d{2})$/
-  const normalizado = CON_ZONA.test(iso) ? iso : `${iso}Z`
+  const sinExceso = iso.replace(/(\.\d{3})\d+/, '$1')
+  const normalizado = CON_ZONA.test(sinExceso) ? sinExceso : `${sinExceso}Z`
   const fecha = new Date(normalizado)
   return Number.isNaN(fecha.getTime()) ? null : fecha
 }

@@ -187,17 +187,21 @@ jobs:
         continue-on-error: true
         run: |
           set -uo pipefail
+          # RUNNER_TEMP es un directorio por-job (ver el mismo fix en
+          # cd-backend.yml y cd-ml.yml — ahí sí importaba para el body,
+          # acá es solo por consistencia con el patrón).
+          ERR="$RUNNER_TEMP/fe_err.txt"
           # nginx arranca rápido; 10 x 3 s = 30 s es suficiente
           for i in $(seq 1 10); do
             echo "Intento $i/10 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/"
             HTTP=$(curl -o /dev/null -w "%{http_code}" -sS \
-              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/" 2>/tmp/fe_err.txt || true)
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/" 2>"$ERR" || true)
             if [ "$HTTP" = "200" ] || [ "$HTTP" = "304" ]; then
               echo "Front-end respondiendo OK (intento $i). HTTP $HTTP"
               exit 0
             fi
             echo "  HTTP: $HTTP"
-            cat /tmp/fe_err.txt 2>/dev/null || true
+            cat "$ERR" 2>/dev/null || true
             sleep 3
           done
           echo "El front-end no respondió después de 30 s."

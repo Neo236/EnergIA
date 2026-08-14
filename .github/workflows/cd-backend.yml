@@ -162,18 +162,27 @@ jobs:
         continue-on-error: true
         run: |
           set -uo pipefail
+          # RUNNER_TEMP es un directorio por-job: en el runner self-hosted,
+          # dos deploys (p.ej. backend y ml) pueden ejecutarse cerca uno del
+          # otro y compartir filesystem. Una ruta fija en /tmp hacía que un
+          # curl fallido de este job (sin body) dejara leer al siguiente el
+          # archivo viejo de OTRO job — pasó de verdad entre cd-backend y
+          # cd-ml en el mismo push.
+          RESP="$RUNNER_TEMP/health_resp.txt"
+          ERR="$RUNNER_TEMP/health_err.txt"
           # 12 x 5 s = 60 s: Spring Boot necesita tiempo para arrancar la JVM
           for i in $(seq 1 12); do
             echo "Intento $i/12 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health"
-            HTTP=$(curl -o /tmp/health_resp.txt -w "%{http_code}" -sS \
-              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health" 2>/tmp/health_err.txt || true)
-            BODY=$(cat /tmp/health_resp.txt 2>/dev/null || true)
+            rm -f "$RESP"
+            HTTP=$(curl -o "$RESP" -w "%{http_code}" -sS \
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health" 2>"$ERR" || true)
+            BODY=$(cat "$RESP" 2>/dev/null || true)
             if echo "$BODY" | grep -q '"status":"UP"'; then
               echo "Backend (Spring Boot) respondiendo OK (intento $i). HTTP $HTTP"
               exit 0
             fi
             echo "  HTTP: $HTTP | Body: $BODY"
-            cat /tmp/health_err.txt 2>/dev/null || true
+            cat "$ERR" 2>/dev/null || true
             sleep 5
           done
           echo "El backend no respondió después de 60 s."

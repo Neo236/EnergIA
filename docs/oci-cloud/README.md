@@ -407,6 +407,6 @@ Ver `data-science/raw/.env.example` para referencia completa. Mínimo para bucke
 STORAGE_BACKEND=oci
 OCI_NAMESPACE=sergiovillenavergara
 OCI_BUCKET=g9-energy-test-bucket
-OCI_REGION=santiago-chile-1
+OCI_REGION=sa-santiago-1
 OCI_INSTANCE_PRINCIPAL=true
 ```

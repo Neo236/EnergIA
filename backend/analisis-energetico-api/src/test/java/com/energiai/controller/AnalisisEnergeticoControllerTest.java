@@ -403,4 +403,20 @@ class AnalisisEnergeticoControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }
+
+    @Test
+    @DisplayName("GET /api/v1/analisis-energetico/{id}: Retorna 404 cuando el id no es un UUID")
+    void testObtenerAnalisisConIdMalFormadoRetorna404() throws Exception {
+        // El caso real: un enlace al resultado que se corto al copiarlo. La
+        // conversion a UUID falla antes de entrar al controlador, asi que sin
+        // un handler para esa excepcion la peticion terminaba en el catch-all
+        // y devolvia 500 — un fallo del servidor por un dato del cliente.
+        mockMvc.perform(get("/api/v1/analisis-energetico/00000000-000"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("NOT_FOUND"));
+
+        // No se consulto la base: el id nunca llego a ser un UUID.
+        verify(repository, never()).findById(any());
+    }
 }

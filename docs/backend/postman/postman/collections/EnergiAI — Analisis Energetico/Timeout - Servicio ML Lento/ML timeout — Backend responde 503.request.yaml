@@ -1,0 +1,48 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/analisis-energetico"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "consumo_kwh": 300,
+      "cantidad_equipos": 8,
+      "tipo_inmueble": "Casa",
+      "horas_alto_consumo": 6
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      // Este test pasara cuando el ML service tarde mas de
+      // read-timeout ms (default: 5000ms) en responder.
+      // Requiere configuracion manual — ver descripcion de la carpeta.
+
+      pm.test('Status is 503 Service Unavailable', () => {
+          pm.response.to.have.status(503);
+      });
+
+      pm.test('Content-Type is JSON', () => {
+          pm.response.to.be.json;
+      });
+
+      pm.test('Error response has required fields', () => {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('timestamp');
+          pm.expect(body).to.have.property('status');
+          pm.expect(body).to.have.property('error');
+          pm.expect(body).to.have.property('mensaje');
+      });
+
+      pm.test('Status code in body is 503', () => {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql(503);
+      });
+
+      pm.test('Error is SERVICE_UNAVAILABLE', () => {
+          const body = pm.response.json();
+          pm.expect(body.error).to.eql('SERVICE_UNAVAILABLE');
+      });
+    language: text/javascript
+order: 1000

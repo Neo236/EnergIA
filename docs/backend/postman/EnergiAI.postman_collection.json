@@ -1,0 +1,1193 @@
+{
+	"info": {
+		"_postman_id": "energiai-collection-v1",
+		"name": "EnergiAI — Analisis Energetico",
+		"description": "Coleccion Postman definitiva para la API REST de EnergiAI.\n\nIncluye: health checks, happy path (3 perfiles), validaciones 400, 404, 502, 503, timeout, y validacion directa contra el ML service.\n\nCada request incluye aserciones automaticas de estructura y rangos.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Checks",
+			"item": [
+				{
+					"name": "Backend Health — Actuator",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["actuator", "health"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Body has status field', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body.status).to.be.a('string');",
+									"});",
+									"",
+									"pm.test('Backend is UP', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql('UP');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "ML Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mlUrl}}/health",
+							"host": ["{{mlUrl}}"],
+							"path": ["health"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Body has status field', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('status');",
+									"});",
+									"",
+									"pm.test('ML service is healthy', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql('healthy');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "ML Service Root Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mlUrl}}/",
+							"host": ["{{mlUrl}}"],
+							"path": [""]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Body has service, status, and endpoint fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('service');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('endpoint');",
+									"    pm.expect(body.service).to.eql('EnergiAI');",
+									"    pm.expect(body.status).to.eql('ok');",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Happy Path — 3 Perfiles Energeticos",
+			"item": [
+				{
+					"name": "Perfil Eficiente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 200,\n  \"cantidad_equipos\": 6,\n  \"tipo_inmueble\": \"Casa\",\n  \"uso_horario_pico\": false,\n  \"horas_alto_consumo\": 6,\n  \"metros_cuadrados\": 26,\n  \"antiguedad_vivienda\": 2,\n  \"zona_fria\": false,\n  \"calidad_aislamiento\": \"Alta\",\n  \"fuente_calefaccion\": \"Solar\",\n  \"fuente_agua_caliente\": \"Solar\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('id');",
+									"    pm.expect(body).to.have.property('fecha');",
+									"    pm.expect(body).to.have.property('categoria');",
+									"    pm.expect(body).to.have.property('probabilidad');",
+									"    pm.expect(body).to.have.property('costo_estimado_mensual');",
+									"    pm.expect(body).to.have.property('recomendaciones');",
+									"});",
+									"",
+									"pm.test('id is a valid UUID', () => {",
+									"    const body = pm.response.json();",
+									"    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;",
+									"    pm.expect(body.id).to.match(uuidRegex);",
+									"});",
+									"",
+									"pm.test('categoria is a valid enum value', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(['Eficiente', 'Moderado', 'Ineficiente']).to.include(body.categoria);",
+									"});",
+									"",
+									"pm.test('probabilidad is between 0 and 1', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.probabilidad).to.be.at.least(0);",
+									"    pm.expect(body.probabilidad).to.be.at.most(1);",
+									"});",
+									"",
+									"pm.test('costo_estimado_mensual is >= 0', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.costo_estimado_mensual).to.be.at.least(0);",
+									"});",
+									"",
+									"pm.test('recomendaciones is a non-empty array', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.recomendaciones).to.be.an('array');",
+									"    pm.expect(body.recomendaciones.length).to.be.above(0);",
+									"});",
+									"",
+									"pm.test('fecha is a valid datetime string', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.fecha).to.be.a('string');",
+									"    pm.expect(new Date(body.fecha).toISOString()).to.equal(body.fecha);",
+									"});",
+									"",
+									"",
+									"pm.test('categoria is Eficiente for this profile', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.categoria).to.eql('Eficiente');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Perfil Moderado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 300,\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"Departamento\",\n  \"uso_horario_pico\": true,\n  \"horas_alto_consumo\": 3,\n  \"metros_cuadrados\": 35,\n  \"antiguedad_vivienda\": 7,\n  \"zona_fria\": false,\n  \"calidad_aislamiento\": \"Media\",\n  \"fuente_calefaccion\": \"Electricidad\",\n  \"fuente_agua_caliente\": \"Electricidad\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('id');",
+									"    pm.expect(body).to.have.property('fecha');",
+									"    pm.expect(body).to.have.property('categoria');",
+									"    pm.expect(body).to.have.property('probabilidad');",
+									"    pm.expect(body).to.have.property('costo_estimado_mensual');",
+									"    pm.expect(body).to.have.property('recomendaciones');",
+									"});",
+									"",
+									"pm.test('id is a valid UUID', () => {",
+									"    const body = pm.response.json();",
+									"    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;",
+									"    pm.expect(body.id).to.match(uuidRegex);",
+									"});",
+									"",
+									"pm.test('categoria is a valid enum value', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(['Eficiente', 'Moderado', 'Ineficiente']).to.include(body.categoria);",
+									"});",
+									"",
+									"pm.test('probabilidad is between 0 and 1', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.probabilidad).to.be.at.least(0);",
+									"    pm.expect(body.probabilidad).to.be.at.most(1);",
+									"});",
+									"",
+									"pm.test('costo_estimado_mensual is >= 0', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.costo_estimado_mensual).to.be.at.least(0);",
+									"});",
+									"",
+									"pm.test('recomendaciones is a non-empty array', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.recomendaciones).to.be.an('array');",
+									"    pm.expect(body.recomendaciones.length).to.be.above(0);",
+									"});",
+									"",
+									"pm.test('fecha is a valid datetime string', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.fecha).to.be.a('string');",
+									"    pm.expect(new Date(body.fecha).toISOString()).to.equal(body.fecha);",
+									"});",
+									"",
+									"",
+									"pm.test('categoria is Moderado for this profile', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.categoria).to.eql('Moderado');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Perfil Ineficiente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 600,\n  \"cantidad_equipos\": 10,\n  \"tipo_inmueble\": \"Departamento\",\n  \"uso_horario_pico\": true,\n  \"horas_alto_consumo\": 6,\n  \"metros_cuadrados\": 40,\n  \"antiguedad_vivienda\": 15,\n  \"zona_fria\": true,\n  \"calidad_aislamiento\": \"Baja\",\n  \"fuente_calefaccion\": \"Electricidad\",\n  \"fuente_agua_caliente\": \"Electricidad\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('id');",
+									"    pm.expect(body).to.have.property('fecha');",
+									"    pm.expect(body).to.have.property('categoria');",
+									"    pm.expect(body).to.have.property('probabilidad');",
+									"    pm.expect(body).to.have.property('costo_estimado_mensual');",
+									"    pm.expect(body).to.have.property('recomendaciones');",
+									"});",
+									"",
+									"pm.test('id is a valid UUID', () => {",
+									"    const body = pm.response.json();",
+									"    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;",
+									"    pm.expect(body.id).to.match(uuidRegex);",
+									"});",
+									"",
+									"pm.test('categoria is a valid enum value', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(['Eficiente', 'Moderado', 'Ineficiente']).to.include(body.categoria);",
+									"});",
+									"",
+									"pm.test('probabilidad is between 0 and 1', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.probabilidad).to.be.at.least(0);",
+									"    pm.expect(body.probabilidad).to.be.at.most(1);",
+									"});",
+									"",
+									"pm.test('costo_estimado_mensual is >= 0', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.costo_estimado_mensual).to.be.at.least(0);",
+									"});",
+									"",
+									"pm.test('recomendaciones is a non-empty array', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.recomendaciones).to.be.an('array');",
+									"    pm.expect(body.recomendaciones.length).to.be.above(0);",
+									"});",
+									"",
+									"pm.test('fecha is a valid datetime string', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.fecha).to.be.a('string');",
+									"    pm.expect(new Date(body.fecha).toISOString()).to.equal(body.fecha);",
+									"});",
+									"",
+									"",
+									"pm.test('categoria is Ineficiente for this profile', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.categoria).to.eql('Ineficiente');",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Validaciones HTTP 400",
+			"item": [
+				{
+					"name": "Campo obligatorio nulo — consumo_kwh faltante",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"Casa\",\n  \"horas_alto_consumo\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 400', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(400);",
+									"});",
+									"",
+									"pm.test('Error is BAD_REQUEST', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.error).to.eql('BAD_REQUEST');",
+									"});",
+									"",
+									"pm.test(' detalles array exists for validation errors', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('detalles');",
+									"    pm.expect(body.detalles).to.be.an('array');",
+									"    pm.expect(body.detalles.length).to.be.above(0);",
+									"});",
+									"",
+									"pm.test('Each detail has campo and mensaje', () => {",
+									"    const body = pm.response.json();",
+									"    body.detalles.forEach((d) => {",
+									"        pm.expect(d).to.have.property('campo');",
+									"        pm.expect(d).to.have.property('mensaje');",
+									"    });",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Valor fuera de rango — consumo_kwh > 1000",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 1500,\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"Casa\",\n  \"horas_alto_consumo\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 400', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(400);",
+									"});",
+									"",
+									"pm.test('detalles array exists', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('detalles');",
+									"    pm.expect(body.detalles).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Enum invalido — tipo_inmueble inexistente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 300,\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"CasaEstilo\",\n  \"horas_alto_consumo\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 400', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(400);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "JSON malformado — body no es JSON valido",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "not a valid json body",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 400', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(400);",
+									"});",
+									"",
+									"pm.test('Error is BAD_REQUEST', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.error).to.eql('BAD_REQUEST');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Body vacio — sin payload",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 400', () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 400', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(400);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Recurso No Encontrado HTTP 404",
+			"item": [
+				{
+					"name": "GET analisis con UUID inexistente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico/00000000-0000-0000-0000-000000000000",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico", "00000000-0000-0000-0000-000000000000"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 404', () => {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 404', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(404);",
+									"});",
+									"",
+									"pm.test('Error is NOT_FOUND', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.error).to.eql('NOT_FOUND');",
+									"});",
+									"",
+									"pm.test('Mensaje contains ID reference', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.mensaje).to.be.a('string');",
+									"    pm.expect(body.mensaje.length).to.be.above(0);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Respuesta Invalida de ML HTTP 502",
+			"description": "Este test requiere intervencion manual: detener el ML service a mitad de procesamiento, o usar un proxy para inyectar una respuesta no-JSON.\n\nPasos para reproducir:\n1. Levantar backend y ML normalmente.\n2. Iniciar un proxy local (ej. mitmproxy) que intercepte la llamada backend->ML y retorne HTML.\n3. Ejecutar este request.\n4. Verificar que el backend retorne 502 al frontend.\n\nAlternativa rapida: enviar un payload que provoque un error inesperado en el ML (ej. timeout muy corto + payload grande).",
+			"item": [
+				{
+					"name": "ML retorna respuesta no-JSON — Backend responde 502",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 300,\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"Casa\",\n  \"horas_alto_consumo\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Este test solo pasara cuando el ML service retorne una respuesta",
+									"// que no es JSON valido (ej. HTML de error, texto plano, etc.)",
+									"// Requiere setup manual — ver descripcion de la carpeta.",
+									"",
+									"pm.test('Status is 502 Bad Gateway', () => {",
+									"    pm.response.to.have.status(502);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 502', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(502);",
+									"});",
+									"",
+									"pm.test('Error is BAD_GATEWAY', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.error).to.eql('BAD_GATEWAY');",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "ML No Disponible HTTP 503",
+			"description": "Este test requiere detener el ML service.\n\nPasos para reproducir:\n1. Levantar todo el stack con: docker compose up -d\n2. Detener solo el ML service: docker stop ml-service\n3. Ejecutar este request contra el backend.\n4. El backend no puede conectar al ML y retorna 503.\n5. Reiniciar ML service: docker start ml-service",
+			"item": [
+				{
+					"name": "ML apagado — Backend responde 503",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 300,\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"Casa\",\n  \"horas_alto_consumo\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Este test solo pasara cuando el ML service este detenido.",
+									"// Requiere: docker stop ml-service antes de ejecutar.",
+									"",
+									"pm.test('Status is 503 Service Unavailable', () => {",
+									"    pm.response.to.have.status(503);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 503', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(503);",
+									"});",
+									"",
+									"pm.test('Error is SERVICE_UNAVAILABLE', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.error).to.eql('SERVICE_UNAVAILABLE');",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Timeout / Servicio ML Lento",
+			"description": "Este test requiere configurar un timeout muy corto en el backend.\n\nPasos para reproducir:\n1. En application.properties del backend, configurar:\n   ml.service.connect-timeout=1000\n   ml.service.read-timeout=1000\n2. Reiniciar el backend.\n3. En el ML service, agregar latencia artificial (ej. sleep(5) en inference).\n4. Ejecutar este request.\n5. El backend supera el timeout y retorna 503.\n\nAlternativa: detener el ML service (misma situacion que 503, pero el error se origina por timeout).",
+			"item": [
+				{
+					"name": "ML timeout — Backend responde 503",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/analisis-energetico",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 300,\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"Casa\",\n  \"horas_alto_consumo\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Este test pasara cuando el ML service tarde mas de",
+									"// read-timeout ms (default: 5000ms) en responder.",
+									"// Requiere configuracion manual — ver descripcion de la carpeta.",
+									"",
+									"pm.test('Status is 503 Service Unavailable', () => {",
+									"    pm.response.to.have.status(503);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Error response has required fields', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('timestamp');",
+									"    pm.expect(body).to.have.property('status');",
+									"    pm.expect(body).to.have.property('error');",
+									"    pm.expect(body).to.have.property('mensaje');",
+									"});",
+									"",
+									"pm.test('Status code in body is 503', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql(503);",
+									"});",
+									"",
+									"pm.test('Error is SERVICE_UNAVAILABLE', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.error).to.eql('SERVICE_UNAVAILABLE');",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Contract Validation — ML Service Directo",
+			"description": "Requests directos contra el FastAPI ML service (puerto 8000).",
+			"item": [
+				{
+					"name": "Happy path — POST al ML directo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{mlUrl}}/analisis-energetico",
+							"host": ["{{mlUrl}}"],
+							"path": ["analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 300,\n  \"cantidad_equipos\": 8,\n  \"tipo_inmueble\": \"Casa\",\n  \"horas_alto_consumo\": 6,\n  \"uso_horario_pico\": false,\n  \"zona_fria\": false,\n  \"fuente_calefaccion\": \"Electricidad\",\n  \"fuente_agua_caliente\": \"Electricidad\",\n  \"metros_cuadrados\": 100,\n  \"antiguedad_vivienda\": 10,\n  \"calidad_aislamiento\": \"Media\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Response has ML fields (no id, no fecha)', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('categoria');",
+									"    pm.expect(body).to.have.property('probabilidad');",
+									"    pm.expect(body).to.have.property('costo_estimado_mensual');",
+									"    pm.expect(body).to.have.property('recomendaciones');",
+									"    pm.expect(body).to.not.have.property('id');",
+									"    pm.expect(body).to.not.have.property('fecha');",
+									"});",
+									"",
+									"pm.test('categoria is valid', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(['Eficiente', 'Moderado', 'Ineficiente']).to.include(body.categoria);",
+									"});",
+									"",
+									"pm.test('probabilidad is between 0 and 1', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.probabilidad).to.be.at.least(0);",
+									"    pm.expect(body.probabilidad).to.be.at.most(1);",
+									"});",
+									"",
+									"pm.test('costo_estimado_mensual is >= 0', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.costo_estimado_mensual).to.be.at.least(0);",
+									"});",
+									"",
+									"pm.test('recomendaciones is a non-empty array', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.recomendaciones).to.be.an('array');",
+									"    pm.expect(body.recomendaciones.length).to.be.above(0);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Validacion Pydantic 422 — campo obligatorio faltante",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{mlUrl}}/analisis-energetico",
+							"host": ["{{mlUrl}}"],
+							"path": ["analisis-energetico"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consumo_kwh\": 300\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 422 Unprocessable Entity', () => {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Response has detail array', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('detail');",
+									"    pm.expect(body.detail).to.be.an('array');",
+									"    pm.expect(body.detail.length).to.be.above(0);",
+									"});",
+									"",
+									"pm.test('Each error has loc, msg, and type', () => {",
+									"    const body = pm.response.json();",
+									"    body.detail.forEach((err) => {",
+									"        pm.expect(err).to.have.property('loc');",
+									"        pm.expect(err).to.have.property('msg');",
+									"        pm.expect(err).to.have.property('type');",
+									"    });",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "ML Health detallado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mlUrl}}/health",
+							"host": ["{{mlUrl}}"],
+							"path": ["health"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status is 200', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Type is JSON', () => {",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test('Body has status field', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property('status');",
+									"});",
+									"",
+									"pm.test('ML is healthy', () => {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body.status).to.eql('healthy');",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "mlUrl",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,3 @@
+$kind: collection
+description: Requests directos contra el FastAPI ML service (puerto 8000).
+order: 8000

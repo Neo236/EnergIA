@@ -1,0 +1,10 @@
+$kind: collection
+description: |-
+  Coleccion Postman definitiva para la API REST de EnergiAI.
+
+  Incluye: health checks, happy path (3 perfiles), validaciones 400, 404, 502, 503, timeout, y validacion directa contra el ML service.
+
+  Cada request incluye aserciones automaticas de estructura y rangos.
+variables:
+  baseUrl: http://localhost:8080
+  mlUrl: http://localhost:8000

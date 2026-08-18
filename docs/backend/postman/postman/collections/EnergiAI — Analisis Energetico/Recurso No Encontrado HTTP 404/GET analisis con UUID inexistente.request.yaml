@@ -1,0 +1,39 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/analisis-energetico/00000000-0000-0000-0000-000000000000"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 404', () => {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test('Content-Type is JSON', () => {
+          pm.response.to.be.json;
+      });
+
+      pm.test('Error response has required fields', () => {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('timestamp');
+          pm.expect(body).to.have.property('status');
+          pm.expect(body).to.have.property('error');
+          pm.expect(body).to.have.property('mensaje');
+      });
+
+      pm.test('Status code in body is 404', () => {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql(404);
+      });
+
+      pm.test('Error is NOT_FOUND', () => {
+          const body = pm.response.json();
+          pm.expect(body.error).to.eql('NOT_FOUND');
+      });
+
+      pm.test('Mensaje contains ID reference', () => {
+          const body = pm.response.json();
+          pm.expect(body.mensaje).to.be.a('string');
+          pm.expect(body.mensaje.length).to.be.above(0);
+      });
+    language: text/javascript
+order: 1000

@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  Este test requiere intervencion manual: detener el ML service a mitad de procesamiento, o usar un proxy para inyectar una respuesta no-JSON.
+
+  Pasos para reproducir:
+  1. Levantar backend y ML normalmente.
+  2. Iniciar un proxy local (ej. mitmproxy) que intercepte la llamada backend->ML y retorne HTML.
+  3. Ejecutar este request.
+  4. Verificar que el backend retorne 502 al frontend.
+
+  Alternativa rapida: enviar un payload que provoque un error inesperado en el ML (ej. timeout muy corto + payload grande).
+order: 5000

@@ -119,9 +119,17 @@ def health():
 def model_info():
     """Identidad del modelo activo: hash SHA-256, tamaño, mtime y estado de cache.
 
-    Util para confirmar desde fuera de la VM que el modelo que sirve la API
-    es el que se entrenó y publicó en el bucket, sin necesidad de acceso SSH.
-    El hash se calcula leyendo el archivo en chunks (impacto de memoria bajo).
+    Permite confirmar que el modelo que sirve la API es el que se entrenó y
+    publicó en el bucket, sin depender de leer el .joblib a mano ni de comparar
+    sidecars. El hash se calcula leyendo el archivo en chunks (memoria acotada).
+
+    Alcance de acceso: este servicio publica su puerto solo en 127.0.0.1 (ver
+    docker-compose.yml) y infra/Caddyfile no lo enruta - el proxy manda /api,
+    /swagger-ui, /v3/api-docs y /actuator al backend Spring, no al ML. Asi que
+    /model-info se consulta DESDE la VM, no desde afuera:
+
+        curl -s localhost:8000/model-info   # produccion
+        curl -s localhost:8002/model-info   # staging
 
     Campos de respuesta:
       model_path       — path relativo usado por el proceso
@@ -132,22 +140,28 @@ def model_info():
       storage_backend  — valor de STORAGE_BACKEND (local | oci | par)
     """
     path = MODEL_PATH
-    if not os.path.exists(path):
+
+    # Sin chequeo previo de os.path.exists(): entre ese chequeo y el open()
+    # hay una ventana en la que el archivo puede desaparecer (el startup lo
+    # reescribe al bajarlo del bucket), y ahi el FileNotFoundError se
+    # propagaba como 500. Un solo camino: intentar abrir y traducir el fallo.
+    # El mtime y el tamaño salen del mismo descriptor que ya estamos leyendo,
+    # via fstat, para que describan exactamente el archivo que se hasheo.
+    sha256 = hashlib.sha256()
+    size = 0
+    try:
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                sha256.update(chunk)
+                size += len(chunk)
+            mtime = os.fstat(f.fileno()).st_mtime
+    except FileNotFoundError:
         raise HTTPException(
             status_code=503,
             detail=f"Archivo de modelo no encontrado en {path}. "
                    "Ejecuta `make pipeline` o espera el startup del servicio.",
         )
 
-    # Hash SHA-256 en chunks para no cargar el archivo completo en memoria
-    sha256 = hashlib.sha256()
-    size = 0
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(65536), b""):
-            sha256.update(chunk)
-            size += len(chunk)
-
-    mtime = os.path.getmtime(path)
     mtime_utc = datetime.fromtimestamp(mtime, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # Verificar si el modelo está en el lru_cache sin intentar cargarlo

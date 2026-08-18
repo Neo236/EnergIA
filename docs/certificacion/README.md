@@ -103,15 +103,19 @@ Se implementó una diferenciación estricta entre comprobación de vida (*Livene
 | Nivel de Verificación | Endpoint / Mecanismo | Validación Realizada | Respuesta Esperada |
 |---|---|---|---|
 | **Liveness (Backend)** | `GET /actuator/health/liveness` | Proceso JVM activo y escuchando peticiones. | `{"status":"UP"}` (HTTP 200) |
-| **Readiness (Backend & DB)** | `GET /actuator/health/readiness` | Conectividad con la base de datos PostgreSQL (`db:5432`) y pool HikariCP listo, vía `readiness.include=readinessState,db`. Es el gate del CD y del `HEALTHCHECK` del contenedor. | `{"status":"UP"}` (HTTP 200) |
+| **Readiness (Backend & DB)** | `GET /actuator/health/readiness` | Conectividad con PostgreSQL (`db:5432`) y pool HikariCP listo, **y que el motor sea efectivamente PostgreSQL** — vía `readiness.include=readinessState,db,motorPersistencia`. Es el gate del CD y del `HEALTHCHECK` del contenedor. | `{"status":"UP"}` (HTTP 200) |
 | **Readiness (ML Service)** | `GET /health` (FastAPI) | Verifica que el archivo `.joblib` esté presente y el modelo cargado en `@lru_cache`. Si falla, retorna HTTP 503. | `{"status":"healthy"}` (HTTP 200) |
 | **Liveness (Frontend)** | `GET /` (nginx) | Servidor web nginx entregando `index.html` con bundles JS referenciados. | HTTP 200 |
 | **Readiness End-to-End** | `POST /api/v1/analisis-energetico`<br/>(Cabecera `X-EnergiAI-Sonda`) | Flujo completo: Caddy ➔ Backend Spring ➔ PostgreSQL ➔ ML Service FastAPI ➔ Inferencia ➔ Respuesta JSON. **No genera persistencia en BD.** | HTTP 200 con payload de análisis y clasificación. |
 
-> 📌 **Por qué el grupo `readiness` se declara explícitamente.** `management.endpoint.health.probes.enabled=true` crea los grupos `liveness` y `readiness`, pero deja a `readiness` con un único miembro: `readinessState`, que refleja la disponibilidad del propio proceso y **no consulta la base de datos**. Sin declararlo, un PostgreSQL caído *después* del arranque dejaba `/actuator/health` en DOWN mientras `/actuator/health/readiness` seguía respondiendo `UP` — un falso verde que este mismo informe y el checklist del runbook habrían dado por bueno. Por eso `application.properties` fija:
+> 📌 **Por qué el grupo `readiness` se declara explícitamente.** `management.endpoint.health.probes.enabled=true` crea los grupos `liveness` y `readiness`, pero deja a `readiness` con un único miembro: `readinessState`, que refleja la disponibilidad del propio proceso y **no consulta la base de datos**. Sin declararlo, un PostgreSQL caído *después* del arranque dejaba `/actuator/health` en DOWN mientras `/actuator/health/readiness` seguía respondiendo `UP` — un falso verde que este mismo informe y el checklist del runbook habrían dado por bueno.
+>
+> 📌 **Por qué además se verifica el motor.** El indicador `db` responde `UP` con *cualquier* `DataSource` que conteste, **incluida una H2 en memoria**. No es hipotético: entre el 09/08 y el 18/08/2026 el backend de producción corrió sobre `jdbc:h2:mem:` —su contenedor era anterior a que Postgres existiera en el `compose` y nunca se recreó— y durante nueve días todas las sondas respondieron `UP` mientras cada análisis "persistido" vivía en el heap de la JVM. `motorPersistencia` (`com.energiai.health.VerificadorMotorPersistencia`) lee el `DatabaseProductName` del pool y reporta `DOWN` si el perfil `prod` está activo y el motor no es PostgreSQL, de modo que ese ambiente **falla el gate del CD y dispara el rollback** en vez de certificarse. Fuera del perfil `prod` la verificación se omite, porque la suite de tests corre sobre H2 a propósito.
+>
+> Por eso `application.properties` fija:
 >
 > ```properties
-> management.endpoint.health.group.readiness.include=readinessState,db
+> management.endpoint.health.group.readiness.include=readinessState,db,motorPersistencia
 > ```
 
 ### Prueba de Sonda End-to-End (Comprobación de Readiness Total)

@@ -20,7 +20,7 @@ Documentación técnica del desarrollo de la API REST principal encargada de orq
 | `POST` | `/api/v1/analisis-energetico` | Procesa los datos de consumo y devuelve clasificación, costo y recomendaciones. |
 | `GET`  | `/actuator/health` | Estado de salud del servicio backend (habilitado mediante `spring-boot-starter-actuator`). |
 | `GET`  | `/actuator/health/liveness` | Sonda de *liveness*: el proceso JVM está vivo. No mira dependencias externas. |
-| `GET`  | `/actuator/health/readiness` | Sonda de *readiness*: el proceso está disponible **y** PostgreSQL responde (`readinessState` + indicador `db`). Es el gate que usan el CD y el `HEALTHCHECK` del contenedor. |
+| `GET`  | `/actuator/health/readiness` | Sonda de *readiness*: el proceso está disponible, PostgreSQL responde **y el motor es efectivamente PostgreSQL** (`readinessState` + `db` + `motorPersistencia`). Es el gate que usan el CD y el `HEALTHCHECK` del contenedor. |
 
 ---
 

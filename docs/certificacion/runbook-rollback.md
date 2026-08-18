@@ -30,7 +30,7 @@ flowchart TD
 ```
 
 ### Comportamiento del Sistema:
-1. Si `/actuator/health` (Backend), `/health` (ML) o `/` (Frontend) no responden satisfactoriamente:
+1. Si `/actuator/health/readiness` (Backend), `/health` (ML) o `/` (Frontend) no responden satisfactoriamente:
    - Se capturan los últimos 50 logs del contenedor y el estado de `docker compose ps`.
    - Se ejecuta `docker compose -p <proyecto> up -d --no-build --no-deps <servicio>` apuntando a `steps.previa.outputs.tag`.
    - El job falla en GitHub Actions para alertar al equipo, pero el servicio en la VM queda restaurado y operativo.
@@ -115,5 +115,9 @@ Tras cualquier procedimiento de rollback, ejecutar la lista de chequeo de verifi
    - Frontend: `curl -I https://energiai-staging.unixsoluciones.com/` (HTTP 200)
    - Backend Actuator: `curl https://energiai-staging.unixsoluciones.com/actuator/health` (`"status":"UP"`)
    - Backend Readiness: `curl https://energiai-staging.unixsoluciones.com/actuator/health/readiness` (`"status":"UP"`)
+
+   > Readiness incluye el indicador `db`, así que un `UP` acá confirma también que el backend alcanza PostgreSQL. Si devuelve `DOWN` con HTTP 503, el rollback dejó el servicio arriba pero sin base: revisar `docker compose -p energiai-staging ps db` antes de dar por cerrado el procedimiento.
+
+   - ML Service (desde la VM, no está expuesto por Caddy): `curl -s localhost:8002/model-info` para confirmar el SHA-256 del modelo que quedó sirviendo.
 3. **Prueba Funcional:**
    - Realizar una solicitud de prueba en Swagger UI o mediante `POST /api/v1/analisis-energetico`.

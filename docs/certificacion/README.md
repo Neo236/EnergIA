@@ -40,7 +40,14 @@ El despliegue en la máquina virtual OCI (`energiai-app-01`, ARM64 Ampere) se re
 
 ## 🧠 3. Identificación del Modelo de Machine Learning
 
-El microservicio de Data Science expone el endpoint `GET /model-info` para auditar en caliente la identidad del modelo en memoria sin requerir acceso SSH a la instancia:
+El microservicio de Data Science expone el endpoint `GET /model-info` para auditar en caliente la identidad del modelo en memoria, sin necesidad de leer el `.joblib` a mano ni de comparar sidecars:
+
+> ⚠️ **Alcance de acceso:** el ML Service publica su puerto solo en `127.0.0.1` (ver `docker-compose.yml`) y **no tiene ruta en `infra/Caddyfile`** — el proxy enruta `/api`, `/swagger-ui`, `/v3/api-docs` y `/actuator` al backend Spring. Por lo tanto `/model-info` se consulta **desde la VM**, no desde internet:
+>
+> ```bash
+> curl -s localhost:8000/model-info   # producción
+> curl -s localhost:8002/model-info   # staging
+> ```
 
 ### Ficha Técnica del Modelo Activo
 
@@ -96,10 +103,16 @@ Se implementó una diferenciación estricta entre comprobación de vida (*Livene
 | Nivel de Verificación | Endpoint / Mecanismo | Validación Realizada | Respuesta Esperada |
 |---|---|---|---|
 | **Liveness (Backend)** | `GET /actuator/health/liveness` | Proceso JVM activo y escuchando peticiones. | `{"status":"UP"}` (HTTP 200) |
-| **Readiness (Backend & DB)** | `GET /actuator/health/readiness` | Conectividad con la base de datos PostgreSQL (`db:5432`) y pool HikariCP listo. | `{"status":"UP"}` (HTTP 200) |
+| **Readiness (Backend & DB)** | `GET /actuator/health/readiness` | Conectividad con la base de datos PostgreSQL (`db:5432`) y pool HikariCP listo, vía `readiness.include=readinessState,db`. Es el gate del CD y del `HEALTHCHECK` del contenedor. | `{"status":"UP"}` (HTTP 200) |
 | **Readiness (ML Service)** | `GET /health` (FastAPI) | Verifica que el archivo `.joblib` esté presente y el modelo cargado en `@lru_cache`. Si falla, retorna HTTP 503. | `{"status":"healthy"}` (HTTP 200) |
 | **Liveness (Frontend)** | `GET /` (nginx) | Servidor web nginx entregando `index.html` con bundles JS referenciados. | HTTP 200 |
 | **Readiness End-to-End** | `POST /api/v1/analisis-energetico`<br/>(Cabecera `X-EnergiAI-Sonda`) | Flujo completo: Caddy ➔ Backend Spring ➔ PostgreSQL ➔ ML Service FastAPI ➔ Inferencia ➔ Respuesta JSON. **No genera persistencia en BD.** | HTTP 200 con payload de análisis y clasificación. |
+
+> 📌 **Por qué el grupo `readiness` se declara explícitamente.** `management.endpoint.health.probes.enabled=true` crea los grupos `liveness` y `readiness`, pero deja a `readiness` con un único miembro: `readinessState`, que refleja la disponibilidad del propio proceso y **no consulta la base de datos**. Sin declararlo, un PostgreSQL caído *después* del arranque dejaba `/actuator/health` en DOWN mientras `/actuator/health/readiness` seguía respondiendo `UP` — un falso verde que este mismo informe y el checklist del runbook habrían dado por bueno. Por eso `application.properties` fija:
+>
+> ```properties
+> management.endpoint.health.group.readiness.include=readinessState,db
+> ```
 
 ### Prueba de Sonda End-to-End (Comprobación de Readiness Total)
 

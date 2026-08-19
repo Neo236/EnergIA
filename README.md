@@ -49,6 +49,7 @@ Este README es el punto de entrada. El detalle de cada área vive en [`docs/`](.
 | [🐍 Data Science](./docs/data-science/README.md) | EDA, modelos y métricas |
 | [☁️ OCI Cloud](./docs/oci-cloud/README.md) | Red, VM, dominios, Object Storage y runbook |
 | [⚙️ Gobernanza & GitHub](./docs/github-config.md) | Protección de ramas, GitFlow y flujo de CI/CD |
+| [🏅 Certificación & Rollback](./docs/certificacion/README.md) | Certificación de staging, runbook de rollback y guía de demo |
 
 ---
 
@@ -368,7 +369,7 @@ El proyecto tiene **4 workflows** en `.github/workflows/`:
 | Workflow | Trigger | Runner | Descripción |
 |----------|---------|--------|-------------|
 | `ci.yml` | Push / PR a `main`, `develop` | `ubuntu-latest` (GitHub hosted) | Build + tests de los 3 componentes. Valida que el código compile y los tests pasen antes de mergear. |
-| `cd-backend.yml` | Push a `main`/`develop` en `backend/**` | `self-hosted, oci` | Construye la imagen Docker del backend, la despliega en la VM y verifica `/actuator/health`. Rollback automático si falla. |
+| `cd-backend.yml` | Push a `main`/`develop` en `backend/**` | `self-hosted, oci` | Construye la imagen Docker del backend, la despliega en la VM y verifica `/actuator/health/readiness` (incluye conectividad con PostgreSQL). Rollback automático si falla. |
 | `cd-ml.yml` | Push a `main`/`develop` en `data-science/**` | `self-hosted, oci` | Construye la imagen Docker del ML service, la despliega y verifica `/health`. Rollback automático si falla. |
 | `cd-frontend.yml` | Push a `main`/`develop` en `frontend/**` | `self-hosted, oci` | Construye y despliega el frontend (nginx). Rollback automático si falla. |
 

@@ -17,6 +17,7 @@ Esta carpeta organiza toda la documentación técnica, diagramas, resultados y a
 | **🐍 Data Science** | Análisis EDA, modelos ML y métricas | [Ver Documentación](./data-science/README.md) |
 | **☁️ OCI Cloud** | Configuración de Oracle Cloud (Storage & Compute) | [Ver Documentación](./oci-cloud/README.md) |
 | **⚙️ Gobernanza & GitHub** | Protección de ramas, GitFlow y flujo de CI/CD | [Ver Documentación](./github-config.md) |
+| **🏅 Certificación & Rollback** | Certificación de staging, runbook de rollback y guía de demo | [Ver Certificación](./certificacion/README.md) |
 
 ---
 

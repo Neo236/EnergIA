@@ -170,12 +170,17 @@ jobs:
           # cd-ml en el mismo push.
           RESP="$RUNNER_TEMP/health_resp.txt"
           ERR="$RUNNER_TEMP/health_err.txt"
+          # Se verifica readiness y no /actuator/health porque readiness incluye
+          # el indicador db (ver application.properties): el gate del deploy pasa
+          # a exigir que el backend pueda hablar con PostgreSQL, no solo que la
+          # JVM responda. Si la DB no esta, esto falla y dispara el rollback
+          # automatico del paso siguiente en vez de certificar un deploy roto.
           # 12 x 5 s = 60 s: Spring Boot necesita tiempo para arrancar la JVM
           for i in $(seq 1 12); do
-            echo "Intento $i/12 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health"
+            echo "Intento $i/12 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health/readiness"
             rm -f "$RESP"
             HTTP=$(curl -o "$RESP" -w "%{http_code}" -sS \
-              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health" 2>"$ERR" || true)
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health/readiness" 2>"$ERR" || true)
             BODY=$(cat "$RESP" 2>/dev/null || true)
             if echo "$BODY" | grep -q '"status":"UP"'; then
               echo "Backend (Spring Boot) respondiendo OK (intento $i). HTTP $HTTP"

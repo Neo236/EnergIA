@@ -1,5 +1,7 @@
+import hashlib
 import logging
 import os
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException
 
@@ -111,6 +113,69 @@ def health():
             detail=f"Modelo no encontrado en {MODEL_PATH}. El servicio no puede responder inferencias.",
         )
     return {"status": "healthy"}
+
+
+@app.get("/model-info")
+def model_info():
+    """Identidad del modelo activo: hash SHA-256, tamaño, mtime y estado de cache.
+
+    Permite confirmar que el modelo que sirve la API es el que se entrenó y
+    publicó en el bucket, sin depender de leer el .joblib a mano ni de comparar
+    sidecars. El hash se calcula leyendo el archivo en chunks (memoria acotada).
+
+    Alcance de acceso: este servicio publica su puerto solo en 127.0.0.1 (ver
+    docker-compose.yml) y infra/Caddyfile no lo enruta - el proxy manda /api,
+    /swagger-ui, /v3/api-docs y /actuator al backend Spring, no al ML. Asi que
+    /model-info se consulta DESDE la VM, no desde afuera:
+
+        curl -s localhost:8000/model-info   # produccion
+        curl -s localhost:8002/model-info   # staging
+
+    Campos de respuesta:
+      model_path       — path relativo usado por el proceso
+      sha256           — hash SHA-256 del .joblib en disco
+      size_bytes       — tamaño en bytes
+      mtime_utc        — ultima modificacion del archivo en UTC ISO-8601
+      loaded           — True si el modelo ya esta en el cache @lru_cache
+      storage_backend  — valor de STORAGE_BACKEND (local | oci | par)
+    """
+    path = MODEL_PATH
+
+    # Sin chequeo previo de os.path.exists(): entre ese chequeo y el open()
+    # hay una ventana en la que el archivo puede desaparecer (el startup lo
+    # reescribe al bajarlo del bucket), y ahi el FileNotFoundError se
+    # propagaba como 500. Un solo camino: intentar abrir y traducir el fallo.
+    # El mtime y el tamaño salen del mismo descriptor que ya estamos leyendo,
+    # via fstat, para que describan exactamente el archivo que se hasheo.
+    sha256 = hashlib.sha256()
+    size = 0
+    try:
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                sha256.update(chunk)
+                size += len(chunk)
+            mtime = os.fstat(f.fileno()).st_mtime
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Archivo de modelo no encontrado en {path}. "
+                   "Ejecuta `make pipeline` o espera el startup del servicio.",
+        )
+
+    mtime_utc = datetime.fromtimestamp(mtime, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Verificar si el modelo está en el lru_cache sin intentar cargarlo
+    cache_info = _load_model_cached.cache_info()
+    loaded = cache_info.currsize > 0
+
+    return {
+        "model_path": path,
+        "sha256": sha256.hexdigest(),
+        "size_bytes": size,
+        "mtime_utc": mtime_utc,
+        "loaded": loaded,
+        "storage_backend": os.getenv("STORAGE_BACKEND", "local"),
+    }
 
 
 @app.post("/analisis-energetico")

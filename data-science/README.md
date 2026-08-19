@@ -283,3 +283,4 @@ El dataset canónico del proyecto se genera de forma reproducible utilizando una
 - GitHub: https://github.com/No-Country-simulation/G9-LATAM-TEAM-09/tree/develop/data-science/data
 - Google Drive: https://drive.google.com/drive/folders/1bEXHPQLwfNvHu__MO169G8rzLKQPdlg-
 - Google Colab: https://colab.research.google.com/drive/1LiisJEOadkTdBZ8nLMKb_T2a3El3nLJi
+- Diccionario de datos: https://docs.google.com/spreadsheets/d/1kf52FUPTGcFzxE7DEhvEo-ZhX5Y8sGAb/edit

@@ -751,6 +751,29 @@ button { font: inherit; color: inherit; }
   .anillo { animation-duration: 3s; }
 }
 
+/* Entrada del contenido que reemplaza a la espera.
+
+   El bloque de carga y el resultado tienen alturas muy distintas, así que
+   cuando llega la respuesta la página salta. Esto no iguala las alturas
+   —eso es trabajo de la silueta que el diseño todavía debe— pero suaviza
+   el reemplazo: lo que entra se desvanece hacia adentro en vez de
+   aparecer de golpe donde antes había otra cosa.
+
+   La duración sale del token, que en `prefers-reduced-motion` vale 1 ms:
+   quien pidió menos movimiento ve el cambio instantáneo, sin animación. */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Sin `fill-mode`: el fotograma final es idéntico al estado normal del
+   elemento, así que retenerlo no aporta nada, y no retenerlo garantiza que
+   fuera de esos 250 ms el contenido se pinte con sus estilos propios —
+   visible— sin depender de que la animación haya llegado a correr. */
+.aparece {
+  animation: aparecer var(--transicion-media);
+}
+
 /* ================= resultado ================= */
 
 .resultado {

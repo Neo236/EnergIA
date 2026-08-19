@@ -15,6 +15,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { Aviso } from '../components/Aviso'
 import { Boton } from '../components/Boton'
 import { Acordeon } from '../components/Campos'
+import { BloqueCarga } from '../components/Cargando'
 import { IconoAlerta, IconoTilde } from '../components/Iconos'
 import { obtenerAnalisis } from '../lib/api'
 import { registrarEnHistorial } from '../lib/historial'
@@ -70,8 +71,11 @@ export function Resultado() {
 
   if (cargando) {
     return (
-      <div className="columna columna--aviso">
-        <p className="resultado__aviso" role="status">Buscando el análisis...</p>
+      <div className="columna columna--aviso" role="status" aria-busy="true">
+        <BloqueCarga
+          titulo="Buscando el análisis..."
+          texto="Estamos recuperando el resultado guardado. Toma solo un momento."
+        />
       </div>
     )
   }
@@ -79,7 +83,7 @@ export function Resultado() {
   if (fallo || !analisis) {
     const texto = fallo ?? textoDeAnalisisAusente(404)
     return (
-      <div className="columna columna--aviso">
+      <div className="columna columna--aviso aparece">
         <Aviso titulo={texto.titulo} texto={texto.texto} advertencia={texto.advertencia}>
           <Link to="/"><Boton tipo="primario" ancho>Hacer un análisis</Boton></Link>
         </Aviso>
@@ -91,7 +95,7 @@ export function Resultado() {
   const anual = analisis.costo_estimado_mensual * 12
 
   return (
-    <div className="columna columna--resultado">
+    <div className="columna columna--resultado aparece">
       <div className="resultado">
         <h1 className="rotulo">Resultado del análisis</h1>
 

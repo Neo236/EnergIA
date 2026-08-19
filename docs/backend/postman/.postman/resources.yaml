@@ -1,0 +1,15 @@
+# Use this workspace to collaborate
+workspace:
+  id: cdd03188-42d4-41fa-8ce1-decc9827ef53
+
+localResources:
+  collections:
+    - ../EnergiAI.postman_collection.json
+  environments:
+    - ../EnergiAI.postman_environment.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../postman/collections/EnergiAI — Analisis Energetico: 6a3a07a2-182b-4ec2-9fb9-69cb489425d0

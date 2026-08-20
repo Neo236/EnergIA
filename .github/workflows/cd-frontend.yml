@@ -122,7 +122,10 @@ jobs:
           if docker image inspect "$TAG" > /dev/null 2>&1; then
             echo "La imagen $TAG ya existe — se reutiliza (rollback)."
           else
-            docker build -t "$TAG" ./frontend
+            # VITE_API_MODO se resuelve en build-time (ver frontend/Dockerfile). Sin
+            # este build-arg, la imagen queda en el default "mock" del Dockerfile y
+            # el sitio desplegado simula respuestas en vez de hablar con la API real.
+            docker build --build-arg VITE_API_MODO=real -t "$TAG" ./frontend
           fi
           # Verificar que la imagen quedó correctamente taggeada antes de continuar
           docker image inspect "$TAG" > /dev/null 2>&1 || {
@@ -184,17 +187,21 @@ jobs:
         continue-on-error: true
         run: |
           set -uo pipefail
+          # RUNNER_TEMP es un directorio por-job (ver el mismo fix en
+          # cd-backend.yml y cd-ml.yml — ahí sí importaba para el body,
+          # acá es solo por consistencia con el patrón).
+          ERR="$RUNNER_TEMP/fe_err.txt"
           # nginx arranca rápido; 10 x 3 s = 30 s es suficiente
           for i in $(seq 1 10); do
             echo "Intento $i/10 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/"
             HTTP=$(curl -o /dev/null -w "%{http_code}" -sS \
-              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/" 2>/tmp/fe_err.txt || true)
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/" 2>"$ERR" || true)
             if [ "$HTTP" = "200" ] || [ "$HTTP" = "304" ]; then
               echo "Front-end respondiendo OK (intento $i). HTTP $HTTP"
               exit 0
             fi
             echo "  HTTP: $HTTP"
-            cat /tmp/fe_err.txt 2>/dev/null || true
+            cat "$ERR" 2>/dev/null || true
             sleep 3
           done
           echo "El front-end no respondió después de 30 s."

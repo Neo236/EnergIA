@@ -17,7 +17,6 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
@@ -26,7 +25,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 // Persiste tanto los datos de entrada como el resultado de cada analisis.
 // Los enums se guardan como texto (EnumType.STRING) para que la tabla no
@@ -45,10 +44,12 @@ public class AnalisisEnergeticoEntity {
     // UUID v7, no un id secuencial: no es adivinable (hoy no hay
     // autenticacion, asi que un id numerico dejaria cualquier analisis
     // accesible con solo probar /1, /2, /3...) y se genera en la app sin
-    // depender de una secuencia central de la base. Ver UuidV7Generator.
+    // depender de una secuencia central de la base. Generador nativo de
+    // Hibernate (RFC 9562): timestamp de milisegundos en los primeros 48
+    // bits + el resto aleatorio, lo que mantiene el orden de insercion en el
+    // indice sin necesitar coordinacion externa.
     @Id
-    @GeneratedValue(generator = "uuid-v7")
-    @GenericGenerator(name = "uuid-v7", type = UuidV7Generator.class)
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     private UUID id;
 
     @Column(name = "fecha", nullable = false)

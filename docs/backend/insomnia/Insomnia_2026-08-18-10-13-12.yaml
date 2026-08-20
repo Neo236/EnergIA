@@ -1,0 +1,672 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Hackathon
+meta:
+  id: wrk_a59fef7d25244534a5c39ab6e465f0e3
+  created: 1784760692084
+  modified: 1784760692084
+  description: ""
+collection:
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: Happy Path
+    meta:
+      id: req_370e966a68d64b5ca35de8bf7223e621
+      created: 1786999280769
+      modified: 1787053904089
+      isPrivate: false
+      description: ""
+      sortKey: -1787052339975
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 300,
+          "cantidad_equipos": 8,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: >-
+        insomnia.test("Status code es 200 OK", () => {
+            insomnia.expect(insomnia.response.code).to.equal(200);
+        });
+
+
+        insomnia.test("Validar estructura de respuesta y rangos", () => {
+            const body = JSON.parse(insomnia.response.body);
+
+            // Validar propiedades obligatorias
+            insomnia.expect(body).to.have.property("id");
+            insomnia.expect(body).to.have.property("fecha");
+            insomnia.expect(body).to.have.property("categoria");
+            insomnia.expect(body).to.have.property("probabilidad");
+            insomnia.expect(body).to.have.property("costo_estimado_mensual");
+            insomnia.expect(body).to.have.property("recomendaciones");
+
+            // Validar tipos de datos y rangos
+            insomnia.expect(body.probabilidad).to.be.within(0.0, 1.0);
+            insomnia.expect(body.costo_estimado_mensual).to.be.above(0);
+            insomnia.expect(body.recomendaciones).to.be.an("array").that.is.not.empty;
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: Validaciones HTTP 400
+    meta:
+      id: req_f8c20905039743aea0112b2c61abc07d
+      created: 1787052154528
+      modified: 1787052556742
+      isPrivate: false
+      description: ""
+      sortKey: -1787052339925
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": -9,
+          "cantidad_equipos": 8,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: >-
+        insomnia.test("Status code es 400 Bad Request", () => {
+            insomnia.expect(insomnia.response.code).to.equal(400);
+        });
+
+
+        insomnia.test("Validar estructura de respuesta de error", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("status").and.to.equal(400);
+            insomnia.expect(body).to.have.property("error").and.to.equal("BAD_REQUEST");
+            insomnia.expect(body).to.have.property("detalles").that.is.an("array").and.have.lengthOf.above(0);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico/00000000-0000-0000-0000-000000000000
+    name: Recurso No Encontrado HTTP 404
+    meta:
+      id: req_7f9ba2c9945b4bc5b06fed5b18dc6eba
+      created: 1787052339875
+      modified: 1787052437253
+      isPrivate: false
+      description: ""
+      sortKey: -1787052339875
+    method: GET
+    scripts:
+      afterResponse: |-
+        insomnia.test("Status code es 404 Not Found", () => {
+            insomnia.expect(insomnia.response.code).to.equal(404);
+        });
+
+        insomnia.test("Validar estructura de error 404", () => {
+            const body = JSON.parse(insomnia.response.body);
+
+            insomnia.expect(body).to.have.property("status").and.to.equal(404);
+            insomnia.expect(body).to.have.property("error");
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: Respuesta Inválida de ML HTTP 502
+    meta:
+      id: req_2a360f62d689468ebd05d2549c88f4fd
+      created: 1787052533434
+      modified: 1787053606464
+      isPrivate: false
+      description: ""
+      sortKey: -1786999280669
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 300,
+          "cantidad_equipos": 8,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: >-
+        insomnia.test("Status code es 502 Bad Gateway", () => {
+            insomnia.expect(insomnia.response.code).to.equal(502);
+        });
+
+
+        insomnia.test("Validar estructura de error 502", () => {
+            const body = JSON.parse(insomnia.response.body);
+
+            insomnia.expect(body).to.have.property("status").and.to.equal(502);
+            insomnia.expect(body).to.have.property("error").and.to.equal("BAD_GATEWAY");
+            insomnia.expect(body).to.have.property("mensaje");
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: ML No Disponible HTTP 503
+    meta:
+      id: req_96c884faa16b4ecabf5962cea738d571
+      created: 1787053990875
+      modified: 1787054208399
+      isPrivate: false
+      description: ""
+      sortKey: -1786999280569
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 300,
+          "cantidad_equipos": 8,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: >-
+        insomnia.test("Status code es 503 Service Unavailable", () => {
+            insomnia.expect(insomnia.response.code).to.equal(503);
+        });
+
+
+        insomnia.test("Validar estructura de error 503", () => {
+            const body = JSON.parse(insomnia.response.body);
+
+            insomnia.expect(body).to.have.property("status").and.to.equal(503);
+            insomnia.expect(body).to.have.property("error").and.to.equal("SERVICE_UNAVAILABLE");
+            insomnia.expect(body).to.have.property("mensaje");
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/actuator/health
+    name: "Health de Backend "
+    meta:
+      id: req_2d211e53f48b4699a389f843d53fd4dc
+      created: 1787054182244
+      modified: 1787054295065
+      isPrivate: false
+      description: ""
+      sortKey: -1786999280469
+    method: GET
+    scripts:
+      afterResponse: |-
+        insomnia.test("Backend está UP (HTTP 200)", () => {
+            insomnia.expect(insomnia.response.code).to.equal(200);
+        });
+
+        insomnia.test("Validar status UP del Backend", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("status").and.to.equal("UP");
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8000/health
+    name: Health de ML
+    meta:
+      id: req_8056d41db9394e36acb584a2d7cc154b
+      created: 1787054346136
+      modified: 1787054396132
+      isPrivate: false
+      description: ""
+      sortKey: -1779824781581.5
+    method: GET
+    scripts:
+      afterResponse: >-
+        insomnia.test("Servicio ML responde (HTTP 200)", () => {
+            insomnia.expect(insomnia.response.code).to.equal(200);
+        });
+
+
+        insomnia.test("Validar status healthy de ML", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("status").and.to.equal("healthy");
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: Perfil Eficiente
+    meta:
+      id: req_7bbe91a91853466bbbf149126e57bfb4
+      created: 1787054603409
+      modified: 1787058325922
+      isPrivate: false
+      description: ""
+      sortKey: -1779824781481.5
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 100,
+          "cantidad_equipos": 2,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": false,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: |-
+        insomnia.test("Respuesta exitosa HTTP 200", () => {
+            insomnia.expect(insomnia.response.code).to.equal(200);
+        });
+
+        insomnia.test("Retorna clasificacion y recomendaciones", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("categoria");
+            insomnia.expect(body).to.have.property("recomendaciones");
+        });
+
+        insomnia.test("Validar rangos numéricos", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body.probabilidad).to.be.within(0.0, 1.0);
+            insomnia.expect(body.costo_estimado_mensual).to.be.above(0);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: Perfil Moderado
+    meta:
+      id: req_76090dae06244b47ad9cd0e8859d7368
+      created: 1787054657187
+      modified: 1787055365878
+      isPrivate: false
+      description: ""
+      sortKey: -1779824781281.5
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 100,
+          "cantidad_equipos": 2,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: |-
+        insomnia.test("Respuesta exitosa HTTP 200", () => {
+            insomnia.expect(insomnia.response.code).to.equal(200);
+        });
+
+        insomnia.test("Retorna clasificacion y recomendaciones", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("categoria");
+            insomnia.expect(body).to.have.property("recomendaciones");
+        });
+
+        insomnia.test("Validar rangos numéricos", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body.probabilidad).to.be.within(0.0, 1.0);
+            insomnia.expect(body.costo_estimado_mensual).to.be.above(0);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: Perfil Ineficiente
+    meta:
+      id: req_70af058fd2c24ccdbc37cc52a76bc0ab
+      created: 1787054666692
+      modified: 1787055267324
+      isPrivate: false
+      description: ""
+      sortKey: -1779824781381.5
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 900,
+          "cantidad_equipos": 12,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 23,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": true,
+          "calidad_aislamiento": "BAJA",
+          "fuente_calefaccion": "ELECTRICIDAD",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: |-
+        insomnia.test("Respuesta exitosa HTTP 200", () => {
+            insomnia.expect(insomnia.response.code).to.equal(200);
+        });
+
+        insomnia.test("Retorna clasificacion y recomendaciones", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("categoria");
+            insomnia.expect(body).to.have.property("recomendaciones");
+        });
+
+        insomnia.test("Validar rangos numéricos", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body.probabilidad).to.be.within(0.0, 1.0);
+            insomnia.expect(body.costo_estimado_mensual).to.be.above(0);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: ML Detenido
+    meta:
+      id: req_41792e4bcc4746bdb23af9daa0a091d9
+      created: 1787055488666
+      modified: 1787058318091
+      isPrivate: false
+      description: ""
+      sortKey: -1779824781181.5
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 300,
+          "cantidad_equipos": 8,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: |-
+        insomnia.test("Status code es 503 o 504", () => {
+            insomnia.expect([503, 504]).to.include(insomnia.response.code);
+        });
+
+        insomnia.test("Validar estructura de error", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("status");
+            insomnia.expect(body).to.have.property("error");
+            insomnia.expect(body).to.have.property("mensaje");
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: "Timeout "
+    meta:
+      id: req_e5b2303b87fd492487f1121e69ecb6e2
+      created: 1787055784184
+      modified: 1787058184743
+      isPrivate: false
+      description: ""
+      sortKey: -1776237531937.75
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 300,
+          "cantidad_equipos": 8,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": true,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: >-
+        insomnia.test("Status code es 502 Bad Gateway", () => {
+            insomnia.expect(insomnia.response.code).to.equal(502);
+        });
+
+
+        insomnia.test("Validar estructura de error 502", () => {
+            const body = JSON.parse(insomnia.response.body);
+            insomnia.expect(body).to.have.property("status").and.to.equal(502);
+            insomnia.expect(body).to.have.property("error").and.to.equal("BAD_GATEWAY");
+            insomnia.expect(body).to.have.property("mensaje");
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v1/analisis-energetico
+    name: Validar Estructura y Rangos
+    meta:
+      id: req_03a440c403f443c98ce384d8d24205d3
+      created: 1787058306141
+      modified: 1787058619765
+      isPrivate: false
+      description: ""
+      sortKey: -1776237531837.75
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "consumo_kwh": 100,
+          "cantidad_equipos": 2,
+          "tipo_inmueble": "Casa",
+          "uso_horario_pico": false,
+          "horas_alto_consumo": 6,
+          "metros_cuadrados": 30,
+          "antiguedad_vivienda": 34,
+          "zona_fria": false,
+          "calidad_aislamiento": "MEDIA",
+          "fuente_calefaccion": "SOLAR",
+          "fuente_agua_caliente": "ELECTRICIDAD"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: >-
+        const response = insomnia.response;
+
+        const body = JSON.parse(response.body);
+
+
+        // 1. Status code
+
+        insomnia.test("Status Code Es 200 OK", () => {
+            insomnia.expect(response.code).to.equal(200);
+        });
+
+
+        // 2. Estructura y tipos de datos
+
+        insomnia.test("Validar Estructura De Campos Obligatorios", () => {
+            // Busca las claves que existan en tu respuesta
+            const keys = Object.keys(body);
+            insomnia.expect(keys.length, "La respuesta no debe estar vacía").to.be.greaterThan(0);
+
+            // Valida que exista al menos un texto descriptivo (perfil/categoría)
+            const textoValido = Object.values(body).some(val => typeof val === "string" && val.length > 0);
+            insomnia.expect(textoValido, "Debe incluir al menos un campo de texto con la clasificación/recomendación").to.be.true;
+
+            // Valida que los campos numéricos devueltos sean de tipo number
+            const numeros = Object.values(body).filter(val => typeof val === "number");
+            insomnia.expect(numeros.length, "Debe contener al menos un valor numérico (id, índice o consumo)").to.be.greaterThan(0);
+        });
+
+
+        // 3. Rangos y validación de negocio
+
+        insomnia.test("Validar Rangos Numéricos Y Categorías De Negocio", () =>
+        {
+            // Validar que ningún número sea negativo
+            Object.values(body).forEach(val => {
+                if (typeof val === "number") {
+                    insomnia.expect(val).to.be.at.least(0);
+                }
+            });
+
+            // Validar perfil en texto si está presente
+            const perfil = body.perfil || body.perfilConsumo || body.perfil_consumo || body.categoria;
+            if (perfil) {
+                const perfilesValidos = [
+                    "EFICIENTE", "MODERADO", "INEFICIENTE",
+                    "Eficiente", "Moderado", "Ineficiente",
+                    "ALTO CONSUMO", "Alto Consumo"
+                ];
+                insomnia.expect(perfilesValidos).to.include(perfil);
+            }
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_be6138e90108bdfb41a7ddef6c6e3dcc9aa8fa84
+    created: 1784760692087
+    modified: 1787058621301
+environments:
+  name: Base Environment
+  meta:
+    id: env_be6138e90108bdfb41a7ddef6c6e3dcc9aa8fa84
+    created: 1784760692086
+    modified: 1787058621304
+    isPrivate: false

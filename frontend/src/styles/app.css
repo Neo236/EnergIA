@@ -751,6 +751,29 @@ button { font: inherit; color: inherit; }
   .anillo { animation-duration: 3s; }
 }
 
+/* Entrada del contenido que reemplaza a la espera.
+
+   El bloque de carga y el resultado tienen alturas muy distintas, así que
+   cuando llega la respuesta la página salta. Esto no iguala las alturas
+   —eso es trabajo de la silueta que el diseño todavía debe— pero suaviza
+   el reemplazo: lo que entra se desvanece hacia adentro en vez de
+   aparecer de golpe donde antes había otra cosa.
+
+   La duración sale del token, que en `prefers-reduced-motion` vale 1 ms:
+   quien pidió menos movimiento ve el cambio instantáneo, sin animación. */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Sin `fill-mode`: el fotograma final es idéntico al estado normal del
+   elemento, así que retenerlo no aporta nada, y no retenerlo garantiza que
+   fuera de esos 250 ms el contenido se pinte con sus estilos propios —
+   visible— sin depender de que la animación haya llegado a correr. */
+.aparece {
+  animation: aparecer var(--transicion-media);
+}
+
 /* ================= resultado ================= */
 
 .resultado {
@@ -968,12 +991,22 @@ button { font: inherit; color: inherit; }
 /* --- item --- */
 
 /* Cada item es también una .tarjeta (blanco + borde + radio).
-   En móvil: columna — datos arriba, acciones abajo separadas por un borde.
-   En 768+:  fila — datos a la izquierda, acciones a la derecha. */
+   En móvil: columna — [casilla + datos] arriba, acciones abajo separadas
+   por un borde. En 768+: una sola fila — casilla, datos, acciones. */
 .historial__item {
   display: flex;
   flex-direction: column;
   gap: var(--e-4);
+}
+
+/* Agrupa la casilla de selección con los datos: así ambos quedan del
+   mismo lado (izquierda) y se apilan juntos en móvil, sin que la casilla
+   termine arriba de todo separada del resto de la fila. */
+.historial__item-contenido {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  min-width: 0;
 }
 
 .historial__item-principal {
@@ -997,6 +1030,11 @@ button { font: inherit; color: inherit; }
     flex-direction: row;
     align-items: center;
     gap: var(--e-6);
+  }
+
+  .historial__item-contenido {
+    flex: 1;
+    min-width: 0;
   }
 
   .historial__item-principal {
@@ -1061,28 +1099,44 @@ button { font: inherit; color: inherit; }
   .historial__costo { margin-left: 0; }
 }
 
-/* --- botón de borrado individual (icono X) --- */
+/* --- casilla de selección (borrado individual y en lote) --- */
 
-.historial__borrar-entrada {
-  all: unset;
-  cursor: pointer;
+/* El <label> es el blanco táctil real (44×44, igual que el resto de los
+   controles aislados del sistema); la casilla visible adentro es más
+   chica. Clickear en cualquier parte del label activa el input. */
+.historial__seleccionar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--blanco-tactil);
+  height: var(--blanco-tactil);
   flex-shrink: 0;
-  border-radius: var(--radio-control);
-  color: var(--gris-medio);
-  transition: color var(--transicion-rapida), background var(--transicion-rapida);
+  cursor: pointer;
 }
 
-.historial__borrar-entrada:hover {
-  color: var(--error-texto);
-  background: var(--error-fondo);
+.historial__casilla {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  background-color: var(--blanco);
+  border: 1px solid var(--borde-control);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color var(--transicion-rapida), border-color var(--transicion-rapida);
 }
 
-.historial__borrar-entrada:focus-visible {
+.historial__casilla:hover { border-color: var(--verde-bosque); }
+
+.historial__casilla:checked {
+  background-color: var(--verde-bosque);
+  border-color: var(--verde-bosque);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='9' viewBox='0 0 12 9' fill='none'%3E%3Cpath d='M1 4.5 4.5 8 11 1' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.historial__casilla:focus-visible {
   outline: var(--anillo-foco) solid var(--verde-bosque);
   outline-offset: var(--anillo-separacion);
 }

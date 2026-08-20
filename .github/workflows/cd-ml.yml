@@ -143,23 +143,39 @@ jobs:
             -p "${{ steps.env.outputs.proyecto }}" up -d --no-build --no-deps ml-service
 
       - name: Verificar salud
+        # /health ahora prueba que el modelo cargó (ver interfaces/api/app.py),
+        # no solo que el proceso responde. El respaldo local cuando el bucket
+        # no está disponible también vive ahí, en el startup del servicio —
+        # se ejecuta solo, en cualquier ambiente, sin depender de un paso
+        # aparte acá. Si ambos fallan (bucket caído Y el entrenamiento de
+        # respaldo también falla), este chequeo lo detecta de verdad y
+        # dispara el rollback de más abajo, en vez de reportar "healthy" a
+        # ciegas como pasaba antes.
         id: salud
         continue-on-error: true
         run: |
           set -uo pipefail
+          # RUNNER_TEMP es un directorio por-job: una ruta fija en /tmp hacía
+          # que un curl fallido de este job (sin body) dejara leer al
+          # siguiente el archivo viejo de OTRO job corriendo en el mismo
+          # runner self-hosted — pasó de verdad entre cd-ml y cd-backend en
+          # el mismo push.
+          RESP="$RUNNER_TEMP/health_resp.txt"
+          ERR="$RUNNER_TEMP/health_err.txt"
           # 15 x 4 s = 60 s: margen para el startup de FastAPI que descarga
           # artefactos del modelo desde OCI/PAR en el primer deploy.
           for i in $(seq 1 15); do
             echo "Intento $i/15 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/health"
-            HTTP=$(curl -o /tmp/health_resp.txt -w "%{http_code}" -sS \
-              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/health" 2>/tmp/health_err.txt || true)
-            BODY=$(cat /tmp/health_resp.txt 2>/dev/null || true)
+            rm -f "$RESP"
+            HTTP=$(curl -o "$RESP" -w "%{http_code}" -sS \
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/health" 2>"$ERR" || true)
+            BODY=$(cat "$RESP" 2>/dev/null || true)
             if echo "$BODY" | grep -q '"status":"healthy"'; then
               echo "ML Service respondiendo OK (intento $i). HTTP $HTTP"
               exit 0
             fi
             echo "  HTTP: $HTTP | Body: $BODY"
-            cat /tmp/health_err.txt 2>/dev/null || true
+            cat "$ERR" 2>/dev/null || true
             sleep 4
           done
           echo "El servicio ML no respondió después de 60 s."

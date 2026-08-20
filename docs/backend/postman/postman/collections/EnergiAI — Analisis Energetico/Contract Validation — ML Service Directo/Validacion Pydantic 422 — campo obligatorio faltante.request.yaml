@@ -1,0 +1,39 @@
+$kind: http-request
+url: "{{mlUrl}}/analisis-energetico"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "consumo_kwh": 300
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 422 Unprocessable Entity', () => {
+          pm.response.to.have.status(422);
+      });
+
+      pm.test('Content-Type is JSON', () => {
+          pm.response.to.be.json;
+      });
+
+      pm.test('Response has detail array', () => {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('detail');
+          pm.expect(body.detail).to.be.an('array');
+          pm.expect(body.detail.length).to.be.above(0);
+      });
+
+      pm.test('Each error has loc, msg, and type', () => {
+          const body = pm.response.json();
+          body.detail.forEach((err) => {
+              pm.expect(err).to.have.property('loc');
+              pm.expect(err).to.have.property('msg');
+              pm.expect(err).to.have.property('type');
+          });
+      });
+    language: text/javascript
+order: 2000

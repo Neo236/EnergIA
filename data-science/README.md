@@ -300,3 +300,25 @@ sin bakearlo en la imagen.
 - Defaults exportados como constantes (`interfaces/api/schemas.py:DEFAULT_*`)
 - Comentarios y docstrings en espanol (mantener consistencia con el colab)
 - Tests con clases `Test*` y fixtures en `tests/conftest.py`
+
+
+## Dataset canónico y reproducibilidad
+
+El dataset canónico del proyecto se genera de forma reproducible utilizando una semilla fija (`seed = 42`). Los archivos CSV y JSON son exportados desde el mismo DataFrame para garantizar consistencia entre ambos formatos.
+
+### Archivos canónicos
+
+- `data/database_beta.csv`
+- `data/database_beta.json`
+- `data/CHECKSUMS.sha256`
+
+### SHA-256
+
+- `database_beta.csv`: `92578ad71e64b2d6e37fdb083cd673a9d933c3c5f4c46239eaab7fde65f5a5f3`
+- `database_beta.json`: `74939597360ad75823e01654e18f1172b549c283a2a3aed201c2ee182257400b`
+
+### Recursos
+
+- GitHub: https://github.com/No-Country-simulation/G9-LATAM-TEAM-09/tree/develop/data-science/data
+- Google Drive: https://drive.google.com/drive/folders/1bEXHPQLwfNvHu__MO169G8rzLKQPdlg-
+- Google Colab: https://colab.research.google.com/drive/1LiisJEOadkTdBZ8nLMKb_T2a3El3nLJi

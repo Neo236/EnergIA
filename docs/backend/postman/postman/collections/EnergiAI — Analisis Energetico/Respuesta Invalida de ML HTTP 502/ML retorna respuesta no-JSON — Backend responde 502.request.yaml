@@ -1,0 +1,48 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/analisis-energetico"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "consumo_kwh": 300,
+      "cantidad_equipos": 8,
+      "tipo_inmueble": "Casa",
+      "horas_alto_consumo": 6
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      // Este test solo pasara cuando el ML service retorne una respuesta
+      // que no es JSON valido (ej. HTML de error, texto plano, etc.)
+      // Requiere setup manual — ver descripcion de la carpeta.
+
+      pm.test('Status is 502 Bad Gateway', () => {
+          pm.response.to.have.status(502);
+      });
+
+      pm.test('Content-Type is JSON', () => {
+          pm.response.to.be.json;
+      });
+
+      pm.test('Error response has required fields', () => {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('timestamp');
+          pm.expect(body).to.have.property('status');
+          pm.expect(body).to.have.property('error');
+          pm.expect(body).to.have.property('mensaje');
+      });
+
+      pm.test('Status code in body is 502', () => {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql(502);
+      });
+
+      pm.test('Error is BAD_GATEWAY', () => {
+          const body = pm.response.json();
+          pm.expect(body.error).to.eql('BAD_GATEWAY');
+      });
+    language: text/javascript
+order: 1000

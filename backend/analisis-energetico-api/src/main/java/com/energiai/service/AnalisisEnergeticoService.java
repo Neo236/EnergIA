@@ -1,6 +1,7 @@
 package com.energiai.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -30,10 +31,10 @@ public class AnalisisEnergeticoService {
 
     // esSonda: true cuando la peticion trae la cabecera secreta X-EnergiAI-Sonda
     // valida (verificada en el controller). Identifica una verificacion
-    // automatica de CI/CD (ver docs/cicd/README.md), no un analisis real: se
-    // sigue llamando al ML de verdad -es la unica forma de validar el circuito
-    // completo- pero el resultado no se persiste ni queda con id/fecha, para
-    // no ensuciar la base con datos sinteticos.
+    // manual (curl documentado en docs/certificacion/README.md), no un
+    // analisis real: se sigue llamando al ML de verdad -es la unica forma de
+    // validar el circuito completo- pero el resultado no se persiste ni
+    // queda con id/fecha, para no ensuciar la base con datos sinteticos.
     public DatosRegistroAnalisis realizarAnalisis(DatosRegistroConsumo datos, boolean esSonda) {
         if (mlClient == null) {
             throw new ServicioMlNoDisponibleException("El servicio Machine Learning no se encuentra disponible");
@@ -81,6 +82,15 @@ public class AnalisisEnergeticoService {
             throw new MlRespuestaInvalidaException(
                     "El servicio Machine Learning no devolvió los campos obligatorios del análisis");
         }
+        // Un elemento null/en blanco en la lista pasa esta validacion de campos
+        // pero despues viola el NOT NULL de
+        // analisis_energetico_recomendaciones.recomendacion al guardar,
+        // saliendo como un 500 generico en vez de este 502 explicito.
+        if (resultadoMl.recomendaciones() == null || resultadoMl.recomendaciones().isEmpty()
+                || resultadoMl.recomendaciones().stream().anyMatch(r -> r == null || r.isBlank())) {
+            throw new MlRespuestaInvalidaException(
+                    "El servicio Machine Learning no devolvió recomendaciones válidas");
+        }
     }
 
     private AnalisisEnergeticoEntity paraEntidad(DatosRegistroConsumo datos, DatosRegistroAnalisis resultadoMl) {
@@ -99,7 +109,15 @@ public class AnalisisEnergeticoService {
                 .fuenteAguaCaliente(datos.fuente_agua_caliente())
                 .categoria(resultadoMl.categoria())
                 .probabilidad(resultadoMl.probabilidad())
-                .costoEstimadoMensual(BigDecimal.valueOf(resultadoMl.costo_estimado_mensual()))
+                // Redondeado a la escala de la columna (NUMERIC(10,2)) antes de
+                // persistir: Postgres redondearia igual al insertar, pero como el
+                // valor devuelto en la respuesta del POST sale de esta misma
+                // entidad en memoria (nunca se recarga desde la DB), sin este
+                // redondeo explicito la respuesta de creacion podia mostrar mas
+                // decimales que los que realmente quedan guardados - y un GET
+                // posterior del mismo analisis devolvia un monto distinto.
+                .costoEstimadoMensual(BigDecimal.valueOf(resultadoMl.costo_estimado_mensual())
+                        .setScale(2, RoundingMode.HALF_UP))
                 .recomendaciones(resultadoMl.recomendaciones())
                 .build();
     }

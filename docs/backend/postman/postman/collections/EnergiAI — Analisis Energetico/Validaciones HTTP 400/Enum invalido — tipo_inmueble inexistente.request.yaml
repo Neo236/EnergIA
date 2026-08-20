@@ -1,0 +1,39 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/analisis-energetico"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "consumo_kwh": 300,
+      "cantidad_equipos": 8,
+      "tipo_inmueble": "CasaEstilo",
+      "horas_alto_consumo": 6
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 400', () => {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test('Content-Type is JSON', () => {
+          pm.response.to.be.json;
+      });
+
+      pm.test('Error response has required fields', () => {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('timestamp');
+          pm.expect(body).to.have.property('status');
+          pm.expect(body).to.have.property('error');
+          pm.expect(body).to.have.property('mensaje');
+      });
+
+      pm.test('Status code in body is 400', () => {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql(400);
+      });
+    language: text/javascript
+order: 3000

@@ -14,6 +14,9 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -71,15 +74,49 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void cuandoParametroDeRutaNoConvierte_retornaRespuestaUniforme404() {
+        // Se simula en vez de construirse: el constructor real pide un
+        // MethodParameter, que aca no aporta nada a lo que se verifica.
+        MethodArgumentTypeMismatchException ex = mock(MethodArgumentTypeMismatchException.class);
+        when(ex.getName()).thenReturn("id");
+        when(ex.getValue()).thenReturn("00000000-000");
+
+        ResponseEntity<DatosErrorRespuesta> response = exceptionHandler.manejarParametroInvalido(ex);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(404, response.getBody().status());
+        assertEquals("NOT_FOUND", response.getBody().error());
+        assertEquals("El recurso solicitado no fue encontrado", response.getBody().mensaje());
+    }
+
+    @Test
     void cuandoOcurreErrorInterno_retornaRespuestaUniforme500() {
         Exception ex = new RuntimeException("Error inesperado de base de datos");
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/api/v1/analisis-energetico");
 
-        ResponseEntity<DatosErrorRespuesta> response = exceptionHandler.manejarErrorInterno(ex, null);
+        ResponseEntity<DatosErrorRespuesta> response = exceptionHandler.manejarErrorInterno(ex, request);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(500, response.getBody().status());
         assertEquals("Ocurrio un error interno en el servidor. Por favor, intente mas tarde.", response.getBody().mensaje());
+    }
+
+    @Test
+    void cuandoOcurreErrorInternoSinRequest_igualRespondeConElContrato() {
+        // El handler registra la ruta de la peticion. Si esa lectura fallara
+        // con la peticion ausente, el ultimo recurso ante un error se
+        // convertiria el mismo en un error, y el cliente recibiria algo que
+        // no respeta el contrato en vez de un 500 con cuerpo uniforme.
+        ResponseEntity<DatosErrorRespuesta> response =
+                exceptionHandler.manejarErrorInterno(new RuntimeException("sin contexto"), null);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(500, response.getBody().status());
     }
 
     @Test                                                                                                                                                                         

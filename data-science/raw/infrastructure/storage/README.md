@@ -103,7 +103,7 @@ operaciones OCI (`upload`, `download`, `exists`, `delete`, `list_objects`,
 | `STORAGE_LOCAL_ROOT` | `.` | Root para LocalStorage |
 | `OCI_NAMESPACE` | (requerido) | Namespace del bucket |
 | `OCI_BUCKET` | `g9-energy-test-bucket` | Nombre del bucket |
-| `OCI_REGION` | `santiago-chile-1` | Región OCI |
+| `OCI_REGION` | `sa-santiago-1` | Región OCI |
 | `OCI_INSTANCE_PRINCIPAL` |   | `true` para auth sin credenciales |
 | `OCI_CONFIG_FILE` |   | Path al config OCI alternativo |
 | `OCI_USER_OCID` / `OCI_TENANCY_OCID` / `OCI_FINGERPRINT` |   | API key auth |

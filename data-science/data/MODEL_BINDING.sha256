@@ -10,9 +10,19 @@
 # El reentrenamiento se realizo en la rama data sin modificar backend,
 # frontend ni infra -- unicamente data-science/.
 #
-# Verificacion rapida (desde la raiz del repo):
+# Verificacion local (sklearn 1.9.x, donde se generaron estos hashes):
 #   sha256sum -c data-science/data/MODEL_BINDING.sha256
-#   (los .joblib viven en data-science/data/, gitignored por *.joblib)
+#
+# Archivos:
+#   database_beta.json    tracked en git, dataset canónico (2000 hogares)
+#   database_beta.csv     tracked en git, dataset canónico (2000 hogares)
+#   modelo_eficiencia_v1.joblib  gitignored + dockerignored, se regenera con train
+#   metricas_v1.joblib    gitignored + dockerignored, se regenera con train
+#
+# En CI (donde .joblib no existen en el checkout) usar SKIP_LOCAL_FILES=1.
+# En CI el contenedor entrena un modelo backup in-situ con sklearn 1.6.1
+# del Dockerfile; su SHA sera distinto al de este binding, pero los 3
+# perfiles golden se validan correctamente.
 #
 # Estructura (formato estricto sha256sum, sin comentarios trailing):
 #   <sha256><dos-espacios><archivo-relativo-a-data-science-data>

@@ -89,17 +89,28 @@ jobs:
         run: docker build -t energiai-ml:test -f data-science/Dockerfile data-science
 
       - name: Smoke test container /health
+        # Si el /health no responde despues de 5 intentos, abortamos con
+        # exit 1. Sin esto el step pasaba aunque el contenedor estuviera
+        # muerto, y el siguiente step (verify_certification.sh) fallaba
+        # con un mensaje menos util.
         run: |
           docker run -d --name ml-test -p 8765:8000 energiai-ml:test
           sleep 8
+          HEALTH_OK=0
           for i in 1 2 3 4 5; do
-            if curl -fsS http://localhost:8765/health; then
-              echo "Healthcheck OK"
+            if curl -fsS --max-time 5 http://localhost:8765/health; then
+              echo "Healthcheck OK (intento $i)"
+              HEALTH_OK=1
               break
             fi
             echo "Waiting... attempt $i"
             sleep 3
           done
+          if [ "$HEALTH_OK" -ne 1 ]; then
+            echo "El contenedor no respondio /health despues de 5 intentos"
+            docker logs ml-test
+            exit 1
+          fi
 
       - name: Certificación end-to-end (verify_certification.sh)
         # Ejecuta checks contra el contenedor arriba:

@@ -19,6 +19,8 @@ energéticas pertenece**:
 - 🔴 **Ineficiente**: el hogar gasta más energía de la que debería.
   Probablemente hay ahorros importantes esperándolo.
 
+é.
+
 Es como un médico que ve tu resumen clínico y te dice "estás sano",
 "deberías cuidarte más" o "necesitamos trabajar en esto".
 
@@ -28,15 +30,24 @@ Es como un médico que ve tu resumen clínico y te dice "estás sano",
 
 Cuando el modelo responde, además de la categoría te da un número
 entre 0 y 1, por ejemplo `0.94`. Eso se llama **probabilidad** y
-representa el porcentaje de árboles del bosque aleatorio que
-votaron por esa categoría.
+técnicamente representa el **promedio de las predicciones de los 200
+árboles del bosque aleatorio** sobre esa categoría.
 
-**Pero ojo: no está calibrada formalmente.** Esto significa que
-"0.94" no es lo mismo que "hay un 94% de chances de que sea X". Es
-más bien un indicador de cuánta evidencia interna encontró el modelo
-a favor de esa categoría. Para una calibración real habría que
-aplicar Platt scaling o isotonic regression y luego medir con
-diagramas de reliability — eso no se hizo en este modelo.
+**Pero ojo: no es una probabilidad calibrada en sentido estricto.**
+Esto significa que "0.94" no es lo mismo que "hay un 94% de chances
+de que sea X". Es más bien un indicador de cuánta evidencia interna
+encontró el modelo a favor de esa categoría. Para tener probabilidades
+calibradas en sentido estricto habría que aplicar Platt scaling o
+isotonic regression y luego medir con reliability diagrams — eso no
+se hizo en este modelo.
+
+**Qué SÍ podemos afirmar con números del test**: sobre los 400
+hogares del test sintético, cuando el modelo dice "Ineficiente"
+acierta el 90.3% de las veces (esto se llama **precision** y se
+mide sobre TODAS las predicciones de Ineficiente, no por-predicción
+individual). Pero esto es un promedio: una predicción específica con
+probabilidad 0.94 puede ser correcta O incorrecta — la precision 0.90
+solo nos dice que "en general le va bien en esta clase".
 
 En la práctica, usalo así:
 
@@ -46,14 +57,6 @@ En la práctica, usalo así:
 | 0.80 – 0.95 | "Hay bastante evidencia. Vale la pena confiar, pero no descartar nada." |
 | 0.60 – 0.80 | "Es lo más probable según el modelo, pero hay dudas reales." |
 | < 0.60 | "Es un caso borderline. No tomes decisiones importantes solo con esto." |
-
-**En la práctica**: una probabilidad alta (>0.85) sugiere que el
-modelo encontró evidencia consistente, pero **no garantiza** que la
-predicción sea correcta. Siempre conviene cruzar con la métrica de
-precision de esa clase específica (ver METRICS.md). Por ejemplo, para
-`Ineficiente` la precision es 0.90 sobre el test sintético, así que
-cuando el modelo dice "Ineficiente" con probabilidad alta, hay ~90%
-de chances de que sea correcto **dentro del dataset sintético**.
 
 ---
 
@@ -72,6 +75,10 @@ va a marcar como "Moderado". Esto es por dos razones combinadas:
   más probable.
 - La métrica F1 de Ineficiente (0.60) es la más baja de las tres
   clases.
+
+**Lectura desde la matriz de confusión** (test sintético, n=400):
+de los 62 hogares Ineficientes reales, el modelo detecta 28 (recall
+0.45) y pierde 34 (que los manda a Moderado).
 
 **Qué hacer**: si el modelo dice "Moderado" y vos tenés la sospecha
 de que ese hogar es Ineficiente (por ejemplo, factura altísima o
@@ -113,21 +120,6 @@ aislamiento, fuentes de energía, etc.). NO mira:
 preguntale al usuario qué pasó ese mes. La predicción es un mapa,
 no un satélite.
 
-### d) Métricas medidas sobre datos similares, no sobre producción
-
-Las métricas de accuracy (0.81), precision, recall, F1 se midieron
-sobre los 400 hogares de test del dataset **sintético**. Esas métricas
-describen qué tan bien le va al modelo **en datos con la misma
-distribución que los de entrenamiento**. En datos muy diferentes (ej:
-usuarios reales con patrones no simulados), el desempeño puede ser
-peor.
-
-Concretamente: la métrica "precision = 0.90 para Ineficiente"
-significa que, dentro del test sintético, el 90% de los hogares que
-el modelo clasifica como Ineficiente efectivamente lo son en el
-simulador. **Esto no equivale a decir que en producción acertará el
-90% de las veces.**
-
 ---
 
 ## 4. Cuando NO usar el modelo
@@ -159,8 +151,9 @@ simulador. **Esto no equivale a decir que en producción acertará el
 **"El modelo te dice a qué categoría parece pertenecer un hogar
 según sus datos, con un nivel de confianza. Sirve para orientar,
 no para sentenciar. Aprendió de casos típicos simulados, no de
-casos reales. Si dice Ineficiente, es bastante confiable. Si dice
-Moderado, no descarta que sea Ineficiente."**
+casos reales. Cuando dice 'Ineficiente' suele acertar (90.3% de las
+veces sobre el test sintético), pero la confianza en una
+predicción específica no se puede saber solo con la probabilidad."**
 
 ---
 
@@ -170,10 +163,11 @@ Moderado, no descarta que sea Ineficiente."**
 |---|---|
 | Modelo | El "cerebro" artificial que mira los datos y decide |
 | Categoría | Eficiente / Moderado / Ineficiente |
-| Probabilidad | Cuánta evidencia encontró el modelo a favor de esa respuesta (no es un porcentaje calibrado) |
+| Probabilidad | Promedio de los 200 árboles del RF (no calibrada en sentido estricto) |
 | Features | Las 11 variables que el modelo mira del hogar |
 | Accuracy | De cada 100 predicciones, ~81 son correctas (sobre test sintético) |
 | Recall (Ineficiente) | De cada 10 hogares ineficientes reales, detecta ~4-5 |
+| Precision (Ineficiente) | De los que el modelo llama Ineficiente, el 90.3% lo son (sobre test sintético) |
 | F1 | Número que combina precision y recall (más alto = mejor) |
 | Calibración | Ajuste para que la probabilidad refleje chances reales — no se hizo en este modelo |
 

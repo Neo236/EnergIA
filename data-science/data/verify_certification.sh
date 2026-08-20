@@ -13,6 +13,18 @@
 # Variables de entorno:
 #   ML_SERVICE_URL     default http://127.0.0.1:8000
 #   BINDING_FILE       default data-science/data/MODEL_BINDING.sha256
+#   SKIP_LOCAL_FILES   si "1", skipea checks de archivos locales
+#                     (CHECKSUMS + MODEL_BINDING) — util en CI donde
+#                     el checkout no tiene los .joblib (gitignored)
+#
+# Tipos de checks:
+#   - LOCAL FILE CHECKS (CHECKSUMS, MODEL_BINDING): validan que los
+#     archivos en disco matchean el binding. Solo tienen sentido donde
+#     los .joblib existen localmente (despues de entrenar).
+#   - CONTAINER CHECKS (/health, /model-info, golden profiles):
+#     validan que el modelo servido se comporta como el certificacion
+#     exige. Son los checks minimos en cualquier entorno (CI, staging,
+#     produccion).
 
 set -u  # falla en variable sin definir, pero NO abortar en error
         # (queremos ver todos los checks incluso si uno falla)
@@ -20,8 +32,10 @@ set -u  # falla en variable sin definir, pero NO abortar en error
 URL="${ML_SERVICE_URL:-http://127.0.0.1:8000}"
 BINDING_FILE="${BINDING_FILE:-data-science/data/MODEL_BINDING.sha256}"
 DATA_DIR="data-science/data"
+SKIP_LOCAL="${SKIP_LOCAL_FILES:-0}"
 PASS=0
 FAIL=0
+SKIP=0
 declare -a FAILURES=()
 
 # --- Helpers ----------------------------------------------------------------
@@ -37,57 +51,68 @@ check_fail() {
     FAILURES+=("$1")
 }
 
+check_skip() {
+    echo "  [SKIP] $1"
+    SKIP=$((SKIP + 1))
+}
+
 section() {
     echo ""
     echo "=== $1 ==="
 }
 
 # --- Check 1: hashes locales (CHECKSUMS.sha256) -----------------------------
-# IMPORTANTE: comprobar AMBOS archivos y verificar exit code 0 de sha256sum.
-# Antes verificaba solo "grep : OK" lo que aprueba con 1 OK + 1 FAILED.
+# IMPORTANTE: exit code 0 + cada archivo OK explicitamente.
+# Antes verificaba "grep : OK" lo que aproba con 1 OK + 1 FAILED.
 
 section "1. Dataset canónico (CHECKSUMS.sha256)"
-cd "$DATA_DIR"
-CHECKSUM_OUT=$(sha256sum -c CHECKSUMS.sha256 2>&1)
-CHECKSUM_EXIT=$?
-if [ $CHECKSUM_EXIT -eq 0 ]; then
-    # Exit 0 = todos OK. Validamos tambien cada archivo individualmente.
-    CSV_OK=$(echo "$CHECKSUM_OUT" | grep -c "database_beta.csv: OK" || true)
-    JSON_OK=$(echo "$CHECKSUM_OUT" | grep -c "database_beta.json: OK" || true)
-    if [ "$CSV_OK" -eq 1 ] && [ "$JSON_OK" -eq 1 ]; then
-        check_pass "database_beta.csv OK"
-        check_pass "database_beta.json OK"
-    else
-        check_fail "exit 0 pero faltan lineas OK (CSV=$CSV_OK, JSON=$JSON_OK)"
-    fi
+if [ "$SKIP_LOCAL" = "1" ]; then
+    check_skip "CHECKSUMS.sha256 (SKIP_LOCAL_FILES=1)"
 else
-    check_fail "sha256sum -c CHECKSUMS.sha256 fallo (exit=$CHECKSUM_EXIT)"
-    echo "$CHECKSUM_OUT" | sed 's/^/         /'
+    cd "$DATA_DIR"
+    CHECKSUM_OUT=$(sha256sum -c CHECKSUMS.sha256 2>&1)
+    CHECKSUM_EXIT=$?
+    if [ $CHECKSUM_EXIT -eq 0 ]; then
+        CSV_OK=$(echo "$CHECKSUM_OUT" | grep -c "database_beta.csv: OK" || true)
+        JSON_OK=$(echo "$CHECKSUM_OUT" | grep -c "database_beta.json: OK" || true)
+        if [ "$CSV_OK" -eq 1 ] && [ "$JSON_OK" -eq 1 ]; then
+            check_pass "database_beta.csv OK"
+            check_pass "database_beta.json OK"
+        else
+            check_fail "exit 0 pero faltan lineas OK (CSV=$CSV_OK, JSON=$JSON_OK)"
+        fi
+    else
+        check_fail "sha256sum -c CHECKSUMS.sha256 fallo (exit=$CHECKSUM_EXIT)"
+        echo "$CHECKSUM_OUT" | sed 's/^/         /'
+    fi
+    cd - > /dev/null
 fi
-cd - > /dev/null
 
 # --- Check 2: binding modelo+dataset+metricas -------------------------------
 
 section "2. Binding modelo+dataset+metricas (MODEL_BINDING.sha256)"
-cd "$DATA_DIR"
-BIND_OUT=$(sha256sum -c MODEL_BINDING.sha256 2>&1)
-BIND_EXIT=$?
-if [ $BIND_EXIT -eq 0 ]; then
-    # Validar cada uno de los 4 archivos explicitamente.
-    for f in modelo_eficiencia_v1.joblib metricas_v1.joblib database_beta.json database_beta.csv; do
-        if echo "$BIND_OUT" | grep -q "$f: OK"; then
-            check_pass "$f OK"
-        else
-            check_fail "$f falta o no es OK en MODEL_BINDING.sha256"
-        fi
-    done
-    BIND_MODEL_SHA=$(grep modelo_eficiencia_v1.joblib MODEL_BINDING.sha256 | awk '{print $1}')
+BIND_MODEL_SHA=""
+if [ "$SKIP_LOCAL" = "1" ]; then
+    check_skip "MODEL_BINDING.sha256 (SKIP_LOCAL_FILES=1)"
 else
-    check_fail "sha256sum -c MODEL_BINDING.sha256 fallo (exit=$BIND_EXIT)"
-    echo "$BIND_OUT" | sed 's/^/         /'
-    BIND_MODEL_SHA=""
+    cd "$DATA_DIR"
+    BIND_OUT=$(sha256sum -c MODEL_BINDING.sha256 2>&1)
+    BIND_EXIT=$?
+    if [ $BIND_EXIT -eq 0 ]; then
+        for f in modelo_eficiencia_v1.joblib metricas_v1.joblib database_beta.json database_beta.csv; do
+            if echo "$BIND_OUT" | grep -q "$f: OK"; then
+                check_pass "$f OK"
+            else
+                check_fail "$f falta o no es OK en MODEL_BINDING.sha256"
+            fi
+        done
+        BIND_MODEL_SHA=$(grep modelo_eficiencia_v1.joblib MODEL_BINDING.sha256 | awk '{print $1}')
+    else
+        check_fail "sha256sum -c MODEL_BINDING.sha256 fallo (exit=$BIND_EXIT)"
+        echo "$BIND_OUT" | sed 's/^/         /'
+    fi
+    cd - > /dev/null
 fi
-cd - > /dev/null
 
 # --- Check 3: servicio vivo (/health) ---------------------------------------
 
@@ -115,12 +140,19 @@ if [ "$MODEL_CODE" = "200" ]; then
 
     check_pass "/model-info -> 200 (path=$SERVED_PATH, loaded=$SERVED_LOADED, size=$SERVED_SIZE bytes)"
 
-    if [ -n "$BIND_MODEL_SHA" ] && [ "$SERVED_SHA" = "$BIND_MODEL_SHA" ]; then
-        check_pass "sha256 servido ($SERVED_SHA) == binding ($BIND_MODEL_SHA)"
-    elif [ -n "$BIND_MODEL_SHA" ]; then
-        check_fail "sha256 servido ($SERVED_SHA) != binding ($BIND_MODEL_SHA)"
+    # Comparacion SHA binding vs servido:
+    # - Si tenemos el binding cargado (local files existen), comparamos
+    # - Si SKIP_LOCAL=1, no tenemos binding, no podemos comparar (SKIP)
+    if [ -n "$BIND_MODEL_SHA" ] && [ -n "$SERVED_SHA" ]; then
+        if [ "$SERVED_SHA" = "$BIND_MODEL_SHA" ]; then
+            check_pass "sha256 servido ($SERVED_SHA) == binding ($BIND_MODEL_SHA)"
+        else
+            check_fail "sha256 servido ($SERVED_SHA) != binding ($BIND_MODEL_SHA) — modelo no es el certificado"
+        fi
+    elif [ "$SKIP_LOCAL" = "1" ]; then
+        check_skip "comparacion SHA binding vs servido (SKIP_LOCAL_FILES=1, sin binding cargado)"
     else
-        check_fail "no se pudo comparar SHA (binding no disponible)"
+        check_fail "no se pudo comparar SHA (binding o servicio no disponibles)"
     fi
 else
     check_fail "/model-info no respondio 200 (code=$MODEL_CODE)"
@@ -168,6 +200,7 @@ fi
 echo ""
 echo "=== RESUMEN ==="
 echo "Checks OK:   $PASS"
+echo "Checks SKIP: $SKIP"
 echo "Checks FAIL: $FAIL"
 if [ $FAIL -gt 0 ]; then
     echo ""

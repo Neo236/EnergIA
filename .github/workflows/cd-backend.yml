@@ -51,12 +51,23 @@ jobs:
             AMBIENTE="staging"
           fi
 
+          # db_puerto: igual que `puerto` (backend), pero para el host donde
+          # publica Postgres. staging y produccion corren en el mismo runner
+          # self-hosted, y docker-compose.yml solo tiene un default (5432)
+          # para DB_PORT — sin un valor distinto por ambiente acá, el segundo
+          # proyecto de Compose que intenta levantar `db` en el host falla
+          # porque el puerto ya esta tomado por el otro ambiente. Ninguno de
+          # los dos coincide con el default de docker-compose.yml a proposito,
+          # para no chocar con lo que ya este corriendo con ese default mientras
+          # este cambio se despliega.
           if [ "$AMBIENTE" = "produccion" ]; then
             echo "proyecto=energiai-prod" >> "$GITHUB_OUTPUT"
             echo "puerto=8080"            >> "$GITHUB_OUTPUT"
+            echo "db_puerto=5434"         >> "$GITHUB_OUTPUT"
           else
             echo "proyecto=energiai-staging" >> "$GITHUB_OUTPUT"
             echo "puerto=8081"               >> "$GITHUB_OUTPUT"
+            echo "db_puerto=5433"            >> "$GITHUB_OUTPUT"
           fi
           echo "ambiente=$AMBIENTE" >> "$GITHUB_OUTPUT"
           echo "tag=${{ github.event.inputs.tag || github.sha }}" >> "$GITHUB_OUTPUT"
@@ -163,8 +174,16 @@ jobs:
         # el backend hace rollback en bucle. `db` es restart:unless-stopped, así que
         # levantarla una vez acá alcanza para todo el resto del job, incluida la
         # verificación de salud y un eventual rollback más abajo.
+        env:
+          DB_PORT: ${{ steps.env.outputs.db_puerto }}
         run: |
           set -euo pipefail
+          # export explícito, mismo motivo que BACKEND_PORT en "Levantar": una
+          # variable de entorno del shell pisa lo que diga --env-file, así que
+          # esto es lo que realmente fija el puerto por ambiente — sin esto,
+          # staging y producción compiten por el mismo default de
+          # docker-compose.yml (DB_PORT:-5432) al correr en el mismo runner.
+          export DB_PORT="$DB_PORT"
           echo "Asegurando dependencias (db)..."
           # --wait bloquea hasta que el healthcheck de `db` (pg_isready) pase,
           # no solo hasta que el contenedor arranque: en el primer deploy de un

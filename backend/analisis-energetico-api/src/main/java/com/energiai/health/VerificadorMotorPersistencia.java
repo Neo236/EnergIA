@@ -70,6 +70,18 @@ public class VerificadorMotorPersistencia implements HealthIndicator {
         try (Connection conexion = dataSource.getConnection()) {
             motor = conexion.getMetaData().getDatabaseProductName();
         } catch (SQLException e) {
+            // Igual que evaluar(): si el perfil prod no exige Postgres (tests,
+            // entornos locales sobre H2), un fallo de conexion tampoco es motivo
+            // para tumbar el readiness de este indicador - esa senal ya la da
+            // el indicador `db`. Sin este chequeo, un hipo transitorio de la
+            // base en un ambiente no-prod bajaba el readiness por una razon
+            // que el resto de esta clase dice explicitamente que no aplica ahi.
+            if (!exigePostgres) {
+                return Health.up()
+                        .withDetail("motor", "desconocido")
+                        .withDetail("verificacion", "omitida (perfil prod inactivo): no se pudo determinar el motor")
+                        .build();
+            }
             // Sin conexion no hay nada que identificar. El indicador `db` ya
             // reporta la caida; aca solo se declara desconocido el motor.
             return Health.down(e).withDetail("motor", "desconocido").build();

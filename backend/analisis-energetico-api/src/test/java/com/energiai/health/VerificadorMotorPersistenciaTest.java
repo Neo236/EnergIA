@@ -1,6 +1,12 @@
 package com.energiai.health;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.health.contributor.Health;
@@ -59,5 +65,31 @@ class VerificadorMotorPersistenciaTest {
 
         assertEquals(Status.DOWN, salud.getStatus());
         assertEquals("desconocido", salud.getDetails().get("motor"));
+    }
+
+    // health() (a diferencia de evaluar()) es el unico lugar que realmente
+    // abre la conexion, asi que es el unico que puede recibir un
+    // SQLException. Debe respetar exigePostgres igual que evaluar().
+    @Test
+    void reportaDownAnteFalloDeConexionCuandoElPerfilProdExigePostgres() throws SQLException {
+        DataSource dataSourceRoto = mock(DataSource.class);
+        when(dataSourceRoto.getConnection()).thenThrow(new SQLException("Connection refused"));
+
+        Health salud = new VerificadorMotorPersistencia(dataSourceRoto, true).health();
+
+        assertEquals(Status.DOWN, salud.getStatus());
+        assertEquals("desconocido", salud.getDetails().get("motor"));
+    }
+
+    // Fuera del perfil prod, un fallo de conexion tampoco es motivo para
+    // tumbar este indicador - esa senal ya la da el indicador `db`.
+    @Test
+    void reportaUpAnteFalloDeConexionCuandoNoSeExigePostgres() throws SQLException {
+        DataSource dataSourceRoto = mock(DataSource.class);
+        when(dataSourceRoto.getConnection()).thenThrow(new SQLException("Connection refused"));
+
+        Health salud = new VerificadorMotorPersistencia(dataSourceRoto, false).health();
+
+        assertEquals(Status.UP, salud.getStatus());
     }
 }

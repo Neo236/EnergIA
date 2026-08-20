@@ -129,6 +129,31 @@ jobs:
             echo "STORAGE_BACKEND=local: no se requieren credenciales OCI."
           fi
 
+          # Producción corre contra Postgres real (ver docker-compose.yml) y
+          # verifica peticiones de sonda con un token compartido (ver
+          # VerificadorSonda). Ambos caen a valores inseguros por defecto
+          # (POSTGRES_PASSWORD=energiai, sonda deshabilitada) si no están en
+          # el .env — sin este chequeo, un .env.prod que nunca se actualizó
+          # tras sumar persistencia despliega en silencio con esas credenciales
+          # de fábrica.
+          if [ "${{ steps.env.outputs.ambiente }}" = "produccion" ]; then
+            PG_PASSWORD=$(grep -E '^POSTGRES_PASSWORD=' "$ENV_FILE" | cut -d= -f2 || echo '')
+            if [ -z "$PG_PASSWORD" ]; then
+              echo "::error::POSTGRES_PASSWORD no está definida (o vacía) en $ENV_FILE para producción."
+              exit 1
+            fi
+            if [ "$PG_PASSWORD" = "energiai" ]; then
+              echo "::error::POSTGRES_PASSWORD sigue en el valor por defecto de docker-compose.yml ('energiai'). Cambiala antes de desplegar a producción."
+              exit 1
+            fi
+
+            SONDA_TOKEN=$(grep -E '^TOKEN_SONDA_SALUD=' "$ENV_FILE" | cut -d= -f2 || echo '')
+            if [ -z "$SONDA_TOKEN" ]; then
+              echo "::error::TOKEN_SONDA_SALUD no está definida (o vacía) en $ENV_FILE para producción."
+              exit 1
+            fi
+          fi
+
       - name: Asegurar dependencias
         # El backend depende de `db` (ver docker-compose.yml), pero "Levantar" usa
         # --no-deps para no reiniciar servicios que no cambiaron — y --no-deps hace
@@ -141,8 +166,14 @@ jobs:
         run: |
           set -euo pipefail
           echo "Asegurando dependencias (db)..."
+          # --wait bloquea hasta que el healthcheck de `db` (pg_isready) pase,
+          # no solo hasta que el contenedor arranque: en el primer deploy de un
+          # ambiente (volumen vacío), el initdb de Postgres puede tardar más
+          # que un arranque en caliente, y sin esto el paso siguiente puede
+          # levantar el backend (y correr la migración de Flyway) contra una
+          # base que todavía no está lista para aceptar conexiones.
           docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
-            -p "${{ steps.env.outputs.proyecto }}" up -d db
+            -p "${{ steps.env.outputs.proyecto }}" up -d db --wait --wait-timeout 60
 
       - name: Levantar
         env:

@@ -364,6 +364,63 @@ class AnalisisEnergeticoControllerTest {
     }
 
     @Test
+    @DisplayName("POST /api/v1/analisis-energetico: Retorna 502 cuando una recomendacion del ML es null")
+    void testMlRecomendacionConElementoNuloRetorna502() throws Exception {
+        List<String> recomendacionesConNulo = new java.util.ArrayList<>();
+        recomendacionesConNulo.add(null);
+        recomendacionesConNulo.add("Ahorrar energía");
+        DatosRegistroAnalisis analisisConRecomendacionInvalida = DatosRegistroAnalisis.builder()
+                .categoria(CategoriaConsumo.EFICIENTE)
+                .probabilidad(0.25)
+                .costo_estimado_mensual(300.0)
+                .recomendaciones(recomendacionesConNulo)
+                .build();
+        when(mlClient.predecir(any())).thenReturn(analisisConRecomendacionInvalida);
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "consumo_kwh": 450.5,
+                      "cantidad_equipos": 8,
+                      "tipo_inmueble": "Casa",
+                      "horas_alto_consumo": 6
+                    }
+                    """))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.status").value(502))
+                .andExpect(jsonPath("$.error").value("BAD_GATEWAY"));
+
+        // No debe intentar persistir una respuesta invalida del ML.
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/analisis-energetico: el costo devuelto viene redondeado a 2 decimales (misma escala que persiste la DB)")
+    void testAnalizarConsumoRedondeaCostoEstimadoA2Decimales() throws Exception {
+        DatosRegistroAnalisis analisisConDecimalesDeSobra = DatosRegistroAnalisis.builder()
+                .categoria(CategoriaConsumo.EFICIENTE)
+                .probabilidad(0.25)
+                .costo_estimado_mensual(337.876)
+                .recomendaciones(List.of("Buen consumo."))
+                .build();
+        when(mlClient.predecir(any())).thenReturn(analisisConDecimalesDeSobra);
+
+        mockMvc.perform(post("/api/v1/analisis-energetico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "consumo_kwh": 450.5,
+                      "cantidad_equipos": 8,
+                      "tipo_inmueble": "Casa",
+                      "horas_alto_consumo": 6
+                    }
+                    """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.costo_estimado_mensual").value(337.88));
+    }
+
+    @Test
     @DisplayName("GET /api/v1/analisis-energetico/{id}: Devuelve el analisis cuando existe")
     void testObtenerAnalisisExistenteRetorna200() throws Exception {
         UUID id = UUID.randomUUID();

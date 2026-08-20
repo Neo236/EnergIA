@@ -129,6 +129,52 @@ jobs:
             echo "STORAGE_BACKEND=local: no se requieren credenciales OCI."
           fi
 
+          # Producción corre contra Postgres real (ver docker-compose.yml) y
+          # verifica peticiones de sonda con un token compartido (ver
+          # VerificadorSonda). Ambos caen a valores inseguros por defecto
+          # (POSTGRES_PASSWORD=energiai, sonda deshabilitada) si no están en
+          # el .env — sin este chequeo, un .env.prod que nunca se actualizó
+          # tras sumar persistencia despliega en silencio con esas credenciales
+          # de fábrica.
+          if [ "${{ steps.env.outputs.ambiente }}" = "produccion" ]; then
+            PG_PASSWORD=$(grep -E '^POSTGRES_PASSWORD=' "$ENV_FILE" | cut -d= -f2 || echo '')
+            if [ -z "$PG_PASSWORD" ]; then
+              echo "::error::POSTGRES_PASSWORD no está definida (o vacía) en $ENV_FILE para producción."
+              exit 1
+            fi
+            if [ "$PG_PASSWORD" = "energiai" ]; then
+              echo "::error::POSTGRES_PASSWORD sigue en el valor por defecto de docker-compose.yml ('energiai'). Cambiala antes de desplegar a producción."
+              exit 1
+            fi
+
+            SONDA_TOKEN=$(grep -E '^TOKEN_SONDA_SALUD=' "$ENV_FILE" | cut -d= -f2 || echo '')
+            if [ -z "$SONDA_TOKEN" ]; then
+              echo "::error::TOKEN_SONDA_SALUD no está definida (o vacía) en $ENV_FILE para producción."
+              exit 1
+            fi
+          fi
+
+      - name: Asegurar dependencias
+        # El backend depende de `db` (ver docker-compose.yml), pero "Levantar" usa
+        # --no-deps para no reiniciar servicios que no cambiaron — y --no-deps hace
+        # que Compose NO levante `db` sola si todavía no existe en este ambiente.
+        # Sin este paso, un ambiente que nunca tuvo Postgres arriba (por ejemplo el
+        # primer deploy tras sumar persistencia) falla con "Connection refused" y
+        # el backend hace rollback en bucle. `db` es restart:unless-stopped, así que
+        # levantarla una vez acá alcanza para todo el resto del job, incluida la
+        # verificación de salud y un eventual rollback más abajo.
+        run: |
+          set -euo pipefail
+          echo "Asegurando dependencias (db)..."
+          # --wait bloquea hasta que el healthcheck de `db` (pg_isready) pase,
+          # no solo hasta que el contenedor arranque: en el primer deploy de un
+          # ambiente (volumen vacío), el initdb de Postgres puede tardar más
+          # que un arranque en caliente, y sin esto el paso siguiente puede
+          # levantar el backend (y correr la migración de Flyway) contra una
+          # base que todavía no está lista para aceptar conexiones.
+          docker compose --env-file "${{ steps.dotenv.outputs.env_file }}" \
+            -p "${{ steps.env.outputs.proyecto }}" up -d db --wait --wait-timeout 60
+
       - name: Levantar
         env:
           BACKEND_TAG: ${{ steps.env.outputs.tag }}
@@ -147,18 +193,32 @@ jobs:
         continue-on-error: true
         run: |
           set -uo pipefail
+          # RUNNER_TEMP es un directorio por-job: en el runner self-hosted,
+          # dos deploys (p.ej. backend y ml) pueden ejecutarse cerca uno del
+          # otro y compartir filesystem. Una ruta fija en /tmp hacía que un
+          # curl fallido de este job (sin body) dejara leer al siguiente el
+          # archivo viejo de OTRO job — pasó de verdad entre cd-backend y
+          # cd-ml en el mismo push.
+          RESP="$RUNNER_TEMP/health_resp.txt"
+          ERR="$RUNNER_TEMP/health_err.txt"
+          # Se verifica readiness y no /actuator/health porque readiness incluye
+          # el indicador db (ver application.properties): el gate del deploy pasa
+          # a exigir que el backend pueda hablar con PostgreSQL, no solo que la
+          # JVM responda. Si la DB no esta, esto falla y dispara el rollback
+          # automatico del paso siguiente en vez de certificar un deploy roto.
           # 12 x 5 s = 60 s: Spring Boot necesita tiempo para arrancar la JVM
           for i in $(seq 1 12); do
-            echo "Intento $i/12 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health"
-            HTTP=$(curl -o /tmp/health_resp.txt -w "%{http_code}" -sS \
-              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health" 2>/tmp/health_err.txt || true)
-            BODY=$(cat /tmp/health_resp.txt 2>/dev/null || true)
+            echo "Intento $i/12 - http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health/readiness"
+            rm -f "$RESP"
+            HTTP=$(curl -o "$RESP" -w "%{http_code}" -sS \
+              "http://127.0.0.1:${{ steps.env.outputs.puerto }}/actuator/health/readiness" 2>"$ERR" || true)
+            BODY=$(cat "$RESP" 2>/dev/null || true)
             if echo "$BODY" | grep -q '"status":"UP"'; then
               echo "Backend (Spring Boot) respondiendo OK (intento $i). HTTP $HTTP"
               exit 0
             fi
             echo "  HTTP: $HTTP | Body: $BODY"
-            cat /tmp/health_err.txt 2>/dev/null || true
+            cat "$ERR" 2>/dev/null || true
             sleep 5
           done
           echo "El backend no respondió después de 60 s."

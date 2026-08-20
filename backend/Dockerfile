@@ -38,7 +38,11 @@ ENV PORT=8080 \
     SPRING_PROFILES_ACTIVE=prod \
     JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -Duser.timezone=UTC"
 
+# Se apunta a /actuator/health/readiness, no a /actuator/health: readiness
+# incluye el indicador db (ver application.properties), asi que `docker compose
+# ps` refleja si el contenedor puede realmente atender trafico y no solo si la
+# JVM esta viva. wget devuelve != 0 ante el 503 que emite un grupo DOWN.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+  CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health/readiness || exit 1
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

@@ -1,0 +1,16 @@
+$kind: collection
+name: Timeout / Servicio ML Lento
+description: |-
+  Este test requiere configurar un timeout muy corto en el backend.
+
+  Pasos para reproducir:
+  1. En application.properties del backend, configurar:
+     ml.service.connect-timeout=1000
+     ml.service.read-timeout=1000
+  2. Reiniciar el backend.
+  3. En el ML service, agregar latencia artificial (ej. sleep(5) en inference).
+  4. Ejecutar este request.
+  5. El backend supera el timeout y retorna 503.
+
+  Alternativa: detener el ML service (misma situacion que 503, pero el error se origina por timeout).
+order: 7000

@@ -10,8 +10,8 @@ El proyecto corre sobre **Oracle Cloud Infrastructure**: una VM Ampere (ARM64) a
 
 | Servicio OCI | Uso / Propósito | Estado |
 |--------------|------------------|--------|
-| **OCI Object Storage** | Almacenamiento del dataset de entrenamiento y modelo `.pkl` / `.onnx`. | 🟡 Bucket de prueba + acceso de equipo vía PAR (Sprint 2) — integración con la app pendiente |
-| **OCI Compute** | Instancia de Máquina Virtual para el despliegue Docker en producción. | ✅ Infraestructura productiva desde el 27/07 (VM, HTTPS, runner de CD) · aplicación desplegada en los dos ambientes desde el 09/08 |
+| **OCI Object Storage** | Almacenamiento del dataset de entrenamiento y modelo `.joblib`. | ✅ Integración implementada y validada vía PAR / SDK; auditado y certificado (Sprint 3) |
+| **OCI Compute** | Instancia de Máquina Virtual para el despliegue Docker en producción y staging. | ✅ Infraestructura productiva desde el 27/07 (VM, HTTPS, runner de CD) · aplicación desplegada en los dos ambientes desde el 09/08 |
 
 ---
 
@@ -264,6 +264,12 @@ Para dar acceso al bucket sin compartir credenciales individuales de OCI, se cre
 4. Copiar la URL generada **una sola vez** (no se vuelve a mostrar) y compartirla por un canal seguro (nunca en el repositorio ni en capturas públicas).
 5. Verificar que el enlace funciona consultándolo y confirmando que devuelve el listado/objeto esperado.
 
+### 🛡️ Auditoría de Seguridad y Decisión sobre la PAR (Sprint 3)
+
+- **Control de Acceso Centralizado:** Se mantiene un **único enlace PAR** (`acceso-equipo-desarrollo`) para evitar dispersión de credenciales. El token reside únicamente en los archivos `.env` protegidos de la VM (`chmod 600`) y en posesión exclusiva del responsable de subir el modelo.
+- **Aislamiento en Contenedores:** La función `_entrenar_respaldo_local()` en `data-science/raw/interfaces/api/app.py` utiliza estrictamente `["--dry-run"]`, impidiendo cualquier escritura accidental sobre el bucket compartido.
+- **Informe de Certificación:** Ver el detalle completo en [`docs/certificacion/README.md`](../certificacion/README.md).
+
 ---
 
 ## 🔁 Procedimiento reproducible — Carga de objetos
@@ -407,6 +413,6 @@ Ver `data-science/raw/.env.example` para referencia completa. Mínimo para bucke
 STORAGE_BACKEND=oci
 OCI_NAMESPACE=sergiovillenavergara
 OCI_BUCKET=g9-energy-test-bucket
-OCI_REGION=santiago-chile-1
+OCI_REGION=sa-santiago-1
 OCI_INSTANCE_PRINCIPAL=true
 ```

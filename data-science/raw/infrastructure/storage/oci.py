@@ -30,7 +30,7 @@ class OciBucketStorage:
     Requiere env vars:
         OCI_NAMESPACE  (Object Storage namespace, ej. 'sergiovillenavergara')
         OCI_BUCKET     (nombre del bucket, ej. 'g9-energy-test-bucket')
-        OCI_REGION     (ej. 'santiago-chile-1')
+        OCI_REGION     (ej. 'sa-santiago-1')
     """
 
     def __init__(
@@ -44,7 +44,7 @@ class OciBucketStorage:
         if not self.namespace:
             missing.append("OCI_NAMESPACE")
         self.bucket = bucket or os.environ.get("OCI_BUCKET", "g9-energy-test-bucket")
-        self.region = region or os.environ.get("OCI_REGION", "santiago-chile-1")
+        self.region = region or os.environ.get("OCI_REGION", "sa-santiago-1")
         if missing:
             raise RuntimeError(
                 f"OCI storage requires env vars: {', '.join(missing)}. "

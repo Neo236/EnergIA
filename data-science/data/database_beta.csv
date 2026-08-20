@@ -1,0 +1,2001 @@
+hogar_id,tipo_inmueble,metros_cuadrados,antiguedad_vivienda,zona_fria,calidad_aislamiento,fuente_calefaccion,fuente_agua_caliente,consumo_kwh,uso_horario_pico,horas_alto_consumo,cantidad_equipos,categoria
+Hogar_0001,Departamento,1269,61,No,Muy Baja,Solar,Electricidad,364.0,Si,14,19,Moderado
+Hogar_0002,Pyme,928,16,Si,Media,Electricidad,Otros,730.5,No,5,92,Ineficiente
+Hogar_0003,Comercio,188,65,No,Media,Otros,Otros,299.3,Si,7,39,Moderado
+Hogar_0004,Departamento,2000,5,Si,Muy Baja,Electricidad,Solar,543.4,Si,23,85,Ineficiente
+Hogar_0005,Casa,1269,57,No,Muy Alta,Electricidad,Electricidad,433.9,Si,13,90,Moderado
+Hogar_0006,Casa,295,68,No,Media,Solar,Electricidad,277.3,No,4,86,Eficiente
+Hogar_0007,Casa,657,61,Si,Media,Electricidad,Solar,974.7,Si,16,70,Ineficiente
+Hogar_0008,Pyme,931,81,No,Media,Electricidad,Electricidad,259.5,Si,21,11,Moderado
+Hogar_0009,Departamento,1897,70,Si,Media,Electricidad,Otros,310.0,No,6,14,Eficiente
+Hogar_0010,Comercio,1449,130,No,Baja,Solar,Electricidad,162.4,Si,8,60,Moderado
+Hogar_0011,Casa,1231,9,No,Baja,Otros,Otros,823.2,Si,15,36,Moderado
+Hogar_0012,Pyme,1667,97,Si,Media,Otros,Solar,587.0,Si,17,41,Moderado
+Hogar_0013,Comercio,1778,88,No,Alta,Solar,Solar,613.4,No,12,2,Eficiente
+Hogar_0014,Casa,230,34,Si,Muy Baja,Electricidad,Electricidad,820.7,Si,17,57,Ineficiente
+Hogar_0015,Casa,607,1,Si,Media,Solar,Otros,343.6,No,9,60,Eficiente
+Hogar_0016,Casa,1605,123,No,Alta,Solar,Electricidad,194.4,No,0,20,Eficiente
+Hogar_0017,Casa,866,23,Si,Baja,Electricidad,Solar,199.2,No,20,22,Eficiente
+Hogar_0018,Departamento,1862,73,No,Muy Baja,Electricidad,Otros,732.9,No,17,4,Moderado
+Hogar_0019,Departamento,1277,21,No,Baja,Electricidad,Electricidad,614.5,No,18,56,Moderado
+Hogar_0020,Casa,1745,38,Si,Media,Solar,Electricidad,207.1,No,1,93,Eficiente
+Hogar_0021,Departamento,1668,19,No,Baja,Electricidad,Solar,145.9,No,3,58,Eficiente
+Hogar_0022,Casa,621,40,Si,Media,Otros,Electricidad,121.6,No,10,88,Moderado
+Hogar_0023,Casa,1899,147,No,Media,Electricidad,Solar,628.2,No,2,65,Moderado
+Hogar_0024,Departamento,275,107,Si,Media,Electricidad,Electricidad,1.1,Si,8,88,Moderado
+Hogar_0025,Departamento,900,146,Si,Baja,Electricidad,Electricidad,19.3,Si,9,58,Moderado
+Hogar_0026,Comercio,1490,83,Si,Media,Solar,Solar,390.2,Si,1,30,Moderado
+Hogar_0027,Casa,1582,110,No,Alta,Electricidad,Solar,691.7,No,6,76,Moderado
+Hogar_0028,Departamento,221,65,No,Muy Alta,Electricidad,Electricidad,695.3,No,14,19,Moderado
+Hogar_0029,Departamento,715,52,No,Alta,Electricidad,Otros,430.7,Si,18,62,Moderado
+Hogar_0030,Casa,1978,33,No,Media,Electricidad,Otros,691.4,Si,9,68,Ineficiente
+Hogar_0031,Departamento,1568,149,No,Media,Electricidad,Solar,521.6,Si,23,79,Moderado
+Hogar_0032,Casa,1119,66,No,Baja,Otros,Electricidad,977.0,Si,19,84,Ineficiente
+Hogar_0033,Casa,664,133,Si,Baja,Solar,Electricidad,163.3,No,13,44,Eficiente
+Hogar_0034,Pyme,1448,26,No,Muy Baja,Solar,Solar,601.1,Si,3,84,Moderado
+Hogar_0035,Pyme,697,9,No,Media,Electricidad,Solar,491.7,Si,24,61,Moderado
+Hogar_0036,Comercio,1809,72,Si,Baja,Electricidad,Electricidad,195.3,Si,10,21,Moderado
+Hogar_0037,Casa,1252,95,No,Baja,Electricidad,Solar,750.2,Si,2,10,Moderado
+Hogar_0038,Casa,1197,47,No,Muy Alta,Solar,Electricidad,276.2,No,22,30,Eficiente
+Hogar_0039,Comercio,1521,69,No,Baja,Solar,Electricidad,382.3,Si,16,24,Moderado
+Hogar_0040,Departamento,1704,99,No,Baja,Electricidad,Solar,375.5,No,6,48,Moderado
+Hogar_0041,Casa,969,58,Si,Muy Baja,Solar,Solar,245.0,Si,10,55,Moderado
+Hogar_0042,Departamento,224,1,Si,Media,Solar,Electricidad,431.3,Si,17,52,Moderado
+Hogar_0043,Casa,1966,64,Si,Media,Electricidad,Solar,473.9,No,13,38,Moderado
+Hogar_0044,Pyme,1475,82,No,Media,Electricidad,Otros,744.5,No,13,67,Moderado
+Hogar_0045,Casa,1715,9,Si,Media,Solar,Solar,765.3,Si,5,93,Moderado
+Hogar_0046,Comercio,517,52,No,Alta,Solar,Solar,159.4,Si,8,8,Eficiente
+Hogar_0047,Casa,1937,78,Si,Alta,Electricidad,Electricidad,593.2,Si,21,29,Moderado
+Hogar_0048,Departamento,921,58,Si,Muy Alta,Electricidad,Electricidad,896.3,No,2,10,Moderado
+Hogar_0049,Departamento,167,149,No,Alta,Solar,Electricidad,109.7,Si,16,69,Moderado
+Hogar_0050,Casa,1362,47,No,Media,Electricidad,Solar,473.4,Si,11,75,Moderado
+Hogar_0051,Pyme,190,148,Si,Baja,Solar,Solar,750.6,No,3,68,Moderado
+Hogar_0052,Comercio,339,122,No,Muy Baja,Solar,Electricidad,611.9,Si,19,49,Moderado
+Hogar_0053,Pyme,46,21,No,Muy Baja,Electricidad,Electricidad,101.5,Si,15,58,Moderado
+Hogar_0054,Pyme,1131,99,Si,Media,Electricidad,Electricidad,397.2,Si,23,35,Ineficiente
+Hogar_0055,Departamento,1630,97,Si,Alta,Solar,Electricidad,507.7,No,9,50,Moderado
+Hogar_0056,Pyme,1180,24,No,Media,Electricidad,Otros,995.8,Si,6,40,Ineficiente
+Hogar_0057,Casa,1648,27,No,Muy Baja,Electricidad,Solar,179.4,No,9,12,Eficiente
+Hogar_0058,Casa,1779,112,Si,Media,Solar,Electricidad,982.4,Si,6,85,Ineficiente
+Hogar_0059,Casa,1982,44,No,Muy Alta,Electricidad,Solar,376.8,No,22,16,Eficiente
+Hogar_0060,Casa,1009,67,No,Media,Solar,Solar,201.1,Si,17,78,Eficiente
+Hogar_0061,Departamento,330,6,No,Alta,Electricidad,Solar,414.7,Si,8,85,Moderado
+Hogar_0062,Casa,1964,48,No,Alta,Solar,Electricidad,614.4,No,21,48,Moderado
+Hogar_0063,Comercio,396,136,No,Muy Alta,Electricidad,Electricidad,214.3,No,17,91,Moderado
+Hogar_0064,Departamento,1906,82,No,Alta,Otros,Electricidad,292.1,No,16,100,Moderado
+Hogar_0065,Casa,878,128,No,Alta,Solar,Otros,854.7,No,10,1,Moderado
+Hogar_0066,Departamento,409,137,No,Baja,Electricidad,Solar,999.0,Si,0,65,Moderado
+Hogar_0067,Casa,1957,72,No,Muy Baja,Electricidad,Solar,318.9,Si,16,22,Moderado
+Hogar_0068,Comercio,470,45,No,Media,Electricidad,Electricidad,149.7,Si,3,15,Moderado
+Hogar_0069,Casa,450,105,Si,Baja,Solar,Electricidad,793.4,No,3,84,Moderado
+Hogar_0070,Pyme,186,31,No,Muy Alta,Otros,Electricidad,600.9,Si,13,67,Moderado
+Hogar_0071,Comercio,1227,5,No,Baja,Solar,Otros,101.3,No,8,14,Eficiente
+Hogar_0072,Casa,654,144,No,Alta,Electricidad,Electricidad,946.8,Si,12,73,Ineficiente
+Hogar_0073,Casa,1757,73,No,Media,Solar,Electricidad,79.0,No,15,19,Eficiente
+Hogar_0074,Comercio,920,113,No,Baja,Electricidad,Otros,625.7,Si,0,40,Moderado
+Hogar_0075,Comercio,515,26,Si,Muy Alta,Solar,Solar,424.5,Si,2,98,Moderado
+Hogar_0076,Comercio,1042,53,No,Media,Solar,Solar,557.1,No,18,4,Eficiente
+Hogar_0077,Comercio,352,84,No,Media,Electricidad,Electricidad,214.0,Si,7,33,Moderado
+Hogar_0078,Casa,623,126,Si,Muy Baja,Electricidad,Solar,688.4,No,17,43,Moderado
+Hogar_0079,Departamento,1040,110,Si,Media,Solar,Electricidad,959.8,No,5,37,Moderado
+Hogar_0080,Casa,314,14,No,Baja,Solar,Solar,459.0,Si,19,66,Moderado
+Hogar_0081,Pyme,618,131,Si,Media,Electricidad,Electricidad,523.4,No,5,27,Moderado
+Hogar_0082,Departamento,1713,92,Si,Media,Electricidad,Electricidad,240.6,No,4,45,Moderado
+Hogar_0083,Casa,1622,122,No,Alta,Solar,Solar,892.0,No,11,81,Moderado
+Hogar_0084,Casa,598,72,No,Alta,Electricidad,Solar,971.2,Si,8,50,Moderado
+Hogar_0085,Casa,1403,146,No,Media,Electricidad,Solar,786.5,Si,8,95,Moderado
+Hogar_0086,Casa,53,91,No,Baja,Electricidad,Electricidad,543.2,No,16,63,Moderado
+Hogar_0087,Comercio,979,16,Si,Alta,Electricidad,Electricidad,956.8,No,18,6,Moderado
+Hogar_0088,Departamento,68,42,No,Baja,Solar,Solar,154.7,Si,16,95,Eficiente
+Hogar_0089,Pyme,1730,120,No,Media,Otros,Solar,479.0,Si,21,67,Moderado
+Hogar_0090,Departamento,448,40,No,Media,Solar,Otros,538.1,Si,15,67,Moderado
+Hogar_0091,Casa,1647,38,No,Alta,Electricidad,Solar,492.4,Si,11,97,Moderado
+Hogar_0092,Comercio,202,112,No,Media,Solar,Solar,802.6,No,2,59,Moderado
+Hogar_0093,Comercio,554,150,No,Media,Solar,Otros,670.7,No,13,13,Moderado
+Hogar_0094,Departamento,1659,110,No,Media,Electricidad,Electricidad,127.5,Si,16,21,Moderado
+Hogar_0095,Comercio,991,46,No,Media,Otros,Electricidad,347.1,No,21,64,Moderado
+Hogar_0096,Departamento,1543,62,No,Muy Baja,Electricidad,Electricidad,339.7,Si,15,37,Ineficiente
+Hogar_0097,Departamento,223,109,No,Media,Otros,Electricidad,566.1,No,20,80,Moderado
+Hogar_0098,Departamento,635,68,No,Alta,Electricidad,Solar,292.2,Si,11,85,Moderado
+Hogar_0099,Casa,1626,42,No,Muy Alta,Solar,Solar,118.2,Si,23,48,Eficiente
+Hogar_0100,Casa,867,33,No,Media,Electricidad,Solar,654.0,No,1,56,Eficiente
+Hogar_0101,Casa,878,39,No,Media,Solar,Electricidad,851.2,Si,7,44,Moderado
+Hogar_0102,Departamento,1566,60,No,Baja,Electricidad,Solar,931.7,Si,11,13,Moderado
+Hogar_0103,Casa,1563,61,No,Alta,Otros,Electricidad,972.6,Si,20,4,Moderado
+Hogar_0104,Departamento,47,57,No,Alta,Solar,Solar,781.3,Si,15,95,Moderado
+Hogar_0105,Pyme,1161,74,No,Baja,Otros,Electricidad,140.6,Si,7,73,Moderado
+Hogar_0106,Casa,1106,15,No,Baja,Solar,Otros,853.3,Si,15,33,Moderado
+Hogar_0107,Departamento,1115,81,No,Alta,Otros,Electricidad,400.6,No,9,37,Moderado
+Hogar_0108,Comercio,867,93,No,Baja,Electricidad,Electricidad,730.2,No,19,53,Ineficiente
+Hogar_0109,Casa,123,47,No,Baja,Solar,Solar,531.7,Si,14,24,Eficiente
+Hogar_0110,Casa,1193,137,No,Baja,Solar,Otros,828.8,No,3,89,Moderado
+Hogar_0111,Casa,1929,81,No,Baja,Solar,Solar,426.1,Si,14,51,Moderado
+Hogar_0112,Casa,460,37,Si,Media,Solar,Solar,62.7,Si,3,41,Eficiente
+Hogar_0113,Pyme,662,126,No,Alta,Electricidad,Otros,557.3,Si,10,29,Moderado
+Hogar_0114,Comercio,1728,18,No,Baja,Electricidad,Otros,172.1,Si,5,59,Moderado
+Hogar_0115,Departamento,1135,62,No,Baja,Otros,Solar,965.6,No,3,40,Moderado
+Hogar_0116,Pyme,613,76,No,Baja,Solar,Solar,527.4,Si,8,51,Moderado
+Hogar_0117,Comercio,369,130,No,Media,Electricidad,Electricidad,554.0,No,8,50,Moderado
+Hogar_0118,Casa,1985,101,No,Baja,Solar,Otros,907.4,Si,2,36,Moderado
+Hogar_0119,Pyme,1343,64,No,Media,Otros,Electricidad,625.0,Si,22,79,Ineficiente
+Hogar_0120,Departamento,596,119,No,Alta,Electricidad,Otros,303.4,No,4,60,Eficiente
+Hogar_0121,Comercio,1699,90,No,Muy Baja,Otros,Electricidad,296.8,Si,14,18,Moderado
+Hogar_0122,Pyme,636,7,Si,Muy Baja,Otros,Electricidad,502.1,Si,8,20,Moderado
+Hogar_0123,Casa,1753,72,No,Muy Baja,Otros,Solar,866.7,Si,1,5,Moderado
+Hogar_0124,Casa,268,133,No,Media,Otros,Electricidad,794.9,Si,2,18,Moderado
+Hogar_0125,Casa,1880,106,Si,Alta,Solar,Electricidad,962.8,No,20,40,Moderado
+Hogar_0126,Departamento,586,88,No,Muy Baja,Electricidad,Solar,72.8,Si,11,1,Moderado
+Hogar_0127,Comercio,985,38,No,Muy Alta,Electricidad,Solar,269.1,Si,15,19,Eficiente
+Hogar_0128,Pyme,57,112,Si,Muy Baja,Electricidad,Solar,81.1,No,4,87,Moderado
+Hogar_0129,Casa,416,27,No,Alta,Electricidad,Electricidad,751.3,Si,9,26,Moderado
+Hogar_0130,Departamento,302,96,Si,Media,Electricidad,Solar,141.7,Si,14,29,Moderado
+Hogar_0131,Departamento,557,36,No,Media,Electricidad,Electricidad,100.8,Si,13,59,Moderado
+Hogar_0132,Casa,1203,136,No,Media,Electricidad,Electricidad,562.1,Si,13,63,Moderado
+Hogar_0133,Casa,408,81,No,Media,Electricidad,Solar,412.1,Si,22,98,Moderado
+Hogar_0134,Casa,1117,55,Si,Alta,Otros,Otros,715.4,Si,12,83,Ineficiente
+Hogar_0135,Pyme,1927,84,Si,Alta,Electricidad,Solar,487.5,No,15,62,Moderado
+Hogar_0136,Casa,909,1,Si,Media,Solar,Solar,425.9,Si,7,48,Moderado
+Hogar_0137,Departamento,239,57,No,Muy Baja,Solar,Electricidad,426.1,Si,7,62,Moderado
+Hogar_0138,Comercio,1704,106,Si,Muy Baja,Electricidad,Solar,872.0,Si,16,18,Ineficiente
+Hogar_0139,Departamento,401,122,No,Alta,Otros,Electricidad,395.8,Si,16,66,Moderado
+Hogar_0140,Pyme,769,113,Si,Media,Solar,Otros,334.1,No,2,27,Moderado
+Hogar_0141,Pyme,238,106,No,Media,Electricidad,Otros,339.2,Si,0,6,Moderado
+Hogar_0142,Casa,104,36,Si,Media,Electricidad,Solar,197.4,Si,16,70,Moderado
+Hogar_0143,Departamento,1775,78,Si,Alta,Electricidad,Solar,860.8,Si,23,59,Ineficiente
+Hogar_0144,Casa,653,91,No,Media,Electricidad,Solar,147.5,Si,15,6,Eficiente
+Hogar_0145,Casa,629,17,Si,Alta,Electricidad,Solar,908.7,No,16,31,Moderado
+Hogar_0146,Casa,807,97,Si,Alta,Solar,Electricidad,284.2,Si,24,94,Moderado
+Hogar_0147,Departamento,1972,62,No,Media,Otros,Electricidad,899.5,Si,1,56,Ineficiente
+Hogar_0148,Departamento,1430,149,No,Baja,Solar,Solar,791.0,Si,24,54,Moderado
+Hogar_0149,Casa,1026,138,No,Alta,Electricidad,Otros,582.4,Si,13,85,Moderado
+Hogar_0150,Casa,705,3,Si,Media,Electricidad,Electricidad,669.8,Si,6,41,Ineficiente
+Hogar_0151,Pyme,83,134,No,Muy Alta,Electricidad,Electricidad,326.5,Si,24,18,Moderado
+Hogar_0152,Casa,1845,60,Si,Muy Baja,Electricidad,Electricidad,574.7,No,18,87,Ineficiente
+Hogar_0153,Casa,1075,106,Si,Muy Baja,Electricidad,Otros,293.1,Si,0,23,Moderado
+Hogar_0154,Departamento,906,53,No,Muy Alta,Otros,Electricidad,402.9,No,16,92,Moderado
+Hogar_0155,Pyme,472,87,No,Media,Electricidad,Electricidad,764.9,Si,9,36,Ineficiente
+Hogar_0156,Casa,91,67,Si,Media,Otros,Solar,244.7,No,5,25,Eficiente
+Hogar_0157,Comercio,1970,128,No,Alta,Electricidad,Solar,839.0,Si,6,7,Moderado
+Hogar_0158,Comercio,1809,54,Si,Media,Otros,Electricidad,376.5,No,24,82,Moderado
+Hogar_0159,Casa,1303,2,No,Media,Solar,Electricidad,532.6,Si,5,20,Moderado
+Hogar_0160,Comercio,1948,120,Si,Muy Baja,Solar,Solar,942.0,Si,4,5,Moderado
+Hogar_0161,Departamento,1093,128,Si,Alta,Electricidad,Solar,681.6,No,1,18,Moderado
+Hogar_0162,Departamento,1146,101,No,Alta,Otros,Otros,646.0,Si,17,33,Moderado
+Hogar_0163,Departamento,1603,37,No,Baja,Otros,Solar,711.9,Si,23,79,Ineficiente
+Hogar_0164,Departamento,1037,84,No,Alta,Solar,Electricidad,918.2,Si,16,35,Moderado
+Hogar_0165,Casa,252,132,Si,Alta,Solar,Solar,249.3,Si,23,65,Eficiente
+Hogar_0166,Comercio,799,91,Si,Media,Solar,Electricidad,613.6,Si,22,63,Moderado
+Hogar_0167,Casa,704,20,No,Media,Electricidad,Electricidad,401.0,Si,6,85,Moderado
+Hogar_0168,Casa,1485,108,Si,Media,Solar,Otros,12.8,Si,20,72,Moderado
+Hogar_0169,Casa,1840,46,No,Baja,Otros,Otros,126.2,Si,18,71,Moderado
+Hogar_0170,Departamento,626,83,Si,Alta,Electricidad,Electricidad,325.7,Si,6,41,Moderado
+Hogar_0171,Comercio,404,82,No,Alta,Electricidad,Electricidad,565.4,Si,22,50,Moderado
+Hogar_0172,Casa,1227,34,No,Media,Electricidad,Electricidad,881.6,Si,6,30,Moderado
+Hogar_0173,Departamento,1476,68,Si,Media,Solar,Electricidad,791.3,No,15,38,Moderado
+Hogar_0174,Casa,1964,128,No,Baja,Electricidad,Solar,553.8,Si,11,35,Moderado
+Hogar_0175,Departamento,734,139,No,Muy Baja,Electricidad,Electricidad,74.8,No,14,66,Moderado
+Hogar_0176,Casa,332,26,Si,Media,Electricidad,Otros,286.6,No,14,46,Eficiente
+Hogar_0177,Comercio,804,55,No,Muy Baja,Solar,Electricidad,367.3,No,10,8,Moderado
+Hogar_0178,Departamento,529,22,No,Media,Electricidad,Solar,622.1,No,1,68,Eficiente
+Hogar_0179,Pyme,293,20,Si,Media,Solar,Otros,65.9,No,2,37,Eficiente
+Hogar_0180,Casa,1635,60,No,Alta,Electricidad,Solar,530.7,Si,18,85,Moderado
+Hogar_0181,Casa,33,62,Si,Baja,Solar,Electricidad,901.6,Si,19,13,Moderado
+Hogar_0182,Casa,1969,121,No,Media,Otros,Electricidad,705.7,Si,24,73,Ineficiente
+Hogar_0183,Pyme,533,51,No,Media,Electricidad,Electricidad,797.3,No,14,45,Moderado
+Hogar_0184,Pyme,501,87,No,Muy Baja,Electricidad,Otros,682.0,No,15,29,Moderado
+Hogar_0185,Casa,1346,54,No,Muy Baja,Otros,Otros,207.4,No,0,41,Eficiente
+Hogar_0186,Comercio,189,45,No,Baja,Electricidad,Otros,111.4,No,14,56,Moderado
+Hogar_0187,Comercio,510,31,No,Muy Alta,Electricidad,Otros,829.7,No,11,88,Moderado
+Hogar_0188,Departamento,1646,54,Si,Baja,Otros,Electricidad,695.8,Si,6,16,Ineficiente
+Hogar_0189,Departamento,1121,95,No,Alta,Otros,Otros,575.5,No,6,12,Eficiente
+Hogar_0190,Casa,592,132,Si,Muy Alta,Solar,Otros,190.1,Si,10,66,Eficiente
+Hogar_0191,Casa,930,35,No,Alta,Electricidad,Electricidad,603.7,Si,19,62,Moderado
+Hogar_0192,Pyme,584,109,No,Baja,Electricidad,Electricidad,32.3,Si,10,19,Moderado
+Hogar_0193,Pyme,1960,105,Si,Muy Alta,Electricidad,Solar,119.7,Si,16,30,Moderado
+Hogar_0194,Departamento,1993,57,Si,Muy Baja,Solar,Electricidad,312.6,No,2,16,Eficiente
+Hogar_0195,Casa,263,38,Si,Media,Solar,Electricidad,444.3,Si,15,88,Moderado
+Hogar_0196,Casa,1153,79,No,Muy Alta,Otros,Otros,121.4,No,4,13,Eficiente
+Hogar_0197,Comercio,1259,96,No,Media,Electricidad,Otros,120.8,Si,1,69,Moderado
+Hogar_0198,Pyme,579,112,No,Media,Solar,Electricidad,726.2,Si,22,23,Moderado
+Hogar_0199,Pyme,853,60,No,Baja,Electricidad,Electricidad,570.1,No,6,62,Moderado
+Hogar_0200,Comercio,493,136,No,Media,Electricidad,Otros,534.2,No,9,31,Moderado
+Hogar_0201,Departamento,1503,5,Si,Media,Solar,Solar,453.0,Si,4,53,Moderado
+Hogar_0202,Casa,1317,108,Si,Baja,Electricidad,Electricidad,976.6,Si,14,17,Ineficiente
+Hogar_0203,Casa,411,34,No,Muy Alta,Solar,Solar,50.8,Si,11,49,Eficiente
+Hogar_0204,Pyme,800,38,No,Muy Alta,Solar,Otros,181.4,No,9,49,Eficiente
+Hogar_0205,Departamento,873,149,Si,Alta,Otros,Otros,647.9,No,21,67,Moderado
+Hogar_0206,Casa,412,117,Si,Media,Solar,Electricidad,137.2,Si,16,26,Moderado
+Hogar_0207,Casa,902,4,Si,Media,Otros,Electricidad,589.8,Si,19,13,Moderado
+Hogar_0208,Comercio,284,86,No,Muy Alta,Solar,Otros,568.2,No,19,38,Eficiente
+Hogar_0209,Casa,308,75,Si,Alta,Electricidad,Electricidad,971.0,No,10,22,Moderado
+Hogar_0210,Casa,1675,56,No,Media,Electricidad,Solar,883.5,No,7,85,Moderado
+Hogar_0211,Departamento,1924,126,No,Muy Baja,Solar,Electricidad,945.6,Si,14,29,Ineficiente
+Hogar_0212,Comercio,65,28,Si,Muy Baja,Solar,Electricidad,114.5,No,1,45,Eficiente
+Hogar_0213,Comercio,511,86,No,Media,Solar,Electricidad,868.3,No,16,46,Moderado
+Hogar_0214,Casa,954,140,No,Media,Electricidad,Electricidad,130.0,No,22,39,Moderado
+Hogar_0215,Comercio,245,45,No,Alta,Electricidad,Otros,633.3,Si,5,69,Moderado
+Hogar_0216,Casa,1178,115,No,Baja,Electricidad,Electricidad,720.4,No,20,78,Ineficiente
+Hogar_0217,Casa,1040,111,No,Baja,Solar,Otros,161.7,No,12,82,Eficiente
+Hogar_0218,Comercio,1049,150,No,Media,Solar,Otros,633.0,No,7,68,Moderado
+Hogar_0219,Departamento,1569,44,No,Media,Solar,Electricidad,53.4,Si,10,97,Moderado
+Hogar_0220,Comercio,638,144,Si,Baja,Electricidad,Solar,294.0,Si,14,39,Moderado
+Hogar_0221,Comercio,953,103,Si,Media,Electricidad,Electricidad,921.2,Si,12,20,Ineficiente
+Hogar_0222,Departamento,1941,84,Si,Media,Solar,Solar,172.6,Si,17,77,Moderado
+Hogar_0223,Casa,713,133,Si,Alta,Solar,Solar,66.2,Si,17,100,Moderado
+Hogar_0224,Departamento,1668,107,Si,Media,Solar,Electricidad,444.2,Si,24,68,Ineficiente
+Hogar_0225,Casa,638,17,Si,Baja,Solar,Electricidad,850.8,Si,16,35,Moderado
+Hogar_0226,Casa,285,93,No,Media,Electricidad,Solar,77.6,No,21,8,Eficiente
+Hogar_0227,Pyme,1015,149,No,Alta,Solar,Otros,356.2,Si,12,52,Moderado
+Hogar_0228,Departamento,991,32,No,Muy Baja,Otros,Electricidad,899.9,Si,2,40,Ineficiente
+Hogar_0229,Pyme,391,125,No,Alta,Solar,Solar,119.0,No,20,36,Eficiente
+Hogar_0230,Departamento,1807,121,No,Media,Solar,Electricidad,311.4,Si,23,6,Moderado
+Hogar_0231,Comercio,1836,137,No,Alta,Solar,Otros,778.6,Si,6,86,Moderado
+Hogar_0232,Departamento,569,114,No,Alta,Solar,Electricidad,543.7,Si,11,70,Moderado
+Hogar_0233,Departamento,674,27,Si,Baja,Solar,Solar,832.5,Si,3,100,Moderado
+Hogar_0234,Departamento,1573,10,No,Media,Solar,Electricidad,112.5,Si,23,73,Moderado
+Hogar_0235,Casa,1956,46,No,Baja,Solar,Solar,920.6,Si,10,16,Moderado
+Hogar_0236,Comercio,839,126,No,Muy Alta,Electricidad,Otros,935.0,No,13,46,Moderado
+Hogar_0237,Casa,1936,146,Si,Media,Otros,Solar,156.2,Si,17,59,Moderado
+Hogar_0238,Casa,1065,117,Si,Media,Solar,Solar,34.8,Si,6,38,Eficiente
+Hogar_0239,Departamento,1178,142,No,Alta,Electricidad,Solar,989.9,No,4,97,Moderado
+Hogar_0240,Casa,600,125,No,Alta,Solar,Otros,482.8,Si,15,18,Eficiente
+Hogar_0241,Pyme,1158,71,Si,Baja,Electricidad,Solar,572.5,Si,10,12,Moderado
+Hogar_0242,Pyme,1936,106,Si,Media,Electricidad,Otros,616.3,No,21,54,Moderado
+Hogar_0243,Pyme,1038,136,No,Media,Electricidad,Solar,789.9,Si,2,91,Ineficiente
+Hogar_0244,Departamento,1582,32,No,Media,Solar,Solar,812.2,No,15,47,Moderado
+Hogar_0245,Casa,695,18,Si,Media,Otros,Electricidad,194.7,Si,10,1,Moderado
+Hogar_0246,Pyme,294,73,No,Media,Solar,Solar,237.4,No,9,15,Eficiente
+Hogar_0247,Departamento,1211,97,Si,Baja,Solar,Electricidad,877.0,Si,22,91,Ineficiente
+Hogar_0248,Pyme,1309,140,Si,Alta,Electricidad,Otros,819.7,Si,22,80,Ineficiente
+Hogar_0249,Pyme,949,128,No,Muy Baja,Electricidad,Solar,618.0,No,1,21,Moderado
+Hogar_0250,Pyme,1151,92,Si,Media,Electricidad,Otros,994.7,No,15,1,Moderado
+Hogar_0251,Casa,1555,47,No,Baja,Solar,Electricidad,735.4,No,16,93,Moderado
+Hogar_0252,Departamento,1784,63,No,Muy Baja,Otros,Electricidad,216.6,No,9,67,Moderado
+Hogar_0253,Pyme,1620,60,No,Baja,Solar,Otros,846.8,No,17,12,Moderado
+Hogar_0254,Casa,272,38,Si,Media,Solar,Electricidad,415.3,Si,11,28,Moderado
+Hogar_0255,Casa,1689,127,Si,Alta,Otros,Solar,37.1,Si,7,39,Eficiente
+Hogar_0256,Departamento,1844,87,Si,Muy Baja,Electricidad,Otros,322.1,Si,2,37,Moderado
+Hogar_0257,Pyme,1886,25,No,Muy Baja,Solar,Solar,763.8,No,19,95,Moderado
+Hogar_0258,Comercio,1586,16,No,Muy Alta,Solar,Electricidad,960.2,No,23,60,Moderado
+Hogar_0259,Departamento,156,70,No,Muy Baja,Solar,Otros,276.9,No,2,31,Eficiente
+Hogar_0260,Casa,378,12,No,Muy Alta,Electricidad,Electricidad,247.3,No,5,58,Eficiente
+Hogar_0261,Departamento,221,68,No,Baja,Solar,Otros,564.1,No,1,97,Eficiente
+Hogar_0262,Pyme,1842,25,No,Alta,Solar,Electricidad,811.9,Si,2,97,Moderado
+Hogar_0263,Casa,1965,48,Si,Baja,Electricidad,Solar,746.8,Si,16,11,Ineficiente
+Hogar_0264,Departamento,955,6,Si,Alta,Solar,Electricidad,560.4,No,8,29,Eficiente
+Hogar_0265,Pyme,1715,57,No,Alta,Electricidad,Solar,631.8,Si,3,89,Moderado
+Hogar_0266,Comercio,1431,48,Si,Media,Otros,Electricidad,242.9,Si,21,13,Moderado
+Hogar_0267,Comercio,1047,102,Si,Muy Baja,Solar,Otros,433.1,Si,22,51,Ineficiente
+Hogar_0268,Comercio,670,52,No,Alta,Otros,Solar,256.1,Si,1,54,Eficiente
+Hogar_0269,Departamento,252,61,No,Media,Electricidad,Electricidad,884.5,No,23,19,Moderado
+Hogar_0270,Casa,726,16,Si,Muy Baja,Electricidad,Solar,113.4,Si,8,58,Moderado
+Hogar_0271,Comercio,1525,24,No,Muy Baja,Electricidad,Solar,680.1,No,13,36,Moderado
+Hogar_0272,Comercio,1526,130,No,Alta,Electricidad,Electricidad,261.0,Si,10,28,Moderado
+Hogar_0273,Pyme,290,28,No,Baja,Electricidad,Electricidad,476.1,No,1,68,Moderado
+Hogar_0274,Pyme,1421,116,Si,Media,Solar,Electricidad,300.1,No,20,3,Moderado
+Hogar_0275,Departamento,1535,25,Si,Media,Electricidad,Electricidad,323.9,No,1,89,Moderado
+Hogar_0276,Departamento,1483,123,No,Alta,Solar,Electricidad,261.1,No,4,41,Eficiente
+Hogar_0277,Comercio,671,143,No,Muy Alta,Electricidad,Electricidad,753.0,Si,6,35,Moderado
+Hogar_0278,Departamento,236,24,No,Muy Alta,Solar,Solar,366.4,Si,21,93,Eficiente
+Hogar_0279,Comercio,1621,53,No,Baja,Solar,Solar,726.6,Si,3,93,Moderado
+Hogar_0280,Comercio,1989,72,Si,Alta,Solar,Electricidad,456.6,No,13,76,Moderado
+Hogar_0281,Pyme,1426,119,Si,Baja,Otros,Otros,547.7,No,1,99,Moderado
+Hogar_0282,Casa,1444,55,No,Media,Electricidad,Otros,543.7,Si,22,84,Moderado
+Hogar_0283,Departamento,1499,64,Si,Media,Electricidad,Electricidad,975.9,No,11,81,Ineficiente
+Hogar_0284,Casa,968,92,Si,Muy Baja,Electricidad,Electricidad,367.7,Si,9,76,Ineficiente
+Hogar_0285,Departamento,1413,85,No,Muy Alta,Electricidad,Otros,208.5,Si,24,50,Moderado
+Hogar_0286,Casa,1925,79,Si,Muy Baja,Solar,Solar,911.9,No,0,100,Moderado
+Hogar_0287,Departamento,482,107,Si,Media,Solar,Electricidad,175.7,Si,18,74,Moderado
+Hogar_0288,Departamento,750,117,No,Alta,Solar,Solar,834.6,Si,22,82,Moderado
+Hogar_0289,Casa,1777,82,Si,Alta,Electricidad,Solar,151.1,No,15,30,Eficiente
+Hogar_0290,Departamento,1275,146,Si,Baja,Otros,Electricidad,659.1,No,14,72,Moderado
+Hogar_0291,Casa,1007,14,No,Media,Otros,Solar,151.4,Si,13,77,Eficiente
+Hogar_0292,Casa,1180,130,No,Alta,Electricidad,Solar,923.2,No,8,95,Moderado
+Hogar_0293,Comercio,613,138,Si,Baja,Electricidad,Solar,565.4,Si,20,70,Ineficiente
+Hogar_0294,Departamento,501,29,No,Media,Otros,Otros,329.9,Si,22,54,Moderado
+Hogar_0295,Casa,1847,56,Si,Baja,Otros,Electricidad,141.2,No,14,71,Moderado
+Hogar_0296,Departamento,1011,145,No,Media,Electricidad,Solar,371.8,Si,6,85,Moderado
+Hogar_0297,Comercio,1326,127,No,Muy Alta,Electricidad,Electricidad,705.3,Si,3,51,Ineficiente
+Hogar_0298,Casa,181,47,No,Media,Otros,Electricidad,385.6,Si,20,28,Moderado
+Hogar_0299,Departamento,1809,135,No,Media,Solar,Electricidad,246.8,No,17,64,Eficiente
+Hogar_0300,Casa,1267,21,Si,Media,Electricidad,Electricidad,577.8,Si,7,85,Moderado
+Hogar_0301,Casa,215,5,Si,Media,Solar,Electricidad,418.4,Si,11,21,Moderado
+Hogar_0302,Departamento,1466,103,No,Muy Baja,Otros,Electricidad,166.6,Si,14,88,Moderado
+Hogar_0303,Departamento,1006,35,Si,Baja,Otros,Electricidad,154.8,Si,14,27,Moderado
+Hogar_0304,Departamento,1724,78,Si,Media,Solar,Solar,707.8,Si,16,27,Moderado
+Hogar_0305,Comercio,1741,115,No,Media,Solar,Electricidad,974.7,Si,1,77,Ineficiente
+Hogar_0306,Pyme,571,56,No,Media,Electricidad,Solar,233.9,No,11,50,Eficiente
+Hogar_0307,Departamento,66,48,No,Baja,Otros,Electricidad,773.4,No,2,29,Moderado
+Hogar_0308,Casa,332,81,Si,Media,Electricidad,Electricidad,88.5,No,6,39,Eficiente
+Hogar_0309,Comercio,968,65,No,Baja,Otros,Electricidad,382.2,Si,5,57,Moderado
+Hogar_0310,Casa,363,76,Si,Muy Alta,Electricidad,Electricidad,507.2,Si,13,92,Moderado
+Hogar_0311,Departamento,1363,44,Si,Media,Otros,Solar,269.5,Si,22,37,Moderado
+Hogar_0312,Casa,1124,78,No,Muy Baja,Electricidad,Electricidad,530.0,Si,4,93,Ineficiente
+Hogar_0313,Casa,978,19,Si,Muy Baja,Solar,Otros,882.7,Si,3,64,Moderado
+Hogar_0314,Pyme,304,122,Si,Muy Alta,Electricidad,Otros,944.5,No,14,48,Moderado
+Hogar_0315,Comercio,1225,66,No,Baja,Solar,Electricidad,101.5,Si,6,22,Eficiente
+Hogar_0316,Comercio,921,82,Si,Alta,Otros,Solar,272.6,Si,2,100,Moderado
+Hogar_0317,Departamento,1711,2,Si,Muy Baja,Solar,Electricidad,979.2,Si,12,30,Ineficiente
+Hogar_0318,Casa,298,63,Si,Muy Alta,Solar,Solar,271.1,Si,9,28,Eficiente
+Hogar_0319,Casa,862,39,No,Alta,Electricidad,Solar,693.0,No,22,23,Moderado
+Hogar_0320,Casa,645,58,No,Media,Otros,Electricidad,254.2,Si,1,97,Moderado
+Hogar_0321,Departamento,1700,61,No,Muy Baja,Solar,Electricidad,357.0,No,11,4,Moderado
+Hogar_0322,Comercio,887,131,No,Baja,Solar,Electricidad,192.1,Si,23,3,Moderado
+Hogar_0323,Comercio,1832,59,No,Media,Solar,Electricidad,856.4,No,21,61,Moderado
+Hogar_0324,Casa,1908,115,No,Media,Solar,Solar,882.8,Si,11,96,Moderado
+Hogar_0325,Pyme,956,74,Si,Baja,Electricidad,Electricidad,297.6,No,18,4,Moderado
+Hogar_0326,Comercio,314,121,Si,Muy Baja,Solar,Electricidad,823.8,Si,18,65,Ineficiente
+Hogar_0327,Departamento,749,106,No,Media,Solar,Solar,358.9,Si,20,12,Moderado
+Hogar_0328,Departamento,918,95,Si,Media,Otros,Solar,99.9,Si,2,13,Eficiente
+Hogar_0329,Departamento,297,90,No,Baja,Otros,Electricidad,758.3,Si,5,34,Moderado
+Hogar_0330,Casa,1979,129,No,Muy Baja,Electricidad,Solar,596.8,Si,1,59,Moderado
+Hogar_0331,Departamento,1115,61,No,Muy Alta,Electricidad,Solar,275.1,No,23,93,Eficiente
+Hogar_0332,Comercio,508,48,No,Media,Electricidad,Solar,253.7,Si,12,73,Moderado
+Hogar_0333,Casa,961,136,No,Alta,Electricidad,Solar,975.6,Si,8,31,Moderado
+Hogar_0334,Casa,273,91,Si,Media,Solar,Solar,862.6,No,12,71,Moderado
+Hogar_0335,Casa,181,123,No,Muy Baja,Otros,Electricidad,810.0,Si,22,13,Ineficiente
+Hogar_0336,Casa,1096,60,No,Baja,Electricidad,Solar,128.9,Si,13,54,Moderado
+Hogar_0337,Pyme,1984,47,No,Baja,Solar,Otros,755.4,No,18,2,Moderado
+Hogar_0338,Comercio,479,135,Si,Alta,Otros,Solar,215.3,No,10,33,Eficiente
+Hogar_0339,Departamento,226,57,Si,Media,Otros,Electricidad,977.4,No,13,50,Moderado
+Hogar_0340,Casa,1709,100,Si,Baja,Solar,Electricidad,53.0,No,15,7,Eficiente
+Hogar_0341,Departamento,149,111,No,Muy Alta,Solar,Otros,352.8,Si,9,18,Eficiente
+Hogar_0342,Departamento,26,61,No,Baja,Solar,Electricidad,429.2,No,19,51,Moderado
+Hogar_0343,Casa,993,38,Si,Muy Alta,Electricidad,Electricidad,824.4,Si,15,8,Moderado
+Hogar_0344,Departamento,1808,57,No,Muy Alta,Electricidad,Electricidad,766.5,Si,1,55,Moderado
+Hogar_0345,Departamento,880,98,Si,Baja,Electricidad,Otros,375.6,No,24,76,Moderado
+Hogar_0346,Departamento,665,43,No,Baja,Electricidad,Electricidad,566.0,Si,15,43,Moderado
+Hogar_0347,Departamento,216,28,No,Media,Otros,Electricidad,835.8,Si,13,59,Moderado
+Hogar_0348,Casa,1628,58,Si,Media,Solar,Solar,19.2,Si,20,30,Eficiente
+Hogar_0349,Departamento,541,70,No,Media,Electricidad,Electricidad,802.4,Si,17,59,Ineficiente
+Hogar_0350,Departamento,467,91,No,Muy Alta,Solar,Otros,946.9,Si,5,9,Moderado
+Hogar_0351,Departamento,1970,8,No,Alta,Electricidad,Solar,33.0,Si,6,92,Moderado
+Hogar_0352,Pyme,1864,126,No,Baja,Solar,Solar,46.5,Si,12,68,Moderado
+Hogar_0353,Comercio,1855,133,No,Muy Baja,Otros,Otros,345.2,Si,1,39,Moderado
+Hogar_0354,Casa,168,144,Si,Media,Electricidad,Otros,88.7,Si,14,81,Moderado
+Hogar_0355,Casa,1240,143,No,Baja,Electricidad,Electricidad,479.8,Si,16,11,Moderado
+Hogar_0356,Departamento,558,130,No,Alta,Solar,Electricidad,729.0,No,12,2,Moderado
+Hogar_0357,Casa,252,20,No,Baja,Solar,Otros,567.3,Si,6,23,Eficiente
+Hogar_0358,Departamento,1362,63,Si,Baja,Electricidad,Electricidad,197.2,No,0,63,Moderado
+Hogar_0359,Pyme,1678,89,Si,Muy Baja,Solar,Otros,655.2,Si,2,22,Moderado
+Hogar_0360,Departamento,974,35,Si,Alta,Solar,Otros,685.2,Si,19,61,Moderado
+Hogar_0361,Departamento,1351,61,Si,Muy Baja,Electricidad,Electricidad,932.5,Si,17,26,Ineficiente
+Hogar_0362,Departamento,1703,75,Si,Alta,Electricidad,Otros,147.7,Si,6,12,Moderado
+Hogar_0363,Departamento,485,12,No,Media,Electricidad,Electricidad,692.6,Si,20,32,Ineficiente
+Hogar_0364,Departamento,1450,10,Si,Alta,Otros,Solar,911.5,Si,16,9,Moderado
+Hogar_0365,Pyme,576,53,Si,Media,Otros,Electricidad,502.1,Si,11,69,Ineficiente
+Hogar_0366,Departamento,418,15,No,Muy Baja,Otros,Otros,362.4,Si,15,90,Moderado
+Hogar_0367,Pyme,1916,7,Si,Alta,Solar,Solar,171.6,No,23,71,Eficiente
+Hogar_0368,Pyme,1813,103,Si,Muy Baja,Solar,Solar,866.9,No,9,93,Ineficiente
+Hogar_0369,Casa,870,58,Si,Media,Solar,Otros,394.9,Si,22,33,Moderado
+Hogar_0370,Casa,1256,56,Si,Baja,Otros,Solar,925.0,No,15,24,Moderado
+Hogar_0371,Casa,235,39,No,Alta,Electricidad,Electricidad,847.9,No,19,89,Moderado
+Hogar_0372,Casa,1164,129,Si,Muy Alta,Solar,Otros,377.3,Si,17,95,Moderado
+Hogar_0373,Casa,1786,93,No,Media,Solar,Solar,574.3,No,14,93,Eficiente
+Hogar_0374,Comercio,671,137,No,Media,Solar,Otros,28.1,No,22,69,Eficiente
+Hogar_0375,Casa,1300,43,No,Alta,Electricidad,Otros,264.0,Si,10,38,Moderado
+Hogar_0376,Casa,244,138,No,Muy Baja,Solar,Electricidad,710.6,No,17,11,Moderado
+Hogar_0377,Comercio,432,79,No,Muy Alta,Solar,Electricidad,678.2,No,5,32,Eficiente
+Hogar_0378,Casa,1492,80,No,Baja,Solar,Electricidad,354.0,Si,0,64,Moderado
+Hogar_0379,Comercio,1652,1,Si,Muy Alta,Solar,Solar,808.8,Si,22,72,Moderado
+Hogar_0380,Casa,1403,139,Si,Alta,Electricidad,Electricidad,236.6,No,6,20,Eficiente
+Hogar_0381,Casa,913,114,No,Alta,Otros,Solar,461.8,No,11,34,Eficiente
+Hogar_0382,Comercio,583,89,Si,Media,Solar,Electricidad,473.1,Si,19,42,Moderado
+Hogar_0383,Departamento,575,22,Si,Media,Solar,Electricidad,341.5,Si,3,8,Moderado
+Hogar_0384,Pyme,167,145,No,Media,Electricidad,Electricidad,954.7,No,9,66,Moderado
+Hogar_0385,Comercio,637,61,No,Muy Baja,Electricidad,Electricidad,697.0,Si,20,21,Ineficiente
+Hogar_0386,Comercio,526,112,Si,Media,Solar,Solar,539.7,No,1,79,Eficiente
+Hogar_0387,Casa,865,127,No,Media,Electricidad,Electricidad,511.0,Si,8,70,Moderado
+Hogar_0388,Casa,727,61,Si,Muy Alta,Solar,Electricidad,160.1,Si,9,5,Eficiente
+Hogar_0389,Comercio,1596,37,No,Media,Electricidad,Electricidad,372.8,Si,19,67,Ineficiente
+Hogar_0390,Comercio,1708,60,Si,Muy Baja,Otros,Solar,673.1,Si,10,43,Ineficiente
+Hogar_0391,Pyme,1591,128,Si,Baja,Solar,Otros,924.6,Si,24,16,Ineficiente
+Hogar_0392,Departamento,1895,148,No,Media,Electricidad,Electricidad,816.6,Si,13,99,Ineficiente
+Hogar_0393,Departamento,1556,121,No,Baja,Solar,Solar,301.1,No,2,73,Eficiente
+Hogar_0394,Comercio,621,109,No,Baja,Otros,Electricidad,434.5,Si,24,35,Moderado
+Hogar_0395,Casa,1930,12,No,Alta,Solar,Electricidad,83.8,No,0,83,Eficiente
+Hogar_0396,Pyme,306,99,Si,Media,Electricidad,Solar,103.1,Si,6,43,Moderado
+Hogar_0397,Pyme,449,134,No,Media,Solar,Electricidad,470.8,Si,3,98,Moderado
+Hogar_0398,Departamento,881,21,Si,Baja,Electricidad,Solar,530.7,Si,6,39,Moderado
+Hogar_0399,Comercio,295,73,Si,Alta,Electricidad,Electricidad,264.8,Si,15,10,Moderado
+Hogar_0400,Comercio,179,131,Si,Baja,Electricidad,Otros,643.1,No,9,74,Moderado
+Hogar_0401,Casa,639,22,No,Alta,Solar,Electricidad,703.7,No,14,20,Eficiente
+Hogar_0402,Pyme,1776,118,No,Muy Baja,Electricidad,Solar,299.8,Si,15,1,Moderado
+Hogar_0403,Departamento,687,69,No,Alta,Otros,Otros,758.7,No,5,6,Moderado
+Hogar_0404,Comercio,1993,83,No,Media,Electricidad,Electricidad,206.4,Si,3,53,Moderado
+Hogar_0405,Casa,108,100,Si,Media,Electricidad,Solar,544.7,Si,3,46,Moderado
+Hogar_0406,Pyme,1671,83,No,Media,Solar,Electricidad,804.5,Si,23,66,Ineficiente
+Hogar_0407,Departamento,972,27,No,Media,Electricidad,Solar,537.5,No,22,38,Moderado
+Hogar_0408,Casa,924,135,Si,Baja,Solar,Electricidad,908.1,Si,3,33,Moderado
+Hogar_0409,Pyme,1475,0,No,Alta,Electricidad,Electricidad,59.4,No,21,67,Moderado
+Hogar_0410,Casa,1324,62,Si,Baja,Electricidad,Solar,588.7,Si,21,100,Moderado
+Hogar_0411,Casa,1762,21,No,Muy Alta,Electricidad,Electricidad,562.2,Si,16,77,Moderado
+Hogar_0412,Pyme,309,69,No,Alta,Electricidad,Solar,660.7,No,12,35,Moderado
+Hogar_0413,Pyme,1005,124,No,Baja,Electricidad,Electricidad,833.6,Si,1,79,Ineficiente
+Hogar_0414,Departamento,198,148,Si,Alta,Solar,Electricidad,726.1,No,19,45,Moderado
+Hogar_0415,Departamento,1376,95,Si,Media,Solar,Solar,790.5,No,5,22,Moderado
+Hogar_0416,Departamento,1767,78,Si,Muy Baja,Solar,Solar,289.5,No,21,68,Moderado
+Hogar_0417,Casa,1112,4,Si,Muy Alta,Solar,Electricidad,388.1,Si,0,17,Eficiente
+Hogar_0418,Casa,1122,59,Si,Media,Solar,Electricidad,627.2,Si,7,5,Moderado
+Hogar_0419,Comercio,788,119,No,Media,Otros,Electricidad,553.9,No,17,85,Moderado
+Hogar_0420,Comercio,1685,45,No,Media,Electricidad,Electricidad,961.1,Si,20,57,Ineficiente
+Hogar_0421,Comercio,1424,133,No,Baja,Electricidad,Electricidad,187.6,Si,3,88,Moderado
+Hogar_0422,Comercio,658,55,No,Muy Alta,Electricidad,Electricidad,351.9,Si,4,95,Moderado
+Hogar_0423,Casa,1557,109,Si,Baja,Electricidad,Solar,573.2,Si,4,40,Moderado
+Hogar_0424,Departamento,812,103,No,Baja,Electricidad,Solar,868.1,Si,14,30,Moderado
+Hogar_0425,Casa,968,76,Si,Media,Solar,Electricidad,929.4,Si,9,42,Ineficiente
+Hogar_0426,Departamento,1037,145,No,Media,Solar,Electricidad,336.7,Si,7,7,Moderado
+Hogar_0427,Departamento,423,1,No,Media,Otros,Electricidad,68.0,Si,6,71,Moderado
+Hogar_0428,Pyme,1169,7,No,Baja,Electricidad,Solar,422.2,Si,11,91,Moderado
+Hogar_0429,Departamento,959,74,Si,Baja,Electricidad,Otros,394.9,No,24,88,Moderado
+Hogar_0430,Casa,1486,124,No,Baja,Otros,Solar,986.5,No,10,19,Moderado
+Hogar_0431,Casa,1878,37,No,Muy Alta,Otros,Solar,431.6,Si,12,41,Moderado
+Hogar_0432,Comercio,701,26,Si,Muy Baja,Solar,Otros,306.4,Si,14,34,Moderado
+Hogar_0433,Departamento,961,19,No,Alta,Solar,Electricidad,366.0,Si,16,22,Moderado
+Hogar_0434,Casa,490,139,No,Alta,Otros,Electricidad,397.5,Si,21,52,Moderado
+Hogar_0435,Casa,311,42,No,Alta,Solar,Solar,821.7,No,21,91,Moderado
+Hogar_0436,Comercio,290,30,Si,Muy Alta,Electricidad,Electricidad,81.9,No,17,6,Eficiente
+Hogar_0437,Casa,345,90,Si,Baja,Otros,Solar,317.2,No,7,74,Eficiente
+Hogar_0438,Comercio,698,60,Si,Baja,Solar,Solar,966.4,Si,5,95,Moderado
+Hogar_0439,Comercio,1425,108,Si,Media,Electricidad,Solar,153.9,Si,10,25,Moderado
+Hogar_0440,Casa,845,90,Si,Baja,Solar,Electricidad,742.9,No,8,66,Moderado
+Hogar_0441,Casa,114,94,Si,Alta,Electricidad,Solar,357.0,Si,4,10,Moderado
+Hogar_0442,Pyme,1703,142,No,Media,Otros,Solar,582.2,Si,6,74,Moderado
+Hogar_0443,Departamento,1252,143,No,Alta,Electricidad,Otros,100.4,Si,21,26,Moderado
+Hogar_0444,Departamento,846,12,Si,Muy Baja,Otros,Solar,307.1,Si,14,5,Moderado
+Hogar_0445,Comercio,1788,112,Si,Muy Alta,Solar,Otros,501.4,Si,20,86,Moderado
+Hogar_0446,Pyme,1026,34,No,Baja,Electricidad,Electricidad,232.5,Si,21,68,Moderado
+Hogar_0447,Pyme,359,148,Si,Media,Electricidad,Electricidad,542.3,No,3,98,Moderado
+Hogar_0448,Comercio,247,47,No,Media,Solar,Electricidad,220.5,No,18,71,Eficiente
+Hogar_0449,Departamento,66,34,No,Alta,Otros,Electricidad,650.5,Si,12,50,Moderado
+Hogar_0450,Casa,1757,85,No,Media,Electricidad,Otros,904.4,Si,0,17,Moderado
+Hogar_0451,Comercio,93,113,No,Muy Alta,Electricidad,Otros,86.4,Si,0,11,Eficiente
+Hogar_0452,Departamento,1013,99,No,Muy Alta,Solar,Electricidad,217.4,No,21,53,Eficiente
+Hogar_0453,Departamento,1825,98,No,Alta,Solar,Electricidad,844.6,Si,13,50,Moderado
+Hogar_0454,Pyme,539,2,Si,Muy Baja,Electricidad,Electricidad,631.9,No,8,8,Moderado
+Hogar_0455,Casa,1922,84,No,Alta,Solar,Otros,79.6,Si,23,92,Moderado
+Hogar_0456,Departamento,1686,124,No,Alta,Solar,Electricidad,486.9,No,11,97,Moderado
+Hogar_0457,Casa,1671,137,Si,Muy Baja,Electricidad,Electricidad,210.5,Si,17,62,Ineficiente
+Hogar_0458,Departamento,1647,82,Si,Muy Baja,Solar,Electricidad,199.9,Si,8,89,Moderado
+Hogar_0459,Casa,1986,24,Si,Muy Baja,Electricidad,Electricidad,940.7,Si,7,85,Ineficiente
+Hogar_0460,Casa,1681,67,No,Muy Baja,Solar,Otros,761.8,Si,13,76,Ineficiente
+Hogar_0461,Casa,1176,60,Si,Media,Solar,Electricidad,696.5,No,8,90,Moderado
+Hogar_0462,Departamento,1304,28,Si,Muy Alta,Solar,Electricidad,239.7,No,19,29,Eficiente
+Hogar_0463,Comercio,720,126,Si,Media,Electricidad,Electricidad,119.5,Si,24,99,Ineficiente
+Hogar_0464,Departamento,1065,18,No,Media,Electricidad,Solar,871.0,No,1,44,Moderado
+Hogar_0465,Pyme,502,73,Si,Muy Alta,Otros,Solar,6.9,Si,0,45,Eficiente
+Hogar_0466,Departamento,1111,60,No,Baja,Solar,Electricidad,388.7,No,12,29,Moderado
+Hogar_0467,Casa,906,19,No,Alta,Solar,Electricidad,278.3,Si,24,88,Moderado
+Hogar_0468,Pyme,457,47,No,Media,Solar,Otros,570.8,No,9,59,Eficiente
+Hogar_0469,Casa,1719,86,No,Media,Electricidad,Electricidad,251.3,Si,7,15,Moderado
+Hogar_0470,Pyme,293,138,Si,Baja,Electricidad,Solar,311.9,Si,6,70,Moderado
+Hogar_0471,Casa,1084,109,Si,Media,Electricidad,Electricidad,850.2,Si,23,96,Ineficiente
+Hogar_0472,Pyme,804,27,No,Muy Baja,Electricidad,Electricidad,603.6,Si,11,44,Ineficiente
+Hogar_0473,Casa,1625,58,Si,Alta,Solar,Solar,146.5,Si,16,98,Eficiente
+Hogar_0474,Pyme,519,132,Si,Baja,Electricidad,Otros,726.7,Si,24,36,Ineficiente
+Hogar_0475,Departamento,1611,50,No,Muy Alta,Electricidad,Solar,208.3,No,11,84,Eficiente
+Hogar_0476,Pyme,1518,148,Si,Media,Solar,Electricidad,433.6,No,15,57,Moderado
+Hogar_0477,Casa,1816,11,No,Baja,Electricidad,Solar,647.0,No,9,64,Moderado
+Hogar_0478,Departamento,686,49,Si,Media,Solar,Solar,272.7,No,24,76,Eficiente
+Hogar_0479,Pyme,1374,131,No,Baja,Electricidad,Solar,384.7,No,11,99,Moderado
+Hogar_0480,Departamento,1353,112,No,Alta,Electricidad,Solar,734.4,No,10,38,Moderado
+Hogar_0481,Departamento,1325,13,No,Muy Alta,Electricidad,Electricidad,938.0,No,24,17,Moderado
+Hogar_0482,Comercio,1918,31,Si,Alta,Electricidad,Solar,529.7,Si,13,27,Moderado
+Hogar_0483,Departamento,1733,138,No,Muy Baja,Otros,Solar,11.0,No,21,17,Eficiente
+Hogar_0484,Departamento,1978,145,No,Media,Solar,Electricidad,339.1,No,19,63,Moderado
+Hogar_0485,Departamento,1038,54,No,Media,Electricidad,Solar,399.2,No,12,11,Eficiente
+Hogar_0486,Pyme,1250,119,Si,Alta,Electricidad,Electricidad,339.8,Si,1,64,Ineficiente
+Hogar_0487,Casa,1494,74,No,Muy Baja,Electricidad,Electricidad,436.8,Si,19,39,Ineficiente
+Hogar_0488,Casa,1954,20,No,Media,Electricidad,Otros,633.0,No,6,2,Eficiente
+Hogar_0489,Pyme,1373,132,No,Media,Electricidad,Electricidad,122.0,No,0,66,Moderado
+Hogar_0490,Pyme,1084,86,No,Baja,Solar,Electricidad,273.4,Si,24,54,Moderado
+Hogar_0491,Departamento,1002,58,Si,Baja,Otros,Solar,508.1,Si,2,29,Moderado
+Hogar_0492,Departamento,507,88,No,Media,Electricidad,Otros,316.3,Si,19,45,Moderado
+Hogar_0493,Casa,753,149,No,Alta,Solar,Otros,991.1,Si,11,88,Moderado
+Hogar_0494,Casa,505,82,No,Muy Alta,Otros,Solar,432.0,Si,4,88,Eficiente
+Hogar_0495,Departamento,1114,64,No,Media,Electricidad,Electricidad,869.9,No,11,80,Ineficiente
+Hogar_0496,Departamento,1057,63,No,Media,Otros,Otros,896.6,No,2,31,Moderado
+Hogar_0497,Departamento,1350,70,No,Baja,Solar,Solar,836.2,No,19,49,Moderado
+Hogar_0498,Casa,368,3,Si,Muy Alta,Electricidad,Electricidad,47.9,Si,4,9,Eficiente
+Hogar_0499,Pyme,1480,142,Si,Muy Alta,Otros,Otros,947.8,No,0,27,Moderado
+Hogar_0500,Pyme,1473,103,No,Muy Alta,Electricidad,Electricidad,129.6,Si,15,56,Moderado
+Hogar_0501,Comercio,357,149,No,Alta,Electricidad,Electricidad,35.4,Si,8,78,Moderado
+Hogar_0502,Departamento,463,92,Si,Baja,Solar,Otros,415.0,Si,9,45,Moderado
+Hogar_0503,Casa,1637,141,Si,Alta,Electricidad,Solar,195.4,No,9,89,Moderado
+Hogar_0504,Comercio,199,147,Si,Media,Electricidad,Electricidad,185.0,No,12,43,Moderado
+Hogar_0505,Comercio,584,111,No,Baja,Electricidad,Electricidad,288.5,No,15,22,Moderado
+Hogar_0506,Casa,552,118,Si,Alta,Solar,Solar,249.2,Si,19,99,Eficiente
+Hogar_0507,Pyme,1922,58,No,Muy Baja,Solar,Electricidad,685.1,Si,24,33,Ineficiente
+Hogar_0508,Comercio,684,42,No,Muy Baja,Solar,Electricidad,187.6,Si,3,27,Moderado
+Hogar_0509,Pyme,51,11,No,Media,Otros,Solar,543.6,No,13,40,Eficiente
+Hogar_0510,Comercio,845,39,No,Media,Electricidad,Otros,986.4,No,16,26,Moderado
+Hogar_0511,Departamento,630,117,No,Muy Alta,Electricidad,Solar,433.0,Si,4,83,Moderado
+Hogar_0512,Departamento,431,19,Si,Baja,Solar,Solar,642.2,Si,12,45,Moderado
+Hogar_0513,Pyme,257,130,No,Baja,Solar,Solar,969.4,No,24,45,Moderado
+Hogar_0514,Pyme,558,89,No,Baja,Electricidad,Solar,138.5,No,2,26,Eficiente
+Hogar_0515,Casa,1868,93,No,Muy Baja,Electricidad,Electricidad,419.2,Si,4,70,Ineficiente
+Hogar_0516,Casa,1599,12,Si,Muy Baja,Otros,Otros,850.3,No,15,67,Moderado
+Hogar_0517,Departamento,1837,65,Si,Media,Otros,Electricidad,932.4,No,18,6,Moderado
+Hogar_0518,Comercio,530,36,Si,Media,Solar,Electricidad,601.6,Si,18,28,Moderado
+Hogar_0519,Pyme,1718,65,Si,Alta,Electricidad,Electricidad,144.3,Si,16,67,Moderado
+Hogar_0520,Casa,204,35,No,Muy Alta,Otros,Solar,901.6,Si,17,13,Moderado
+Hogar_0521,Departamento,157,25,Si,Media,Otros,Electricidad,175.3,Si,17,63,Moderado
+Hogar_0522,Departamento,1872,74,No,Muy Baja,Solar,Electricidad,353.5,No,24,13,Moderado
+Hogar_0523,Pyme,1504,107,Si,Muy Baja,Otros,Solar,376.1,Si,22,77,Ineficiente
+Hogar_0524,Comercio,373,42,Si,Muy Alta,Otros,Otros,447.8,Si,7,1,Moderado
+Hogar_0525,Comercio,565,149,No,Media,Otros,Solar,790.4,Si,17,40,Moderado
+Hogar_0526,Departamento,797,147,Si,Alta,Otros,Electricidad,802.3,Si,8,37,Ineficiente
+Hogar_0527,Departamento,1455,7,Si,Alta,Solar,Electricidad,719.9,No,18,31,Moderado
+Hogar_0528,Casa,101,28,No,Muy Alta,Solar,Solar,23.1,Si,9,17,Eficiente
+Hogar_0529,Casa,1990,39,No,Muy Alta,Solar,Electricidad,565.3,Si,1,9,Eficiente
+Hogar_0530,Pyme,604,127,Si,Media,Solar,Solar,747.7,No,16,64,Moderado
+Hogar_0531,Comercio,879,83,No,Baja,Solar,Electricidad,445.2,Si,24,57,Moderado
+Hogar_0532,Pyme,1541,115,No,Muy Alta,Otros,Otros,945.0,No,23,13,Moderado
+Hogar_0533,Pyme,219,143,No,Media,Solar,Solar,824.0,Si,12,37,Moderado
+Hogar_0534,Departamento,1211,61,Si,Muy Baja,Solar,Electricidad,638.5,No,10,14,Moderado
+Hogar_0535,Comercio,372,6,Si,Media,Electricidad,Otros,63.4,No,15,75,Moderado
+Hogar_0536,Pyme,976,44,Si,Media,Solar,Electricidad,652.7,Si,19,25,Moderado
+Hogar_0537,Comercio,1410,87,Si,Muy Alta,Solar,Electricidad,911.7,No,6,95,Moderado
+Hogar_0538,Casa,1818,72,No,Media,Electricidad,Otros,380.1,Si,2,78,Moderado
+Hogar_0539,Departamento,1633,36,No,Baja,Solar,Electricidad,838.3,No,15,57,Moderado
+Hogar_0540,Casa,1136,118,No,Muy Alta,Electricidad,Electricidad,313.8,Si,18,71,Moderado
+Hogar_0541,Pyme,1983,56,Si,Alta,Electricidad,Electricidad,570.5,No,19,88,Ineficiente
+Hogar_0542,Departamento,1311,7,No,Media,Solar,Electricidad,648.8,Si,15,100,Moderado
+Hogar_0543,Casa,239,94,Si,Baja,Electricidad,Electricidad,678.3,No,1,42,Moderado
+Hogar_0544,Comercio,1714,116,No,Media,Electricidad,Solar,882.7,No,13,42,Moderado
+Hogar_0545,Departamento,1771,109,No,Media,Electricidad,Solar,235.4,No,19,47,Eficiente
+Hogar_0546,Departamento,1962,19,No,Muy Baja,Electricidad,Electricidad,263.1,Si,9,44,Moderado
+Hogar_0547,Casa,598,123,No,Baja,Solar,Electricidad,704.3,Si,18,41,Ineficiente
+Hogar_0548,Comercio,805,52,Si,Alta,Solar,Otros,178.0,Si,23,3,Moderado
+Hogar_0549,Departamento,287,118,No,Media,Otros,Otros,464.8,Si,10,90,Moderado
+Hogar_0550,Comercio,755,11,No,Media,Electricidad,Solar,21.0,Si,17,90,Moderado
+Hogar_0551,Departamento,308,16,No,Baja,Electricidad,Otros,141.8,Si,10,1,Moderado
+Hogar_0552,Pyme,1697,63,No,Media,Electricidad,Solar,679.2,Si,8,79,Ineficiente
+Hogar_0553,Departamento,1516,41,No,Alta,Solar,Electricidad,747.7,Si,18,11,Moderado
+Hogar_0554,Departamento,1429,93,Si,Baja,Solar,Electricidad,116.2,Si,19,7,Moderado
+Hogar_0555,Pyme,387,146,No,Muy Baja,Otros,Electricidad,228.5,Si,9,12,Moderado
+Hogar_0556,Departamento,1498,10,Si,Media,Solar,Otros,99.8,Si,2,38,Moderado
+Hogar_0557,Casa,466,97,No,Muy Alta,Solar,Solar,434.0,No,2,54,Eficiente
+Hogar_0558,Casa,118,70,No,Media,Solar,Solar,127.0,Si,23,67,Eficiente
+Hogar_0559,Comercio,1670,107,Si,Muy Baja,Otros,Electricidad,437.9,Si,7,53,Ineficiente
+Hogar_0560,Departamento,778,57,No,Baja,Electricidad,Solar,732.4,Si,5,90,Ineficiente
+Hogar_0561,Comercio,892,33,Si,Alta,Electricidad,Solar,683.7,Si,19,94,Ineficiente
+Hogar_0562,Casa,1473,19,No,Baja,Solar,Otros,281.2,No,0,32,Eficiente
+Hogar_0563,Casa,167,49,No,Media,Solar,Electricidad,674.1,Si,19,100,Moderado
+Hogar_0564,Casa,1340,101,No,Media,Otros,Solar,927.8,Si,23,45,Moderado
+Hogar_0565,Departamento,1481,137,No,Baja,Solar,Electricidad,348.2,No,5,51,Moderado
+Hogar_0566,Departamento,774,51,No,Alta,Electricidad,Solar,329.8,No,1,37,Eficiente
+Hogar_0567,Departamento,1901,14,Si,Alta,Otros,Solar,571.9,Si,18,59,Moderado
+Hogar_0568,Departamento,1873,83,No,Media,Otros,Electricidad,246.3,Si,6,54,Moderado
+Hogar_0569,Pyme,1738,130,No,Baja,Electricidad,Solar,651.9,Si,10,18,Moderado
+Hogar_0570,Casa,678,36,Si,Muy Baja,Otros,Electricidad,832.4,Si,10,1,Ineficiente
+Hogar_0571,Departamento,726,125,Si,Media,Electricidad,Otros,459.9,Si,3,21,Moderado
+Hogar_0572,Comercio,1023,39,Si,Media,Electricidad,Electricidad,679.8,No,19,28,Ineficiente
+Hogar_0573,Departamento,74,71,Si,Baja,Otros,Solar,652.2,Si,15,16,Moderado
+Hogar_0574,Departamento,1351,39,No,Muy Baja,Solar,Otros,39.6,No,4,48,Eficiente
+Hogar_0575,Pyme,906,55,No,Muy Baja,Electricidad,Electricidad,184.2,Si,23,28,Moderado
+Hogar_0576,Pyme,1239,150,No,Muy Alta,Electricidad,Solar,893.6,Si,6,22,Moderado
+Hogar_0577,Casa,1185,103,Si,Alta,Solar,Solar,939.0,No,24,83,Moderado
+Hogar_0578,Pyme,580,138,Si,Muy Alta,Electricidad,Electricidad,780.7,Si,15,1,Ineficiente
+Hogar_0579,Departamento,429,109,Si,Baja,Solar,Solar,921.3,Si,14,95,Moderado
+Hogar_0580,Casa,917,135,No,Muy Alta,Solar,Solar,306.8,Si,4,42,Eficiente
+Hogar_0581,Departamento,890,92,No,Baja,Electricidad,Otros,248.5,Si,0,98,Moderado
+Hogar_0582,Pyme,627,93,No,Media,Solar,Otros,384.9,Si,19,70,Moderado
+Hogar_0583,Departamento,1856,55,No,Alta,Otros,Solar,56.3,Si,21,92,Moderado
+Hogar_0584,Casa,366,59,No,Baja,Solar,Solar,810.1,Si,21,3,Moderado
+Hogar_0585,Departamento,1806,137,No,Media,Electricidad,Otros,984.2,Si,8,95,Ineficiente
+Hogar_0586,Casa,1994,38,No,Baja,Electricidad,Solar,824.2,No,20,80,Moderado
+Hogar_0587,Casa,729,27,No,Baja,Solar,Electricidad,555.4,Si,4,81,Moderado
+Hogar_0588,Casa,343,48,Si,Media,Otros,Electricidad,296.0,Si,21,44,Moderado
+Hogar_0589,Casa,643,124,No,Media,Electricidad,Otros,198.5,No,5,27,Eficiente
+Hogar_0590,Casa,1412,12,No,Alta,Electricidad,Solar,364.7,No,2,51,Eficiente
+Hogar_0591,Casa,1871,35,No,Media,Electricidad,Solar,667.3,Si,5,24,Moderado
+Hogar_0592,Departamento,407,100,Si,Media,Solar,Electricidad,447.6,Si,7,20,Moderado
+Hogar_0593,Casa,258,25,No,Muy Baja,Electricidad,Otros,934.1,No,5,32,Moderado
+Hogar_0594,Casa,1826,85,No,Baja,Otros,Electricidad,854.4,Si,15,99,Ineficiente
+Hogar_0595,Pyme,1393,3,Si,Muy Alta,Electricidad,Solar,103.3,No,15,13,Eficiente
+Hogar_0596,Departamento,1598,81,No,Muy Baja,Solar,Electricidad,132.4,No,20,43,Moderado
+Hogar_0597,Comercio,842,126,Si,Media,Solar,Electricidad,676.6,Si,2,20,Moderado
+Hogar_0598,Casa,578,87,Si,Baja,Solar,Solar,231.5,Si,16,2,Eficiente
+Hogar_0599,Casa,1578,126,Si,Alta,Electricidad,Otros,791.2,No,20,68,Ineficiente
+Hogar_0600,Casa,881,119,Si,Alta,Solar,Electricidad,591.8,Si,5,91,Moderado
+Hogar_0601,Casa,1838,21,No,Baja,Electricidad,Electricidad,230.6,Si,5,60,Moderado
+Hogar_0602,Casa,844,129,Si,Baja,Electricidad,Electricidad,479.2,Si,21,89,Ineficiente
+Hogar_0603,Casa,1620,30,Si,Media,Solar,Electricidad,406.7,No,18,4,Moderado
+Hogar_0604,Casa,1984,118,Si,Media,Solar,Electricidad,873.3,Si,19,96,Ineficiente
+Hogar_0605,Casa,208,10,Si,Baja,Electricidad,Solar,33.1,No,14,17,Eficiente
+Hogar_0606,Departamento,1090,45,Si,Alta,Electricidad,Otros,895.9,No,18,1,Moderado
+Hogar_0607,Casa,1600,95,No,Baja,Otros,Electricidad,652.4,Si,1,33,Moderado
+Hogar_0608,Departamento,422,9,Si,Alta,Otros,Solar,737.8,No,7,30,Eficiente
+Hogar_0609,Departamento,1753,127,No,Media,Electricidad,Electricidad,3.6,Si,6,5,Moderado
+Hogar_0610,Comercio,804,98,No,Muy Baja,Solar,Electricidad,628.6,No,7,12,Moderado
+Hogar_0611,Casa,1543,111,Si,Media,Electricidad,Electricidad,588.9,Si,12,32,Moderado
+Hogar_0612,Comercio,1708,59,No,Media,Solar,Solar,537.7,Si,21,38,Moderado
+Hogar_0613,Departamento,932,86,Si,Baja,Otros,Electricidad,786.1,No,14,17,Moderado
+Hogar_0614,Casa,1382,144,Si,Media,Electricidad,Electricidad,556.3,Si,11,58,Ineficiente
+Hogar_0615,Pyme,152,64,Si,Baja,Solar,Electricidad,857.2,No,14,40,Moderado
+Hogar_0616,Pyme,1607,56,Si,Baja,Solar,Electricidad,233.4,No,13,96,Moderado
+Hogar_0617,Casa,1606,105,No,Baja,Solar,Electricidad,806.2,Si,6,24,Moderado
+Hogar_0618,Casa,26,8,No,Media,Solar,Otros,180.1,Si,16,12,Eficiente
+Hogar_0619,Comercio,1217,21,Si,Baja,Otros,Solar,813.3,No,4,95,Moderado
+Hogar_0620,Comercio,1669,140,No,Media,Electricidad,Otros,940.5,Si,19,19,Ineficiente
+Hogar_0621,Casa,44,88,Si,Media,Electricidad,Electricidad,336.4,No,9,29,Moderado
+Hogar_0622,Casa,1381,17,No,Media,Electricidad,Electricidad,530.4,No,18,85,Moderado
+Hogar_0623,Departamento,609,114,Si,Alta,Otros,Electricidad,658.7,No,17,90,Moderado
+Hogar_0624,Departamento,481,144,Si,Alta,Solar,Electricidad,80.4,No,24,52,Eficiente
+Hogar_0625,Departamento,982,142,Si,Media,Solar,Solar,494.6,Si,23,92,Moderado
+Hogar_0626,Departamento,1158,105,Si,Media,Electricidad,Electricidad,361.2,No,9,17,Moderado
+Hogar_0627,Departamento,1317,14,No,Baja,Otros,Electricidad,872.6,No,1,73,Moderado
+Hogar_0628,Comercio,470,62,No,Muy Alta,Otros,Solar,876.8,No,5,21,Eficiente
+Hogar_0629,Casa,1289,12,Si,Muy Baja,Solar,Electricidad,701.1,Si,2,60,Ineficiente
+Hogar_0630,Casa,1978,80,No,Baja,Electricidad,Otros,656.1,Si,18,98,Ineficiente
+Hogar_0631,Comercio,1350,31,No,Alta,Electricidad,Electricidad,734.0,No,4,75,Moderado
+Hogar_0632,Pyme,627,136,No,Muy Baja,Solar,Solar,366.6,Si,6,20,Moderado
+Hogar_0633,Departamento,128,39,Si,Baja,Solar,Electricidad,405.1,Si,6,53,Moderado
+Hogar_0634,Departamento,1013,147,No,Media,Electricidad,Otros,554.2,Si,9,80,Moderado
+Hogar_0635,Casa,1299,81,No,Media,Solar,Electricidad,938.1,Si,0,63,Moderado
+Hogar_0636,Departamento,1502,76,No,Alta,Electricidad,Solar,724.3,Si,10,57,Moderado
+Hogar_0637,Departamento,545,75,Si,Alta,Solar,Electricidad,551.4,Si,22,29,Moderado
+Hogar_0638,Casa,1202,37,Si,Baja,Solar,Solar,770.6,Si,6,1,Moderado
+Hogar_0639,Casa,884,70,Si,Muy Baja,Electricidad,Electricidad,371.5,No,5,82,Moderado
+Hogar_0640,Departamento,199,47,No,Media,Solar,Electricidad,730.7,Si,5,59,Moderado
+Hogar_0641,Casa,1392,17,No,Baja,Electricidad,Otros,411.3,Si,12,64,Moderado
+Hogar_0642,Casa,1719,143,Si,Media,Electricidad,Otros,280.4,Si,15,86,Moderado
+Hogar_0643,Casa,1030,38,No,Baja,Otros,Electricidad,610.1,Si,12,72,Moderado
+Hogar_0644,Casa,456,88,No,Media,Electricidad,Otros,687.2,No,1,71,Moderado
+Hogar_0645,Casa,752,61,No,Media,Electricidad,Electricidad,459.8,No,18,89,Moderado
+Hogar_0646,Pyme,1738,140,No,Media,Electricidad,Otros,565.9,Si,18,94,Ineficiente
+Hogar_0647,Departamento,1736,108,No,Media,Electricidad,Solar,694.4,Si,18,98,Ineficiente
+Hogar_0648,Comercio,1901,80,Si,Media,Electricidad,Solar,767.9,No,17,44,Ineficiente
+Hogar_0649,Comercio,875,133,No,Baja,Electricidad,Otros,895.7,Si,24,48,Ineficiente
+Hogar_0650,Departamento,1707,76,Si,Muy Baja,Solar,Otros,355.2,Si,5,75,Moderado
+Hogar_0651,Casa,1373,89,Si,Muy Baja,Electricidad,Electricidad,951.5,Si,1,15,Ineficiente
+Hogar_0652,Departamento,1015,13,Si,Media,Solar,Solar,637.6,Si,18,35,Moderado
+Hogar_0653,Departamento,1722,94,Si,Media,Electricidad,Electricidad,787.9,Si,5,23,Ineficiente
+Hogar_0654,Comercio,664,53,Si,Media,Electricidad,Otros,700.1,Si,19,53,Ineficiente
+Hogar_0655,Departamento,445,131,Si,Baja,Electricidad,Solar,206.4,Si,22,45,Moderado
+Hogar_0656,Casa,619,38,No,Media,Otros,Electricidad,72.4,Si,21,85,Moderado
+Hogar_0657,Casa,510,71,Si,Alta,Solar,Solar,726.6,Si,14,92,Moderado
+Hogar_0658,Departamento,1708,24,No,Baja,Solar,Solar,511.5,Si,5,13,Eficiente
+Hogar_0659,Departamento,1800,76,Si,Baja,Electricidad,Solar,702.5,Si,2,34,Ineficiente
+Hogar_0660,Departamento,437,119,No,Muy Baja,Otros,Electricidad,477.4,Si,10,38,Moderado
+Hogar_0661,Departamento,961,52,No,Media,Electricidad,Electricidad,312.9,Si,7,70,Moderado
+Hogar_0662,Pyme,1133,130,Si,Media,Electricidad,Solar,285.7,No,24,68,Moderado
+Hogar_0663,Departamento,1162,149,No,Baja,Solar,Electricidad,730.8,No,21,5,Moderado
+Hogar_0664,Casa,1786,95,No,Media,Electricidad,Electricidad,277.5,Si,17,40,Moderado
+Hogar_0665,Casa,357,71,No,Baja,Otros,Solar,715.0,Si,16,70,Moderado
+Hogar_0666,Casa,1427,61,No,Media,Electricidad,Electricidad,384.6,No,18,21,Moderado
+Hogar_0667,Casa,1804,5,No,Media,Otros,Solar,771.1,Si,18,28,Moderado
+Hogar_0668,Casa,680,31,No,Alta,Solar,Solar,143.7,Si,23,3,Eficiente
+Hogar_0669,Casa,66,98,No,Muy Baja,Solar,Solar,205.8,No,20,23,Eficiente
+Hogar_0670,Casa,1984,137,Si,Muy Alta,Electricidad,Electricidad,686.2,No,16,72,Ineficiente
+Hogar_0671,Casa,1819,130,No,Alta,Electricidad,Electricidad,560.7,Si,3,19,Moderado
+Hogar_0672,Pyme,984,75,Si,Baja,Otros,Electricidad,204.7,Si,6,75,Moderado
+Hogar_0673,Casa,1846,58,No,Baja,Electricidad,Otros,902.9,No,4,50,Moderado
+Hogar_0674,Departamento,130,30,Si,Media,Solar,Electricidad,276.7,Si,15,74,Moderado
+Hogar_0675,Departamento,227,92,No,Alta,Otros,Otros,421.7,No,5,58,Eficiente
+Hogar_0676,Pyme,475,68,No,Alta,Electricidad,Solar,203.1,Si,13,92,Moderado
+Hogar_0677,Casa,1868,51,Si,Media,Solar,Otros,388.6,Si,19,20,Moderado
+Hogar_0678,Departamento,1892,88,Si,Alta,Solar,Electricidad,492.2,Si,1,92,Moderado
+Hogar_0679,Pyme,1315,126,No,Muy Baja,Electricidad,Electricidad,296.0,No,24,93,Moderado
+Hogar_0680,Pyme,935,30,No,Muy Baja,Electricidad,Otros,769.3,No,17,72,Ineficiente
+Hogar_0681,Comercio,235,83,No,Muy Alta,Solar,Electricidad,394.5,Si,17,83,Moderado
+Hogar_0682,Casa,588,126,Si,Alta,Electricidad,Electricidad,729.8,No,12,53,Moderado
+Hogar_0683,Casa,1167,149,No,Media,Solar,Electricidad,207.9,Si,17,85,Moderado
+Hogar_0684,Comercio,738,131,No,Alta,Electricidad,Otros,377.7,No,16,82,Moderado
+Hogar_0685,Pyme,1426,12,Si,Muy Alta,Otros,Solar,9.1,No,12,9,Eficiente
+Hogar_0686,Departamento,1600,44,Si,Alta,Electricidad,Solar,758.9,Si,11,4,Moderado
+Hogar_0687,Departamento,1589,126,No,Alta,Solar,Solar,626.3,Si,2,41,Moderado
+Hogar_0688,Casa,796,113,Si,Alta,Solar,Electricidad,818.0,No,21,25,Moderado
+Hogar_0689,Comercio,1133,19,Si,Baja,Electricidad,Solar,456.2,No,6,34,Moderado
+Hogar_0690,Casa,479,80,No,Alta,Electricidad,Electricidad,799.9,Si,0,73,Ineficiente
+Hogar_0691,Casa,692,128,Si,Baja,Solar,Otros,647.9,Si,4,9,Moderado
+Hogar_0692,Departamento,654,142,No,Muy Alta,Otros,Electricidad,4.6,No,20,82,Eficiente
+Hogar_0693,Departamento,1563,16,Si,Media,Electricidad,Electricidad,254.4,Si,0,75,Moderado
+Hogar_0694,Casa,1654,57,No,Media,Electricidad,Solar,494.4,Si,3,13,Moderado
+Hogar_0695,Casa,1727,71,No,Media,Electricidad,Electricidad,619.1,Si,0,9,Moderado
+Hogar_0696,Departamento,412,108,Si,Muy Baja,Electricidad,Solar,66.5,No,12,80,Moderado
+Hogar_0697,Casa,1961,22,No,Baja,Solar,Electricidad,705.4,Si,13,4,Moderado
+Hogar_0698,Departamento,1399,71,Si,Muy Alta,Otros,Electricidad,544.0,Si,14,34,Moderado
+Hogar_0699,Casa,321,7,No,Muy Alta,Electricidad,Solar,526.3,Si,16,7,Eficiente
+Hogar_0700,Departamento,283,58,No,Baja,Otros,Solar,292.8,No,11,15,Eficiente
+Hogar_0701,Departamento,1130,110,No,Muy Alta,Electricidad,Electricidad,595.2,No,6,38,Moderado
+Hogar_0702,Casa,1986,12,No,Alta,Solar,Solar,28.5,No,22,75,Eficiente
+Hogar_0703,Casa,293,15,Si,Media,Electricidad,Electricidad,65.6,Si,18,96,Moderado
+Hogar_0704,Casa,444,118,No,Muy Baja,Electricidad,Electricidad,734.1,No,22,91,Ineficiente
+Hogar_0705,Casa,260,1,Si,Muy Alta,Solar,Electricidad,322.6,No,2,94,Eficiente
+Hogar_0706,Pyme,1882,144,Si,Media,Electricidad,Otros,347.6,No,17,52,Moderado
+Hogar_0707,Casa,1360,29,No,Alta,Solar,Solar,209.2,No,3,81,Eficiente
+Hogar_0708,Comercio,1862,102,Si,Alta,Solar,Electricidad,446.2,Si,2,100,Moderado
+Hogar_0709,Casa,1011,12,No,Alta,Electricidad,Solar,52.9,No,11,83,Eficiente
+Hogar_0710,Comercio,1406,95,Si,Media,Otros,Otros,301.1,No,22,7,Moderado
+Hogar_0711,Comercio,1262,93,No,Baja,Electricidad,Electricidad,527.6,No,11,45,Moderado
+Hogar_0712,Departamento,599,81,Si,Baja,Solar,Otros,466.2,Si,16,59,Moderado
+Hogar_0713,Departamento,74,12,Si,Baja,Electricidad,Electricidad,999.7,Si,5,21,Ineficiente
+Hogar_0714,Departamento,1176,93,No,Muy Baja,Electricidad,Otros,389.4,No,14,28,Moderado
+Hogar_0715,Casa,248,148,No,Media,Electricidad,Solar,387.6,Si,1,3,Moderado
+Hogar_0716,Pyme,946,111,No,Media,Solar,Electricidad,504.1,Si,7,14,Moderado
+Hogar_0717,Comercio,1328,54,Si,Alta,Solar,Electricidad,191.1,No,13,2,Eficiente
+Hogar_0718,Pyme,1457,80,Si,Baja,Electricidad,Otros,876.4,Si,4,29,Ineficiente
+Hogar_0719,Casa,1554,115,No,Media,Electricidad,Solar,572.7,Si,2,18,Moderado
+Hogar_0720,Comercio,1343,142,No,Muy Baja,Electricidad,Solar,192.9,No,9,37,Moderado
+Hogar_0721,Pyme,1845,107,Si,Muy Baja,Solar,Electricidad,793.6,Si,6,45,Ineficiente
+Hogar_0722,Casa,302,52,No,Muy Baja,Solar,Electricidad,35.3,Si,10,45,Moderado
+Hogar_0723,Casa,1487,127,No,Alta,Electricidad,Electricidad,982.6,Si,14,24,Ineficiente
+Hogar_0724,Comercio,1156,56,No,Muy Baja,Electricidad,Electricidad,865.3,Si,1,46,Ineficiente
+Hogar_0725,Departamento,1707,51,No,Alta,Solar,Solar,580.1,Si,4,12,Eficiente
+Hogar_0726,Comercio,445,136,No,Baja,Electricidad,Otros,112.2,Si,10,53,Moderado
+Hogar_0727,Casa,636,110,Si,Alta,Electricidad,Solar,216.1,Si,7,45,Eficiente
+Hogar_0728,Comercio,1478,0,Si,Alta,Electricidad,Electricidad,280.2,Si,12,32,Moderado
+Hogar_0729,Casa,400,43,No,Muy Alta,Electricidad,Solar,241.8,Si,10,18,Eficiente
+Hogar_0730,Casa,98,74,No,Muy Alta,Solar,Otros,498.0,No,16,13,Eficiente
+Hogar_0731,Casa,1998,97,No,Muy Alta,Solar,Solar,944.6,Si,14,4,Moderado
+Hogar_0732,Comercio,1683,8,Si,Alta,Electricidad,Solar,444.7,No,0,23,Eficiente
+Hogar_0733,Comercio,1079,31,No,Media,Solar,Otros,661.9,Si,18,62,Moderado
+Hogar_0734,Departamento,1237,14,No,Baja,Electricidad,Solar,688.9,No,15,54,Moderado
+Hogar_0735,Departamento,1413,139,Si,Baja,Otros,Electricidad,871.7,No,18,74,Ineficiente
+Hogar_0736,Pyme,1915,135,Si,Baja,Solar,Electricidad,34.8,Si,12,55,Moderado
+Hogar_0737,Departamento,1849,71,No,Media,Solar,Otros,404.9,Si,22,69,Moderado
+Hogar_0738,Comercio,1500,11,No,Media,Electricidad,Solar,785.0,Si,21,40,Ineficiente
+Hogar_0739,Departamento,220,64,Si,Alta,Electricidad,Electricidad,815.1,No,22,14,Moderado
+Hogar_0740,Departamento,1205,106,No,Muy Alta,Solar,Solar,927.4,Si,3,98,Moderado
+Hogar_0741,Departamento,1221,41,No,Media,Solar,Solar,703.1,No,10,28,Eficiente
+Hogar_0742,Casa,872,114,No,Media,Electricidad,Otros,245.9,Si,17,72,Moderado
+Hogar_0743,Comercio,1090,138,Si,Muy Alta,Otros,Electricidad,506.2,Si,17,80,Ineficiente
+Hogar_0744,Departamento,1112,102,No,Baja,Otros,Solar,33.3,Si,9,95,Moderado
+Hogar_0745,Casa,48,94,Si,Alta,Solar,Otros,647.3,No,16,71,Moderado
+Hogar_0746,Pyme,385,16,No,Baja,Otros,Electricidad,554.7,Si,12,67,Moderado
+Hogar_0747,Departamento,1124,84,Si,Media,Electricidad,Electricidad,667.2,No,24,29,Ineficiente
+Hogar_0748,Departamento,585,150,No,Baja,Electricidad,Otros,930.2,Si,13,100,Ineficiente
+Hogar_0749,Pyme,697,55,Si,Muy Alta,Electricidad,Solar,687.6,Si,6,61,Moderado
+Hogar_0750,Departamento,1874,133,No,Media,Solar,Solar,321.1,No,9,68,Eficiente
+Hogar_0751,Casa,1167,85,No,Baja,Electricidad,Solar,199.5,No,2,9,Eficiente
+Hogar_0752,Pyme,1661,101,Si,Baja,Otros,Electricidad,854.8,Si,1,17,Ineficiente
+Hogar_0753,Departamento,1429,53,No,Media,Electricidad,Otros,195.1,Si,18,49,Moderado
+Hogar_0754,Casa,1978,114,Si,Muy Alta,Electricidad,Electricidad,162.4,No,6,63,Eficiente
+Hogar_0755,Casa,1969,138,Si,Alta,Otros,Electricidad,207.4,Si,4,84,Moderado
+Hogar_0756,Comercio,704,87,No,Media,Electricidad,Electricidad,509.3,No,2,78,Moderado
+Hogar_0757,Departamento,1339,48,Si,Baja,Electricidad,Electricidad,125.1,Si,24,46,Moderado
+Hogar_0758,Departamento,465,148,No,Media,Solar,Otros,938.2,Si,1,93,Moderado
+Hogar_0759,Pyme,1717,114,No,Alta,Electricidad,Solar,966.3,No,22,13,Moderado
+Hogar_0760,Comercio,958,62,No,Alta,Electricidad,Otros,973.8,Si,21,100,Ineficiente
+Hogar_0761,Casa,32,103,Si,Baja,Electricidad,Electricidad,40.1,No,5,45,Moderado
+Hogar_0762,Casa,1245,82,No,Alta,Solar,Solar,946.3,No,13,53,Eficiente
+Hogar_0763,Casa,446,102,No,Media,Otros,Solar,997.4,No,6,17,Eficiente
+Hogar_0764,Comercio,1617,16,Si,Muy Alta,Otros,Otros,942.5,Si,21,47,Ineficiente
+Hogar_0765,Casa,858,5,No,Muy Alta,Electricidad,Solar,671.3,No,1,62,Eficiente
+Hogar_0766,Departamento,1242,146,Si,Alta,Electricidad,Electricidad,701.5,No,10,50,Ineficiente
+Hogar_0767,Comercio,584,27,No,Alta,Solar,Electricidad,123.1,Si,20,43,Moderado
+Hogar_0768,Pyme,1197,37,Si,Baja,Otros,Electricidad,874.4,Si,2,68,Ineficiente
+Hogar_0769,Casa,1836,118,No,Alta,Electricidad,Solar,60.6,Si,8,84,Moderado
+Hogar_0770,Comercio,1718,36,No,Media,Electricidad,Otros,318.4,No,7,75,Moderado
+Hogar_0771,Casa,1251,114,Si,Baja,Solar,Electricidad,991.2,No,10,86,Moderado
+Hogar_0772,Comercio,1493,67,Si,Media,Otros,Electricidad,422.9,No,17,72,Moderado
+Hogar_0773,Casa,939,42,No,Alta,Electricidad,Electricidad,132.0,No,0,28,Eficiente
+Hogar_0774,Departamento,1468,57,No,Baja,Electricidad,Solar,969.3,Si,14,45,Ineficiente
+Hogar_0775,Comercio,1476,12,Si,Media,Electricidad,Electricidad,984.2,Si,3,41,Ineficiente
+Hogar_0776,Casa,1032,51,Si,Media,Electricidad,Electricidad,187.9,Si,3,94,Moderado
+Hogar_0777,Casa,1528,57,No,Muy Baja,Solar,Electricidad,864.9,Si,9,97,Ineficiente
+Hogar_0778,Comercio,1524,31,No,Baja,Solar,Solar,391.0,Si,10,97,Moderado
+Hogar_0779,Comercio,151,104,No,Alta,Solar,Solar,382.0,No,17,36,Eficiente
+Hogar_0780,Departamento,420,82,No,Alta,Electricidad,Solar,263.4,No,22,91,Eficiente
+Hogar_0781,Comercio,842,98,Si,Baja,Electricidad,Electricidad,45.7,Si,14,84,Ineficiente
+Hogar_0782,Departamento,906,103,No,Alta,Electricidad,Solar,268.7,No,2,33,Eficiente
+Hogar_0783,Casa,1855,27,No,Alta,Electricidad,Electricidad,54.7,Si,6,25,Eficiente
+Hogar_0784,Casa,601,128,Si,Media,Solar,Electricidad,924.4,Si,6,19,Moderado
+Hogar_0785,Casa,350,47,No,Alta,Electricidad,Solar,662.1,No,16,47,Eficiente
+Hogar_0786,Pyme,1441,39,No,Muy Alta,Electricidad,Electricidad,886.7,Si,21,85,Ineficiente
+Hogar_0787,Departamento,955,96,Si,Media,Electricidad,Solar,717.6,No,19,33,Moderado
+Hogar_0788,Departamento,1737,113,No,Baja,Electricidad,Electricidad,132.2,No,23,67,Moderado
+Hogar_0789,Departamento,1677,131,Si,Muy Alta,Solar,Electricidad,940.6,No,15,14,Moderado
+Hogar_0790,Pyme,1489,136,No,Media,Otros,Otros,900.0,Si,15,79,Ineficiente
+Hogar_0791,Casa,1253,110,No,Muy Baja,Electricidad,Solar,348.7,Si,7,33,Moderado
+Hogar_0792,Departamento,1535,143,Si,Media,Solar,Solar,112.4,Si,2,42,Eficiente
+Hogar_0793,Departamento,858,75,Si,Media,Electricidad,Otros,704.5,No,19,86,Ineficiente
+Hogar_0794,Departamento,1080,30,No,Alta,Electricidad,Solar,728.6,No,14,65,Moderado
+Hogar_0795,Casa,1437,118,No,Media,Otros,Solar,896.9,Si,0,95,Moderado
+Hogar_0796,Pyme,1674,141,No,Baja,Electricidad,Solar,53.6,No,9,47,Moderado
+Hogar_0797,Pyme,1926,24,No,Media,Solar,Electricidad,142.6,Si,1,35,Moderado
+Hogar_0798,Departamento,1483,33,No,Media,Electricidad,Electricidad,598.7,Si,6,84,Moderado
+Hogar_0799,Comercio,862,66,No,Baja,Solar,Solar,619.5,No,13,32,Eficiente
+Hogar_0800,Pyme,951,117,No,Media,Solar,Electricidad,34.6,No,15,55,Eficiente
+Hogar_0801,Comercio,1425,72,Si,Alta,Otros,Electricidad,397.5,Si,14,54,Moderado
+Hogar_0802,Casa,1393,25,No,Muy Baja,Otros,Electricidad,584.6,Si,6,76,Moderado
+Hogar_0803,Departamento,468,147,No,Media,Solar,Electricidad,738.2,Si,12,51,Moderado
+Hogar_0804,Departamento,1628,103,No,Baja,Electricidad,Electricidad,316.8,Si,24,80,Ineficiente
+Hogar_0805,Departamento,100,9,No,Baja,Solar,Electricidad,484.4,No,9,59,Moderado
+Hogar_0806,Comercio,582,66,No,Media,Solar,Electricidad,814.2,Si,8,72,Moderado
+Hogar_0807,Pyme,1821,4,No,Baja,Electricidad,Electricidad,953.9,Si,8,14,Ineficiente
+Hogar_0808,Pyme,1715,26,Si,Alta,Electricidad,Solar,231.1,Si,5,18,Moderado
+Hogar_0809,Departamento,1204,112,Si,Baja,Otros,Electricidad,253.8,No,23,55,Moderado
+Hogar_0810,Casa,1479,14,No,Alta,Solar,Otros,939.9,No,24,94,Moderado
+Hogar_0811,Pyme,388,104,Si,Muy Baja,Electricidad,Otros,396.5,No,11,97,Ineficiente
+Hogar_0812,Comercio,473,43,Si,Muy Alta,Otros,Solar,718.6,Si,22,98,Moderado
+Hogar_0813,Casa,1283,25,Si,Media,Electricidad,Solar,612.7,No,19,56,Moderado
+Hogar_0814,Pyme,1612,94,No,Alta,Electricidad,Electricidad,286.3,Si,19,49,Moderado
+Hogar_0815,Pyme,1867,83,No,Baja,Solar,Electricidad,653.9,No,21,98,Moderado
+Hogar_0816,Departamento,287,139,No,Media,Electricidad,Otros,655.9,No,13,60,Moderado
+Hogar_0817,Departamento,1876,131,No,Baja,Solar,Electricidad,592.9,Si,19,53,Moderado
+Hogar_0818,Departamento,150,86,Si,Muy Alta,Electricidad,Otros,100.6,Si,6,71,Moderado
+Hogar_0819,Casa,936,111,No,Media,Electricidad,Solar,995.2,Si,7,6,Moderado
+Hogar_0820,Casa,270,128,No,Media,Electricidad,Electricidad,401.0,Si,7,70,Moderado
+Hogar_0821,Comercio,567,88,No,Alta,Otros,Solar,638.6,Si,7,86,Moderado
+Hogar_0822,Casa,1987,65,Si,Media,Electricidad,Solar,885.9,No,1,8,Moderado
+Hogar_0823,Casa,510,130,Si,Alta,Electricidad,Electricidad,423.9,Si,13,15,Moderado
+Hogar_0824,Departamento,147,121,Si,Media,Electricidad,Electricidad,774.2,No,9,26,Moderado
+Hogar_0825,Departamento,150,148,No,Alta,Electricidad,Solar,971.9,No,17,39,Moderado
+Hogar_0826,Pyme,1598,83,No,Media,Electricidad,Solar,359.6,No,17,3,Moderado
+Hogar_0827,Casa,195,115,No,Media,Electricidad,Electricidad,405.9,Si,17,57,Moderado
+Hogar_0828,Casa,149,115,No,Baja,Solar,Electricidad,905.7,Si,15,10,Moderado
+Hogar_0829,Comercio,1918,37,No,Alta,Solar,Otros,160.5,Si,19,3,Eficiente
+Hogar_0830,Departamento,1084,142,No,Media,Solar,Solar,29.6,Si,4,94,Eficiente
+Hogar_0831,Casa,1136,109,Si,Media,Solar,Solar,909.0,No,19,46,Moderado
+Hogar_0832,Departamento,671,45,Si,Muy Alta,Electricidad,Otros,821.8,Si,4,22,Moderado
+Hogar_0833,Casa,1757,24,No,Muy Baja,Electricidad,Electricidad,972.6,Si,19,67,Ineficiente
+Hogar_0834,Casa,811,20,Si,Alta,Solar,Solar,59.2,Si,22,65,Eficiente
+Hogar_0835,Departamento,226,120,No,Muy Alta,Solar,Otros,157.0,No,9,97,Eficiente
+Hogar_0836,Departamento,394,121,No,Muy Alta,Electricidad,Solar,106.2,Si,16,19,Eficiente
+Hogar_0837,Pyme,822,132,No,Alta,Otros,Electricidad,683.7,Si,12,100,Ineficiente
+Hogar_0838,Departamento,102,69,No,Media,Electricidad,Electricidad,606.4,Si,16,62,Moderado
+Hogar_0839,Departamento,84,112,No,Baja,Electricidad,Solar,360.0,Si,17,98,Moderado
+Hogar_0840,Departamento,456,106,No,Alta,Electricidad,Electricidad,58.4,No,12,57,Eficiente
+Hogar_0841,Casa,663,111,Si,Baja,Otros,Otros,640.0,Si,16,95,Moderado
+Hogar_0842,Comercio,1549,107,Si,Baja,Solar,Electricidad,570.6,No,14,88,Moderado
+Hogar_0843,Casa,1962,46,Si,Alta,Solar,Electricidad,113.8,Si,11,76,Moderado
+Hogar_0844,Pyme,134,90,No,Baja,Electricidad,Electricidad,909.0,Si,9,13,Ineficiente
+Hogar_0845,Casa,1785,17,Si,Muy Alta,Solar,Solar,199.8,Si,12,16,Eficiente
+Hogar_0846,Departamento,1033,148,Si,Alta,Electricidad,Otros,743.8,Si,10,16,Ineficiente
+Hogar_0847,Casa,1327,103,Si,Alta,Otros,Solar,885.2,No,2,52,Moderado
+Hogar_0848,Pyme,93,150,No,Alta,Electricidad,Otros,579.9,Si,21,84,Ineficiente
+Hogar_0849,Departamento,1118,39,No,Muy Alta,Electricidad,Electricidad,247.6,No,9,41,Eficiente
+Hogar_0850,Departamento,1214,137,No,Alta,Electricidad,Electricidad,309.9,Si,10,48,Moderado
+Hogar_0851,Casa,1538,88,No,Media,Otros,Otros,885.9,No,5,91,Moderado
+Hogar_0852,Comercio,330,60,No,Baja,Solar,Otros,299.0,No,0,39,Eficiente
+Hogar_0853,Casa,1958,4,No,Muy Alta,Electricidad,Otros,746.4,No,5,13,Moderado
+Hogar_0854,Pyme,699,121,No,Alta,Electricidad,Solar,990.2,Si,4,4,Moderado
+Hogar_0855,Casa,390,54,No,Media,Otros,Electricidad,999.8,No,6,96,Moderado
+Hogar_0856,Casa,1903,36,Si,Muy Baja,Otros,Electricidad,533.9,No,21,98,Moderado
+Hogar_0857,Casa,846,55,No,Media,Solar,Otros,826.7,Si,11,43,Moderado
+Hogar_0858,Departamento,1428,101,Si,Muy Baja,Electricidad,Electricidad,990.3,Si,11,81,Ineficiente
+Hogar_0859,Departamento,368,92,No,Muy Alta,Electricidad,Electricidad,375.3,Si,6,88,Moderado
+Hogar_0860,Casa,972,72,No,Muy Alta,Otros,Solar,253.2,Si,1,93,Eficiente
+Hogar_0861,Comercio,924,58,Si,Baja,Electricidad,Electricidad,115.1,Si,0,46,Moderado
+Hogar_0862,Departamento,1603,1,Si,Media,Electricidad,Otros,141.8,Si,22,92,Moderado
+Hogar_0863,Departamento,1403,103,No,Muy Baja,Solar,Electricidad,853.7,No,24,47,Moderado
+Hogar_0864,Departamento,1465,50,Si,Alta,Otros,Solar,589.1,Si,17,86,Moderado
+Hogar_0865,Departamento,1158,29,No,Baja,Electricidad,Solar,873.8,No,11,92,Moderado
+Hogar_0866,Departamento,1612,10,No,Media,Solar,Solar,789.7,Si,6,53,Moderado
+Hogar_0867,Casa,787,107,No,Media,Otros,Solar,674.1,No,18,25,Moderado
+Hogar_0868,Casa,1546,75,No,Baja,Electricidad,Electricidad,609.7,Si,21,41,Ineficiente
+Hogar_0869,Pyme,366,89,No,Media,Electricidad,Solar,49.3,No,2,3,Eficiente
+Hogar_0870,Pyme,967,122,No,Muy Baja,Otros,Solar,872.4,Si,9,77,Ineficiente
+Hogar_0871,Departamento,408,124,No,Media,Otros,Solar,418.4,Si,10,95,Moderado
+Hogar_0872,Casa,1029,121,No,Muy Baja,Otros,Electricidad,560.2,No,4,13,Moderado
+Hogar_0873,Departamento,1582,93,No,Media,Solar,Electricidad,22.9,Si,1,18,Eficiente
+Hogar_0874,Departamento,325,102,No,Muy Alta,Electricidad,Electricidad,936.1,Si,7,37,Moderado
+Hogar_0875,Casa,164,30,Si,Alta,Otros,Solar,902.8,Si,13,43,Moderado
+Hogar_0876,Casa,384,51,No,Muy Alta,Electricidad,Electricidad,543.7,No,7,34,Eficiente
+Hogar_0877,Comercio,861,88,No,Muy Alta,Otros,Otros,577.7,Si,22,81,Moderado
+Hogar_0878,Comercio,1548,75,Si,Muy Baja,Otros,Solar,705.3,No,5,55,Moderado
+Hogar_0879,Casa,1434,128,Si,Baja,Solar,Solar,265.4,Si,0,52,Eficiente
+Hogar_0880,Casa,1653,21,No,Media,Otros,Otros,222.7,Si,23,85,Moderado
+Hogar_0881,Casa,1329,39,Si,Muy Alta,Solar,Electricidad,674.3,No,0,36,Moderado
+Hogar_0882,Comercio,1686,100,Si,Muy Alta,Electricidad,Otros,105.3,Si,7,54,Moderado
+Hogar_0883,Casa,508,110,No,Muy Baja,Solar,Solar,454.6,No,10,59,Eficiente
+Hogar_0884,Casa,934,128,No,Media,Electricidad,Otros,493.3,Si,17,52,Moderado
+Hogar_0885,Comercio,1160,64,Si,Baja,Solar,Otros,382.0,Si,23,19,Moderado
+Hogar_0886,Casa,891,148,No,Alta,Electricidad,Electricidad,186.1,Si,9,12,Moderado
+Hogar_0887,Comercio,164,78,No,Media,Electricidad,Electricidad,356.0,Si,11,92,Ineficiente
+Hogar_0888,Casa,1021,21,No,Muy Baja,Otros,Solar,338.2,No,19,11,Eficiente
+Hogar_0889,Casa,460,98,Si,Media,Otros,Solar,499.8,No,22,48,Moderado
+Hogar_0890,Casa,534,7,No,Media,Electricidad,Electricidad,675.0,Si,15,92,Ineficiente
+Hogar_0891,Comercio,298,16,No,Alta,Solar,Electricidad,968.3,Si,4,99,Moderado
+Hogar_0892,Pyme,1148,16,No,Muy Baja,Solar,Electricidad,145.0,Si,15,79,Moderado
+Hogar_0893,Comercio,1813,89,No,Muy Alta,Otros,Solar,873.1,No,23,16,Moderado
+Hogar_0894,Departamento,1899,140,No,Media,Solar,Otros,284.9,No,11,71,Eficiente
+Hogar_0895,Comercio,129,144,Si,Alta,Solar,Solar,591.8,Si,5,47,Moderado
+Hogar_0896,Casa,1263,80,No,Alta,Otros,Electricidad,547.2,Si,4,67,Moderado
+Hogar_0897,Casa,1810,77,Si,Baja,Electricidad,Electricidad,557.4,Si,0,31,Moderado
+Hogar_0898,Pyme,1713,5,No,Muy Baja,Otros,Electricidad,723.6,No,18,76,Ineficiente
+Hogar_0899,Casa,787,109,No,Alta,Otros,Solar,382.3,No,9,8,Eficiente
+Hogar_0900,Casa,812,13,Si,Baja,Otros,Otros,319.8,Si,24,89,Moderado
+Hogar_0901,Casa,190,71,No,Alta,Electricidad,Electricidad,853.0,Si,13,61,Moderado
+Hogar_0902,Casa,1024,142,Si,Alta,Electricidad,Solar,220.9,Si,24,44,Moderado
+Hogar_0903,Casa,1902,53,Si,Alta,Otros,Otros,181.1,Si,20,50,Moderado
+Hogar_0904,Departamento,545,26,No,Baja,Electricidad,Otros,16.6,No,2,35,Eficiente
+Hogar_0905,Departamento,1333,12,Si,Baja,Solar,Electricidad,211.4,Si,5,76,Moderado
+Hogar_0906,Pyme,542,59,No,Media,Electricidad,Electricidad,519.0,No,4,61,Moderado
+Hogar_0907,Comercio,682,5,Si,Muy Baja,Electricidad,Electricidad,539.0,Si,16,85,Ineficiente
+Hogar_0908,Casa,638,57,No,Alta,Electricidad,Solar,255.2,Si,17,90,Moderado
+Hogar_0909,Casa,189,48,No,Alta,Solar,Otros,73.2,No,11,55,Eficiente
+Hogar_0910,Departamento,1935,150,No,Media,Electricidad,Electricidad,744.9,Si,4,66,Ineficiente
+Hogar_0911,Departamento,1708,25,No,Alta,Solar,Electricidad,758.2,No,8,14,Moderado
+Hogar_0912,Casa,89,46,No,Baja,Solar,Otros,997.8,Si,11,4,Moderado
+Hogar_0913,Departamento,1140,4,Si,Baja,Solar,Solar,900.1,Si,19,17,Moderado
+Hogar_0914,Departamento,1166,19,Si,Muy Alta,Solar,Otros,926.1,No,8,69,Moderado
+Hogar_0915,Departamento,1915,133,No,Muy Alta,Electricidad,Electricidad,798.4,Si,2,24,Moderado
+Hogar_0916,Departamento,292,58,Si,Media,Electricidad,Electricidad,615.9,Si,0,49,Moderado
+Hogar_0917,Casa,1871,145,No,Muy Alta,Electricidad,Electricidad,129.4,No,21,55,Moderado
+Hogar_0918,Pyme,1734,131,Si,Media,Solar,Electricidad,622.7,Si,14,71,Ineficiente
+Hogar_0919,Comercio,1608,16,No,Baja,Solar,Solar,56.9,Si,9,23,Eficiente
+Hogar_0920,Casa,1189,13,No,Baja,Solar,Electricidad,885.4,No,13,81,Moderado
+Hogar_0921,Pyme,271,12,Si,Muy Alta,Electricidad,Electricidad,482.3,Si,6,12,Moderado
+Hogar_0922,Departamento,1710,134,No,Baja,Solar,Otros,697.8,Si,3,11,Moderado
+Hogar_0923,Pyme,1807,127,Si,Media,Electricidad,Electricidad,53.2,Si,4,75,Ineficiente
+Hogar_0924,Comercio,420,43,No,Media,Otros,Solar,534.7,Si,19,98,Moderado
+Hogar_0925,Departamento,1536,118,Si,Alta,Electricidad,Electricidad,302.0,No,15,29,Moderado
+Hogar_0926,Casa,501,142,No,Media,Otros,Otros,285.7,Si,2,62,Eficiente
+Hogar_0927,Casa,1566,18,No,Baja,Solar,Electricidad,390.3,Si,16,53,Moderado
+Hogar_0928,Departamento,1002,62,Si,Baja,Electricidad,Solar,1.6,Si,12,48,Moderado
+Hogar_0929,Departamento,1233,80,Si,Media,Electricidad,Electricidad,467.2,Si,5,100,Ineficiente
+Hogar_0930,Casa,1069,146,No,Alta,Electricidad,Electricidad,487.1,No,4,91,Moderado
+Hogar_0931,Casa,1986,147,Si,Media,Electricidad,Solar,863.3,Si,15,86,Ineficiente
+Hogar_0932,Comercio,583,99,No,Alta,Electricidad,Electricidad,449.1,No,10,66,Moderado
+Hogar_0933,Pyme,1043,121,No,Baja,Solar,Electricidad,364.2,Si,16,100,Ineficiente
+Hogar_0934,Departamento,1573,43,Si,Muy Alta,Electricidad,Otros,994.8,No,4,48,Moderado
+Hogar_0935,Casa,1631,103,No,Media,Solar,Otros,571.6,Si,5,94,Moderado
+Hogar_0936,Casa,1578,60,No,Baja,Electricidad,Electricidad,473.1,Si,9,59,Moderado
+Hogar_0937,Casa,908,124,No,Media,Otros,Electricidad,496.4,No,20,71,Moderado
+Hogar_0938,Pyme,172,144,No,Alta,Solar,Electricidad,809.4,Si,0,57,Moderado
+Hogar_0939,Casa,691,70,Si,Muy Alta,Electricidad,Electricidad,341.3,Si,20,76,Moderado
+Hogar_0940,Departamento,1353,106,Si,Baja,Electricidad,Otros,389.8,Si,9,3,Moderado
+Hogar_0941,Casa,645,49,No,Alta,Electricidad,Solar,756.1,Si,16,81,Moderado
+Hogar_0942,Departamento,1797,64,No,Muy Baja,Electricidad,Solar,73.9,No,2,32,Eficiente
+Hogar_0943,Comercio,845,98,Si,Muy Baja,Solar,Otros,865.3,Si,1,8,Ineficiente
+Hogar_0944,Comercio,889,31,No,Media,Solar,Solar,430.8,No,16,87,Eficiente
+Hogar_0945,Casa,607,140,No,Media,Otros,Solar,581.7,Si,3,30,Eficiente
+Hogar_0946,Casa,1048,57,Si,Alta,Solar,Electricidad,757.7,No,1,15,Moderado
+Hogar_0947,Casa,720,127,No,Baja,Otros,Electricidad,266.8,Si,4,74,Moderado
+Hogar_0948,Pyme,1811,141,Si,Muy Baja,Otros,Solar,890.4,No,9,55,Ineficiente
+Hogar_0949,Pyme,1277,111,No,Media,Otros,Electricidad,979.2,Si,0,38,Ineficiente
+Hogar_0950,Departamento,1151,67,Si,Muy Baja,Solar,Electricidad,494.8,Si,0,15,Moderado
+Hogar_0951,Departamento,1636,39,No,Muy Baja,Electricidad,Electricidad,937.0,No,3,30,Moderado
+Hogar_0952,Comercio,1466,143,Si,Baja,Electricidad,Electricidad,2.1,Si,6,46,Moderado
+Hogar_0953,Casa,1265,131,No,Media,Solar,Solar,894.3,Si,13,64,Moderado
+Hogar_0954,Pyme,432,89,No,Baja,Electricidad,Solar,311.7,No,13,26,Eficiente
+Hogar_0955,Departamento,424,27,Si,Media,Electricidad,Electricidad,312.2,Si,17,78,Moderado
+Hogar_0956,Departamento,1972,95,No,Muy Baja,Solar,Electricidad,228.9,Si,1,67,Moderado
+Hogar_0957,Departamento,740,30,No,Baja,Electricidad,Solar,317.7,Si,0,36,Moderado
+Hogar_0958,Casa,729,2,Si,Media,Solar,Electricidad,214.3,No,20,90,Moderado
+Hogar_0959,Casa,786,135,No,Baja,Electricidad,Solar,906.0,Si,21,78,Ineficiente
+Hogar_0960,Comercio,524,23,Si,Media,Solar,Solar,899.1,No,15,31,Moderado
+Hogar_0961,Casa,1803,14,No,Muy Baja,Solar,Electricidad,103.1,No,21,78,Moderado
+Hogar_0962,Departamento,1514,44,No,Media,Electricidad,Solar,143.7,No,17,40,Eficiente
+Hogar_0963,Casa,1740,7,No,Baja,Solar,Solar,862.2,Si,15,74,Moderado
+Hogar_0964,Departamento,1998,70,Si,Muy Baja,Solar,Electricidad,399.5,No,22,73,Moderado
+Hogar_0965,Casa,999,107,No,Media,Electricidad,Electricidad,170.1,Si,21,46,Moderado
+Hogar_0966,Departamento,1780,114,No,Muy Alta,Electricidad,Otros,511.2,No,23,42,Moderado
+Hogar_0967,Comercio,107,102,No,Muy Baja,Electricidad,Electricidad,417.3,Si,5,18,Moderado
+Hogar_0968,Casa,629,124,No,Media,Solar,Otros,219.9,No,24,100,Eficiente
+Hogar_0969,Departamento,1996,56,No,Alta,Solar,Solar,721.0,Si,9,36,Moderado
+Hogar_0970,Departamento,1736,29,Si,Media,Electricidad,Electricidad,631.7,Si,1,76,Ineficiente
+Hogar_0971,Comercio,1800,145,Si,Alta,Solar,Electricidad,100.6,Si,6,50,Moderado
+Hogar_0972,Pyme,797,113,Si,Baja,Electricidad,Solar,925.5,Si,20,61,Ineficiente
+Hogar_0973,Comercio,928,116,Si,Muy Alta,Otros,Electricidad,558.9,Si,16,40,Moderado
+Hogar_0974,Casa,390,59,Si,Media,Electricidad,Solar,251.0,Si,2,3,Eficiente
+Hogar_0975,Casa,188,97,Si,Baja,Otros,Otros,207.1,Si,19,82,Moderado
+Hogar_0976,Casa,1097,125,Si,Alta,Electricidad,Otros,136.8,No,11,7,Eficiente
+Hogar_0977,Departamento,536,150,Si,Media,Solar,Electricidad,425.2,Si,1,31,Moderado
+Hogar_0978,Casa,1378,93,Si,Media,Solar,Otros,136.4,Si,6,65,Moderado
+Hogar_0979,Departamento,1889,133,Si,Alta,Solar,Otros,416.4,No,16,95,Moderado
+Hogar_0980,Departamento,141,121,Si,Media,Electricidad,Otros,149.6,No,18,64,Moderado
+Hogar_0981,Casa,966,107,No,Baja,Solar,Solar,657.2,Si,11,77,Moderado
+Hogar_0982,Comercio,1898,3,No,Media,Electricidad,Solar,785.5,Si,8,93,Ineficiente
+Hogar_0983,Casa,362,92,Si,Baja,Solar,Solar,550.0,Si,13,3,Moderado
+Hogar_0984,Casa,906,150,No,Alta,Solar,Electricidad,680.4,No,1,93,Moderado
+Hogar_0985,Comercio,762,5,Si,Muy Alta,Otros,Otros,938.4,No,20,35,Moderado
+Hogar_0986,Departamento,1913,31,Si,Media,Solar,Electricidad,638.7,No,3,15,Moderado
+Hogar_0987,Comercio,865,105,Si,Media,Electricidad,Electricidad,364.8,Si,18,21,Ineficiente
+Hogar_0988,Departamento,172,145,No,Muy Baja,Solar,Otros,450.0,No,20,62,Moderado
+Hogar_0989,Casa,1624,14,No,Muy Baja,Solar,Electricidad,860.7,Si,15,83,Ineficiente
+Hogar_0990,Comercio,1855,121,Si,Muy Alta,Otros,Otros,131.6,Si,21,28,Moderado
+Hogar_0991,Comercio,1372,95,Si,Baja,Otros,Solar,326.4,Si,16,4,Moderado
+Hogar_0992,Comercio,468,5,No,Media,Solar,Electricidad,577.7,Si,1,13,Moderado
+Hogar_0993,Casa,862,111,Si,Alta,Electricidad,Electricidad,676.7,No,16,79,Ineficiente
+Hogar_0994,Departamento,1062,119,Si,Muy Alta,Solar,Solar,763.7,No,18,51,Moderado
+Hogar_0995,Departamento,968,122,No,Media,Solar,Solar,318.9,No,7,48,Eficiente
+Hogar_0996,Casa,1543,66,No,Media,Otros,Otros,146.7,Si,23,39,Moderado
+Hogar_0997,Pyme,1750,105,No,Media,Electricidad,Otros,954.9,No,19,96,Ineficiente
+Hogar_0998,Casa,312,138,No,Muy Alta,Electricidad,Electricidad,77.3,No,5,67,Eficiente
+Hogar_0999,Pyme,745,42,Si,Media,Electricidad,Electricidad,96.7,Si,11,94,Moderado
+Hogar_1000,Departamento,1163,144,Si,Media,Solar,Otros,495.4,No,24,58,Moderado
+Hogar_1001,Casa,505,95,No,Muy Baja,Otros,Solar,819.5,No,22,84,Moderado
+Hogar_1002,Departamento,47,131,Si,Muy Baja,Electricidad,Electricidad,774.7,Si,17,2,Ineficiente
+Hogar_1003,Pyme,1398,80,No,Media,Solar,Otros,937.8,No,1,25,Moderado
+Hogar_1004,Comercio,1775,40,No,Muy Alta,Solar,Otros,142.5,No,18,11,Eficiente
+Hogar_1005,Comercio,708,132,No,Alta,Solar,Solar,376.4,No,23,1,Eficiente
+Hogar_1006,Comercio,1884,34,Si,Muy Alta,Electricidad,Electricidad,282.9,No,9,48,Moderado
+Hogar_1007,Comercio,1615,21,No,Media,Otros,Solar,861.0,Si,24,48,Moderado
+Hogar_1008,Comercio,931,149,No,Alta,Electricidad,Solar,488.9,No,2,10,Eficiente
+Hogar_1009,Casa,1859,111,No,Alta,Solar,Otros,27.8,No,24,81,Eficiente
+Hogar_1010,Departamento,345,10,Si,Media,Electricidad,Otros,708.3,Si,11,30,Moderado
+Hogar_1011,Casa,151,2,Si,Baja,Solar,Solar,389.3,Si,15,35,Moderado
+Hogar_1012,Pyme,302,136,Si,Media,Otros,Solar,531.6,No,11,19,Moderado
+Hogar_1013,Pyme,1253,59,Si,Alta,Electricidad,Otros,893.9,Si,7,53,Ineficiente
+Hogar_1014,Casa,219,75,Si,Baja,Electricidad,Electricidad,257.5,No,4,34,Eficiente
+Hogar_1015,Comercio,1730,86,No,Muy Alta,Solar,Electricidad,241.0,No,10,32,Eficiente
+Hogar_1016,Pyme,1713,13,No,Baja,Solar,Otros,263.9,Si,9,76,Moderado
+Hogar_1017,Casa,1596,17,Si,Alta,Solar,Electricidad,338.8,Si,2,81,Moderado
+Hogar_1018,Departamento,721,112,No,Media,Electricidad,Electricidad,108.2,Si,22,6,Moderado
+Hogar_1019,Pyme,1335,72,Si,Alta,Electricidad,Electricidad,697.5,Si,8,13,Ineficiente
+Hogar_1020,Casa,82,22,No,Media,Electricidad,Electricidad,208.2,No,11,86,Eficiente
+Hogar_1021,Comercio,1783,82,No,Muy Alta,Electricidad,Electricidad,926.2,Si,5,75,Ineficiente
+Hogar_1022,Casa,1352,124,No,Media,Otros,Electricidad,216.5,Si,18,64,Moderado
+Hogar_1023,Pyme,1212,68,No,Baja,Electricidad,Otros,256.4,No,15,7,Moderado
+Hogar_1024,Pyme,44,46,Si,Media,Electricidad,Solar,297.7,No,20,45,Moderado
+Hogar_1025,Pyme,1419,115,Si,Baja,Electricidad,Solar,768.8,Si,22,45,Ineficiente
+Hogar_1026,Departamento,289,29,No,Baja,Electricidad,Electricidad,428.2,No,23,85,Moderado
+Hogar_1027,Pyme,819,24,No,Media,Solar,Solar,819.5,Si,13,65,Moderado
+Hogar_1028,Comercio,138,111,Si,Alta,Solar,Solar,785.1,No,3,94,Moderado
+Hogar_1029,Casa,1537,24,Si,Media,Electricidad,Solar,929.6,Si,17,19,Moderado
+Hogar_1030,Comercio,1376,73,No,Media,Electricidad,Electricidad,756.8,Si,9,47,Ineficiente
+Hogar_1031,Casa,567,57,Si,Media,Electricidad,Electricidad,52.9,No,17,46,Moderado
+Hogar_1032,Departamento,672,93,No,Baja,Solar,Otros,837.4,Si,11,29,Moderado
+Hogar_1033,Casa,604,118,No,Muy Alta,Solar,Solar,938.1,Si,18,99,Moderado
+Hogar_1034,Casa,1114,126,Si,Media,Electricidad,Solar,993.7,No,7,84,Moderado
+Hogar_1035,Casa,1341,24,Si,Muy Alta,Solar,Solar,126.1,No,0,100,Eficiente
+Hogar_1036,Comercio,50,77,No,Baja,Solar,Electricidad,613.7,Si,13,61,Moderado
+Hogar_1037,Casa,1598,98,No,Baja,Otros,Solar,200.3,No,22,65,Eficiente
+Hogar_1038,Comercio,26,115,No,Alta,Otros,Electricidad,263.2,No,5,23,Eficiente
+Hogar_1039,Casa,936,47,Si,Media,Electricidad,Solar,745.8,No,13,95,Moderado
+Hogar_1040,Casa,1598,9,Si,Baja,Electricidad,Otros,977.7,Si,1,51,Ineficiente
+Hogar_1041,Departamento,166,98,No,Baja,Electricidad,Solar,595.3,No,8,63,Moderado
+Hogar_1042,Comercio,1793,10,No,Alta,Solar,Electricidad,850.7,No,11,99,Moderado
+Hogar_1043,Casa,673,84,Si,Media,Otros,Electricidad,9.9,No,4,22,Eficiente
+Hogar_1044,Departamento,1950,148,No,Media,Solar,Solar,37.6,Si,1,71,Eficiente
+Hogar_1045,Pyme,213,134,Si,Baja,Electricidad,Otros,597.1,No,18,33,Moderado
+Hogar_1046,Departamento,1177,125,Si,Media,Electricidad,Solar,389.6,Si,6,100,Moderado
+Hogar_1047,Casa,226,63,Si,Muy Alta,Electricidad,Solar,889.9,No,6,44,Moderado
+Hogar_1048,Casa,1176,1,Si,Baja,Electricidad,Electricidad,302.7,No,9,7,Moderado
+Hogar_1049,Pyme,282,75,No,Media,Solar,Solar,432.6,Si,16,91,Moderado
+Hogar_1050,Casa,1725,120,No,Alta,Electricidad,Solar,528.4,Si,13,2,Moderado
+Hogar_1051,Pyme,572,41,No,Baja,Electricidad,Otros,273.8,Si,10,17,Moderado
+Hogar_1052,Departamento,219,53,No,Media,Solar,Electricidad,908.6,No,19,65,Moderado
+Hogar_1053,Pyme,728,74,Si,Media,Electricidad,Solar,465.1,Si,5,58,Moderado
+Hogar_1054,Comercio,1153,15,Si,Media,Electricidad,Electricidad,424.7,No,7,30,Moderado
+Hogar_1055,Pyme,1584,17,Si,Media,Electricidad,Solar,849.9,No,18,86,Ineficiente
+Hogar_1056,Departamento,1314,89,Si,Media,Otros,Otros,312.7,No,18,92,Moderado
+Hogar_1057,Comercio,827,143,No,Media,Solar,Electricidad,817.6,No,23,97,Moderado
+Hogar_1058,Departamento,967,5,No,Media,Electricidad,Electricidad,123.2,Si,23,26,Moderado
+Hogar_1059,Departamento,1433,107,No,Media,Solar,Solar,183.6,No,23,35,Eficiente
+Hogar_1060,Departamento,1309,47,Si,Muy Baja,Electricidad,Solar,950.9,Si,16,63,Ineficiente
+Hogar_1061,Pyme,439,41,Si,Media,Solar,Electricidad,842.6,Si,23,75,Ineficiente
+Hogar_1062,Pyme,1407,75,No,Muy Alta,Solar,Electricidad,388.5,Si,23,71,Moderado
+Hogar_1063,Comercio,1124,76,Si,Media,Otros,Solar,638.8,No,17,28,Moderado
+Hogar_1064,Departamento,1404,131,No,Alta,Solar,Otros,943.0,No,11,25,Moderado
+Hogar_1065,Departamento,1633,129,No,Media,Otros,Electricidad,212.6,Si,8,61,Moderado
+Hogar_1066,Comercio,1820,58,Si,Alta,Otros,Otros,60.0,No,22,31,Eficiente
+Hogar_1067,Casa,935,26,No,Muy Alta,Otros,Electricidad,537.9,No,23,54,Moderado
+Hogar_1068,Casa,213,78,No,Baja,Solar,Electricidad,143.5,Si,15,67,Moderado
+Hogar_1069,Departamento,1734,71,Si,Media,Electricidad,Electricidad,188.1,No,17,97,Moderado
+Hogar_1070,Casa,1339,6,No,Media,Electricidad,Otros,891.6,Si,15,51,Moderado
+Hogar_1071,Casa,70,110,Si,Media,Electricidad,Electricidad,8.4,Si,15,58,Moderado
+Hogar_1072,Casa,1622,118,Si,Baja,Electricidad,Solar,817.0,No,3,34,Moderado
+Hogar_1073,Casa,108,62,No,Alta,Solar,Solar,517.4,Si,22,59,Eficiente
+Hogar_1074,Casa,1172,123,No,Muy Baja,Solar,Otros,559.7,Si,21,21,Moderado
+Hogar_1075,Pyme,383,11,Si,Media,Otros,Otros,672.1,No,6,56,Moderado
+Hogar_1076,Departamento,1577,140,Si,Media,Electricidad,Solar,432.0,No,0,37,Moderado
+Hogar_1077,Departamento,1115,42,No,Baja,Electricidad,Otros,116.5,No,23,64,Moderado
+Hogar_1078,Comercio,961,16,No,Muy Alta,Solar,Solar,103.7,Si,22,19,Eficiente
+Hogar_1079,Casa,1706,62,No,Alta,Electricidad,Otros,754.6,Si,19,85,Ineficiente
+Hogar_1080,Pyme,400,119,Si,Media,Electricidad,Electricidad,221.8,No,0,78,Moderado
+Hogar_1081,Comercio,187,35,No,Media,Otros,Electricidad,29.1,Si,7,74,Moderado
+Hogar_1082,Casa,1795,7,Si,Baja,Solar,Solar,979.6,Si,22,53,Moderado
+Hogar_1083,Departamento,1429,68,No,Alta,Electricidad,Electricidad,980.4,Si,7,71,Ineficiente
+Hogar_1084,Pyme,1705,89,Si,Baja,Otros,Electricidad,378.8,No,9,93,Ineficiente
+Hogar_1085,Pyme,1407,35,No,Media,Solar,Solar,26.5,Si,0,63,Eficiente
+Hogar_1086,Departamento,1237,27,Si,Alta,Solar,Electricidad,727.5,Si,20,62,Ineficiente
+Hogar_1087,Departamento,347,117,No,Baja,Otros,Solar,831.2,Si,24,72,Ineficiente
+Hogar_1088,Casa,475,92,Si,Alta,Electricidad,Electricidad,125.9,Si,20,77,Moderado
+Hogar_1089,Pyme,1523,75,Si,Muy Baja,Solar,Otros,136.3,Si,13,19,Moderado
+Hogar_1090,Casa,1062,100,No,Muy Alta,Electricidad,Otros,822.4,Si,13,75,Moderado
+Hogar_1091,Pyme,209,150,No,Muy Baja,Electricidad,Otros,922.0,Si,9,2,Ineficiente
+Hogar_1092,Departamento,136,143,No,Media,Otros,Electricidad,791.0,Si,18,6,Ineficiente
+Hogar_1093,Departamento,1976,13,Si,Baja,Solar,Solar,201.5,Si,24,29,Moderado
+Hogar_1094,Departamento,533,70,No,Alta,Solar,Otros,412.1,Si,15,41,Moderado
+Hogar_1095,Casa,1339,123,No,Media,Otros,Otros,601.2,Si,8,51,Moderado
+Hogar_1096,Casa,320,124,Si,Baja,Otros,Solar,161.1,Si,19,5,Moderado
+Hogar_1097,Casa,1500,36,Si,Media,Otros,Electricidad,211.4,Si,15,41,Moderado
+Hogar_1098,Casa,929,28,No,Media,Solar,Solar,283.6,Si,19,62,Eficiente
+Hogar_1099,Comercio,1264,142,No,Media,Electricidad,Solar,510.0,No,7,30,Eficiente
+Hogar_1100,Departamento,999,18,No,Muy Alta,Electricidad,Electricidad,511.3,Si,6,62,Moderado
+Hogar_1101,Casa,657,105,No,Media,Electricidad,Solar,814.5,No,10,100,Moderado
+Hogar_1102,Pyme,1943,20,No,Baja,Electricidad,Otros,753.3,Si,20,27,Ineficiente
+Hogar_1103,Pyme,1616,63,Si,Muy Baja,Solar,Solar,913.8,Si,5,50,Ineficiente
+Hogar_1104,Pyme,1076,26,No,Media,Solar,Solar,833.1,No,14,82,Moderado
+Hogar_1105,Pyme,1679,54,No,Media,Otros,Solar,254.6,Si,18,52,Moderado
+Hogar_1106,Casa,758,28,Si,Media,Solar,Otros,332.0,Si,13,49,Eficiente
+Hogar_1107,Departamento,1280,147,No,Baja,Solar,Solar,500.9,No,14,62,Eficiente
+Hogar_1108,Comercio,1614,24,Si,Media,Electricidad,Solar,15.3,Si,5,100,Moderado
+Hogar_1109,Comercio,1856,69,No,Muy Alta,Electricidad,Solar,904.0,Si,23,60,Moderado
+Hogar_1110,Casa,346,62,Si,Baja,Electricidad,Solar,45.3,Si,9,80,Moderado
+Hogar_1111,Comercio,938,129,Si,Media,Solar,Solar,323.1,No,13,54,Eficiente
+Hogar_1112,Casa,1282,149,Si,Alta,Electricidad,Solar,569.6,No,15,5,Eficiente
+Hogar_1113,Casa,1719,15,No,Alta,Solar,Solar,518.3,Si,12,9,Eficiente
+Hogar_1114,Departamento,462,145,Si,Baja,Solar,Solar,654.8,Si,10,34,Moderado
+Hogar_1115,Departamento,806,99,No,Media,Electricidad,Electricidad,528.0,No,24,98,Moderado
+Hogar_1116,Departamento,1582,29,No,Alta,Electricidad,Electricidad,229.8,Si,2,36,Moderado
+Hogar_1117,Casa,1452,44,No,Muy Baja,Solar,Electricidad,201.9,Si,7,95,Moderado
+Hogar_1118,Pyme,1102,18,Si,Media,Electricidad,Otros,907.3,No,2,20,Moderado
+Hogar_1119,Casa,1836,33,No,Baja,Solar,Electricidad,264.7,Si,1,81,Moderado
+Hogar_1120,Casa,1362,140,Si,Media,Solar,Electricidad,281.7,No,20,84,Moderado
+Hogar_1121,Pyme,1330,61,No,Media,Solar,Electricidad,413.5,No,13,92,Moderado
+Hogar_1122,Pyme,751,117,Si,Alta,Otros,Solar,140.3,No,19,85,Moderado
+Hogar_1123,Pyme,56,99,No,Muy Baja,Solar,Electricidad,507.8,Si,20,83,Ineficiente
+Hogar_1124,Comercio,362,21,No,Media,Otros,Solar,665.4,Si,21,63,Moderado
+Hogar_1125,Comercio,208,110,No,Media,Electricidad,Electricidad,786.2,Si,14,67,Ineficiente
+Hogar_1126,Departamento,1072,72,No,Media,Solar,Otros,711.7,Si,2,30,Moderado
+Hogar_1127,Casa,569,146,Si,Alta,Electricidad,Otros,148.5,Si,0,69,Moderado
+Hogar_1128,Departamento,1495,37,Si,Media,Electricidad,Otros,456.6,Si,14,70,Ineficiente
+Hogar_1129,Departamento,1123,69,No,Muy Alta,Electricidad,Electricidad,39.5,Si,19,3,Moderado
+Hogar_1130,Casa,1059,115,No,Media,Solar,Solar,18.8,Si,21,49,Eficiente
+Hogar_1131,Comercio,1533,78,Si,Media,Electricidad,Solar,440.7,Si,1,42,Moderado
+Hogar_1132,Departamento,1505,147,No,Alta,Electricidad,Electricidad,253.7,Si,17,24,Moderado
+Hogar_1133,Casa,1615,8,No,Baja,Otros,Electricidad,683.7,Si,0,44,Ineficiente
+Hogar_1134,Casa,1613,31,No,Muy Baja,Otros,Electricidad,724.5,Si,8,1,Moderado
+Hogar_1135,Comercio,685,131,Si,Alta,Solar,Solar,895.5,No,2,54,Moderado
+Hogar_1136,Casa,185,49,Si,Media,Solar,Electricidad,760.9,No,1,52,Moderado
+Hogar_1137,Pyme,1931,81,Si,Muy Alta,Otros,Solar,49.2,Si,3,36,Moderado
+Hogar_1138,Departamento,1063,4,No,Muy Alta,Solar,Solar,372.3,Si,15,79,Eficiente
+Hogar_1139,Departamento,1227,147,No,Media,Electricidad,Solar,273.8,Si,21,38,Moderado
+Hogar_1140,Departamento,437,86,No,Media,Otros,Otros,386.7,Si,0,44,Moderado
+Hogar_1141,Comercio,1927,125,No,Media,Solar,Solar,160.9,Si,8,82,Moderado
+Hogar_1142,Casa,1037,74,No,Baja,Electricidad,Solar,98.6,No,24,87,Eficiente
+Hogar_1143,Comercio,78,21,No,Alta,Solar,Solar,521.5,Si,7,47,Eficiente
+Hogar_1144,Departamento,433,67,No,Alta,Electricidad,Electricidad,720.7,No,5,29,Moderado
+Hogar_1145,Casa,872,43,Si,Media,Otros,Electricidad,702.2,Si,19,51,Ineficiente
+Hogar_1146,Pyme,1071,33,No,Muy Baja,Electricidad,Otros,451.5,Si,17,41,Ineficiente
+Hogar_1147,Comercio,1079,76,No,Baja,Otros,Otros,522.8,Si,15,86,Moderado
+Hogar_1148,Comercio,728,41,Si,Baja,Otros,Solar,516.8,No,7,64,Moderado
+Hogar_1149,Pyme,285,136,Si,Alta,Solar,Electricidad,691.9,Si,22,88,Ineficiente
+Hogar_1150,Pyme,1254,105,Si,Muy Baja,Solar,Electricidad,48.9,Si,3,48,Moderado
+Hogar_1151,Comercio,1108,94,No,Alta,Electricidad,Electricidad,710.2,No,2,77,Moderado
+Hogar_1152,Comercio,1520,134,No,Media,Electricidad,Otros,582.6,Si,14,97,Ineficiente
+Hogar_1153,Comercio,801,67,No,Alta,Electricidad,Solar,198.9,Si,5,22,Eficiente
+Hogar_1154,Comercio,1515,146,No,Media,Solar,Otros,50.0,Si,0,99,Moderado
+Hogar_1155,Departamento,1061,127,Si,Media,Solar,Solar,109.4,Si,17,17,Eficiente
+Hogar_1156,Comercio,1680,84,Si,Media,Electricidad,Electricidad,525.2,Si,22,86,Ineficiente
+Hogar_1157,Casa,1976,82,Si,Alta,Electricidad,Electricidad,758.7,Si,10,5,Ineficiente
+Hogar_1158,Pyme,1339,94,No,Media,Otros,Electricidad,335.3,Si,2,61,Moderado
+Hogar_1159,Pyme,875,31,Si,Media,Electricidad,Solar,379.7,Si,12,89,Moderado
+Hogar_1160,Casa,1809,65,No,Media,Otros,Electricidad,934.2,No,16,6,Moderado
+Hogar_1161,Comercio,379,115,No,Muy Baja,Electricidad,Solar,213.8,No,17,53,Moderado
+Hogar_1162,Casa,1688,137,No,Media,Solar,Solar,104.6,Si,13,81,Eficiente
+Hogar_1163,Casa,1124,129,Si,Muy Alta,Electricidad,Electricidad,344.1,Si,24,95,Ineficiente
+Hogar_1164,Comercio,898,59,No,Muy Baja,Solar,Electricidad,746.2,Si,6,17,Moderado
+Hogar_1165,Casa,1765,16,No,Baja,Solar,Electricidad,626.5,Si,6,59,Moderado
+Hogar_1166,Comercio,1610,95,Si,Baja,Electricidad,Solar,416.4,Si,13,97,Ineficiente
+Hogar_1167,Comercio,1640,143,No,Media,Solar,Solar,964.8,Si,23,39,Moderado
+Hogar_1168,Departamento,1490,15,No,Muy Baja,Solar,Electricidad,735.3,No,14,54,Moderado
+Hogar_1169,Casa,1016,45,Si,Media,Solar,Otros,62.8,Si,11,48,Moderado
+Hogar_1170,Casa,1290,106,No,Muy Baja,Solar,Solar,744.9,No,11,37,Moderado
+Hogar_1171,Departamento,1043,87,Si,Muy Baja,Electricidad,Solar,25.0,Si,7,48,Moderado
+Hogar_1172,Pyme,1910,128,No,Alta,Solar,Solar,650.7,Si,15,68,Moderado
+Hogar_1173,Departamento,1203,138,Si,Baja,Otros,Otros,211.3,Si,8,78,Moderado
+Hogar_1174,Casa,1835,118,No,Muy Alta,Otros,Solar,696.7,Si,1,77,Moderado
+Hogar_1175,Departamento,1145,84,Si,Muy Baja,Otros,Electricidad,310.5,Si,13,27,Moderado
+Hogar_1176,Departamento,1775,3,No,Media,Electricidad,Electricidad,873.1,Si,23,88,Ineficiente
+Hogar_1177,Comercio,319,70,No,Muy Baja,Solar,Solar,337.6,No,23,27,Eficiente
+Hogar_1178,Casa,234,110,No,Media,Solar,Solar,620.1,Si,15,72,Moderado
+Hogar_1179,Comercio,1392,49,No,Muy Alta,Electricidad,Solar,286.6,Si,4,63,Eficiente
+Hogar_1180,Departamento,1137,139,No,Muy Alta,Otros,Otros,917.3,No,4,52,Moderado
+Hogar_1181,Pyme,843,94,Si,Muy Baja,Solar,Otros,781.2,No,19,47,Ineficiente
+Hogar_1182,Casa,1825,91,Si,Media,Electricidad,Electricidad,244.1,No,20,21,Moderado
+Hogar_1183,Departamento,1986,64,No,Media,Electricidad,Electricidad,948.8,Si,17,57,Ineficiente
+Hogar_1184,Pyme,415,46,Si,Baja,Otros,Electricidad,357.8,Si,17,75,Ineficiente
+Hogar_1185,Casa,350,105,Si,Baja,Electricidad,Solar,652.2,Si,4,95,Moderado
+Hogar_1186,Pyme,965,129,No,Muy Alta,Electricidad,Electricidad,743.1,Si,10,91,Ineficiente
+Hogar_1187,Comercio,914,105,Si,Muy Alta,Electricidad,Electricidad,23.9,Si,12,42,Moderado
+Hogar_1188,Casa,1881,23,Si,Muy Alta,Electricidad,Electricidad,959.0,Si,2,48,Ineficiente
+Hogar_1189,Casa,1206,3,No,Alta,Otros,Electricidad,345.1,No,16,27,Eficiente
+Hogar_1190,Comercio,693,107,No,Media,Solar,Electricidad,190.6,No,24,72,Moderado
+Hogar_1191,Casa,1700,18,No,Baja,Solar,Electricidad,850.9,Si,17,33,Moderado
+Hogar_1192,Departamento,658,39,No,Baja,Otros,Solar,703.2,Si,13,76,Moderado
+Hogar_1193,Casa,602,49,No,Muy Baja,Solar,Electricidad,87.7,Si,11,35,Moderado
+Hogar_1194,Departamento,1668,74,No,Media,Electricidad,Electricidad,117.9,Si,13,98,Moderado
+Hogar_1195,Casa,1708,11,Si,Alta,Solar,Otros,715.5,Si,17,16,Moderado
+Hogar_1196,Pyme,162,26,Si,Alta,Electricidad,Otros,75.7,No,19,36,Moderado
+Hogar_1197,Pyme,1972,112,No,Muy Alta,Electricidad,Electricidad,917.3,Si,1,66,Ineficiente
+Hogar_1198,Pyme,1723,48,No,Alta,Solar,Electricidad,741.8,Si,6,76,Ineficiente
+Hogar_1199,Comercio,453,143,No,Muy Alta,Otros,Solar,336.2,Si,14,91,Moderado
+Hogar_1200,Casa,1501,129,Si,Baja,Solar,Electricidad,363.6,No,9,56,Moderado
+Hogar_1201,Comercio,637,59,Si,Alta,Otros,Electricidad,507.0,No,14,17,Moderado
+Hogar_1202,Casa,1899,29,No,Media,Solar,Electricidad,361.6,No,16,20,Eficiente
+Hogar_1203,Casa,936,83,Si,Baja,Solar,Electricidad,783.7,Si,10,85,Ineficiente
+Hogar_1204,Casa,844,27,No,Muy Alta,Otros,Solar,974.8,Si,1,94,Moderado
+Hogar_1205,Departamento,166,24,Si,Muy Alta,Electricidad,Otros,584.9,Si,20,84,Moderado
+Hogar_1206,Comercio,1132,95,Si,Baja,Electricidad,Solar,446.6,Si,17,8,Moderado
+Hogar_1207,Comercio,202,124,No,Muy Baja,Solar,Solar,223.6,No,24,18,Eficiente
+Hogar_1208,Departamento,223,9,No,Media,Solar,Electricidad,653.8,Si,3,18,Moderado
+Hogar_1209,Casa,649,41,Si,Media,Electricidad,Solar,685.9,Si,8,18,Moderado
+Hogar_1210,Pyme,1617,39,Si,Muy Alta,Electricidad,Electricidad,685.5,Si,16,2,Ineficiente
+Hogar_1211,Departamento,716,76,No,Baja,Electricidad,Electricidad,28.0,Si,16,76,Moderado
+Hogar_1212,Departamento,1470,104,Si,Muy Baja,Solar,Solar,899.2,Si,16,96,Ineficiente
+Hogar_1213,Casa,426,117,No,Baja,Otros,Otros,338.8,Si,15,72,Moderado
+Hogar_1214,Comercio,1747,41,No,Muy Baja,Otros,Electricidad,744.4,Si,19,51,Ineficiente
+Hogar_1215,Comercio,496,46,Si,Muy Baja,Solar,Otros,760.0,Si,24,10,Ineficiente
+Hogar_1216,Casa,243,21,No,Muy Alta,Otros,Electricidad,650.9,No,7,75,Eficiente
+Hogar_1217,Casa,1974,106,Si,Media,Solar,Electricidad,395.5,Si,22,14,Moderado
+Hogar_1218,Comercio,954,26,No,Media,Electricidad,Electricidad,608.8,Si,14,26,Moderado
+Hogar_1219,Comercio,1877,40,Si,Muy Baja,Electricidad,Solar,41.2,Si,0,47,Moderado
+Hogar_1220,Casa,1778,79,No,Baja,Solar,Otros,762.1,No,18,30,Moderado
+Hogar_1221,Pyme,657,88,Si,Alta,Electricidad,Solar,100.5,No,24,56,Eficiente
+Hogar_1222,Casa,976,65,Si,Media,Solar,Electricidad,397.4,Si,14,42,Moderado
+Hogar_1223,Departamento,931,11,No,Alta,Solar,Electricidad,104.5,Si,8,4,Eficiente
+Hogar_1224,Pyme,200,72,No,Media,Electricidad,Solar,837.2,No,4,11,Moderado
+Hogar_1225,Departamento,48,75,No,Baja,Otros,Electricidad,550.8,No,15,24,Moderado
+Hogar_1226,Departamento,1774,89,Si,Media,Solar,Electricidad,691.3,Si,12,86,Ineficiente
+Hogar_1227,Departamento,1966,9,No,Baja,Electricidad,Otros,682.9,Si,15,67,Ineficiente
+Hogar_1228,Casa,260,95,Si,Alta,Solar,Solar,841.8,Si,21,37,Moderado
+Hogar_1229,Pyme,1062,19,Si,Baja,Solar,Electricidad,133.4,No,10,2,Eficiente
+Hogar_1230,Departamento,1150,38,No,Media,Electricidad,Electricidad,660.1,Si,12,12,Moderado
+Hogar_1231,Pyme,954,59,Si,Baja,Electricidad,Electricidad,575.6,Si,5,21,Ineficiente
+Hogar_1232,Casa,1585,65,No,Media,Solar,Solar,31.9,Si,19,69,Eficiente
+Hogar_1233,Casa,1925,64,No,Muy Alta,Otros,Otros,202.2,Si,16,71,Moderado
+Hogar_1234,Casa,548,123,No,Media,Solar,Solar,268.3,No,4,64,Eficiente
+Hogar_1235,Comercio,1834,129,No,Media,Otros,Electricidad,73.5,No,16,68,Moderado
+Hogar_1236,Departamento,1501,56,No,Muy Alta,Otros,Electricidad,355.4,Si,0,43,Moderado
+Hogar_1237,Pyme,456,77,Si,Media,Electricidad,Otros,28.2,No,4,54,Moderado
+Hogar_1238,Departamento,818,28,No,Baja,Solar,Otros,553.6,Si,4,100,Moderado
+Hogar_1239,Pyme,1655,14,Si,Baja,Electricidad,Solar,212.3,No,6,62,Moderado
+Hogar_1240,Casa,1762,11,Si,Alta,Electricidad,Electricidad,287.7,No,15,86,Moderado
+Hogar_1241,Pyme,558,100,No,Alta,Solar,Solar,910.6,No,17,93,Moderado
+Hogar_1242,Comercio,1901,83,No,Baja,Solar,Otros,503.3,No,5,73,Moderado
+Hogar_1243,Comercio,1004,124,No,Baja,Electricidad,Solar,269.7,Si,1,90,Moderado
+Hogar_1244,Comercio,1772,102,Si,Muy Alta,Otros,Solar,598.9,No,12,12,Eficiente
+Hogar_1245,Comercio,1701,23,No,Muy Baja,Solar,Electricidad,202.5,Si,9,1,Moderado
+Hogar_1246,Departamento,1342,148,Si,Media,Otros,Electricidad,75.3,Si,20,72,Moderado
+Hogar_1247,Casa,835,137,No,Muy Baja,Electricidad,Electricidad,21.9,Si,19,33,Moderado
+Hogar_1248,Casa,938,109,No,Alta,Otros,Otros,951.6,Si,10,64,Moderado
+Hogar_1249,Pyme,1150,77,No,Muy Baja,Electricidad,Solar,724.9,No,20,68,Ineficiente
+Hogar_1250,Departamento,1551,100,Si,Media,Electricidad,Solar,800.1,Si,1,14,Moderado
+Hogar_1251,Comercio,1353,145,Si,Muy Baja,Solar,Electricidad,980.9,No,7,93,Ineficiente
+Hogar_1252,Departamento,896,141,Si,Media,Solar,Otros,931.7,No,23,14,Moderado
+Hogar_1253,Casa,565,127,No,Alta,Solar,Otros,737.2,No,21,9,Moderado
+Hogar_1254,Casa,1049,57,No,Media,Solar,Electricidad,694.3,Si,18,73,Ineficiente
+Hogar_1255,Comercio,1602,75,Si,Media,Electricidad,Otros,337.5,Si,19,26,Ineficiente
+Hogar_1256,Departamento,1404,149,No,Media,Solar,Electricidad,104.9,Si,16,49,Moderado
+Hogar_1257,Casa,1352,35,No,Baja,Electricidad,Electricidad,574.1,Si,15,17,Moderado
+Hogar_1258,Departamento,1545,21,No,Alta,Solar,Electricidad,576.7,No,24,68,Moderado
+Hogar_1259,Casa,1707,126,No,Baja,Electricidad,Otros,952.3,No,9,60,Moderado
+Hogar_1260,Departamento,1817,79,No,Alta,Otros,Otros,443.1,Si,4,3,Moderado
+Hogar_1261,Casa,252,99,Si,Baja,Solar,Electricidad,691.1,No,13,93,Moderado
+Hogar_1262,Comercio,1285,95,Si,Baja,Solar,Solar,575.4,Si,23,25,Moderado
+Hogar_1263,Casa,898,147,Si,Baja,Otros,Solar,177.6,Si,18,21,Moderado
+Hogar_1264,Departamento,917,17,No,Media,Solar,Otros,592.5,Si,3,12,Eficiente
+Hogar_1265,Casa,1504,37,No,Media,Electricidad,Electricidad,540.6,Si,19,54,Moderado
+Hogar_1266,Casa,1062,150,No,Alta,Electricidad,Solar,494.4,No,15,1,Eficiente
+Hogar_1267,Departamento,235,108,Si,Baja,Solar,Solar,513.9,No,23,1,Eficiente
+Hogar_1268,Departamento,766,122,No,Muy Baja,Electricidad,Electricidad,164.8,No,14,45,Moderado
+Hogar_1269,Departamento,422,143,Si,Alta,Solar,Electricidad,464.0,Si,8,46,Moderado
+Hogar_1270,Casa,1149,148,Si,Alta,Electricidad,Solar,606.0,Si,2,48,Moderado
+Hogar_1271,Comercio,56,103,No,Muy Baja,Electricidad,Electricidad,490.0,Si,22,7,Ineficiente
+Hogar_1272,Pyme,923,139,No,Media,Solar,Otros,489.2,No,8,10,Eficiente
+Hogar_1273,Comercio,1577,143,No,Media,Otros,Electricidad,78.4,Si,17,15,Moderado
+Hogar_1274,Casa,674,80,No,Alta,Solar,Otros,191.6,Si,3,40,Eficiente
+Hogar_1275,Departamento,354,86,Si,Alta,Otros,Electricidad,321.7,No,18,11,Eficiente
+Hogar_1276,Casa,1215,141,Si,Alta,Otros,Electricidad,419.9,No,23,56,Moderado
+Hogar_1277,Casa,1508,60,Si,Alta,Electricidad,Electricidad,594.3,No,3,46,Moderado
+Hogar_1278,Pyme,1871,45,No,Baja,Electricidad,Solar,863.5,No,8,45,Moderado
+Hogar_1279,Casa,977,31,No,Alta,Solar,Solar,160.0,Si,0,87,Eficiente
+Hogar_1280,Departamento,1149,14,Si,Media,Otros,Electricidad,16.1,Si,0,13,Moderado
+Hogar_1281,Departamento,646,43,No,Muy Baja,Solar,Electricidad,449.8,Si,19,27,Moderado
+Hogar_1282,Comercio,1904,144,Si,Media,Otros,Solar,432.7,Si,18,81,Ineficiente
+Hogar_1283,Departamento,1222,53,Si,Muy Alta,Electricidad,Solar,552.3,Si,2,50,Moderado
+Hogar_1284,Casa,1798,43,No,Muy Alta,Electricidad,Solar,833.4,Si,9,61,Moderado
+Hogar_1285,Casa,187,97,Si,Muy Baja,Solar,Electricidad,802.6,No,11,13,Moderado
+Hogar_1286,Departamento,1954,4,No,Alta,Solar,Solar,100.9,Si,17,12,Eficiente
+Hogar_1287,Casa,1777,108,No,Alta,Electricidad,Solar,934.1,Si,13,29,Moderado
+Hogar_1288,Departamento,801,26,No,Baja,Electricidad,Otros,111.3,No,9,85,Moderado
+Hogar_1289,Casa,1312,115,Si,Media,Electricidad,Solar,634.9,Si,9,84,Moderado
+Hogar_1290,Casa,1853,86,Si,Alta,Solar,Electricidad,672.7,No,17,20,Moderado
+Hogar_1291,Departamento,299,103,No,Media,Otros,Electricidad,680.2,No,23,31,Moderado
+Hogar_1292,Casa,1052,122,Si,Muy Baja,Otros,Solar,266.1,No,0,8,Eficiente
+Hogar_1293,Departamento,1077,78,Si,Alta,Solar,Solar,331.0,Si,14,24,Eficiente
+Hogar_1294,Comercio,351,42,No,Muy Alta,Solar,Otros,549.1,No,7,75,Eficiente
+Hogar_1295,Comercio,965,96,No,Media,Solar,Solar,200.4,Si,2,39,Eficiente
+Hogar_1296,Casa,1198,30,No,Alta,Electricidad,Solar,21.3,No,17,33,Eficiente
+Hogar_1297,Casa,565,98,Si,Media,Electricidad,Electricidad,562.6,Si,8,42,Moderado
+Hogar_1298,Casa,513,16,No,Baja,Electricidad,Electricidad,465.8,Si,15,15,Moderado
+Hogar_1299,Departamento,847,82,Si,Media,Otros,Electricidad,657.1,No,20,68,Moderado
+Hogar_1300,Comercio,1487,109,Si,Baja,Otros,Electricidad,147.6,Si,14,65,Moderado
+Hogar_1301,Casa,1114,31,No,Alta,Solar,Solar,841.1,No,4,32,Eficiente
+Hogar_1302,Pyme,381,140,No,Baja,Solar,Electricidad,147.1,Si,12,11,Moderado
+Hogar_1303,Casa,1582,34,No,Media,Electricidad,Electricidad,891.5,No,21,94,Ineficiente
+Hogar_1304,Departamento,1301,132,No,Media,Solar,Electricidad,450.1,No,19,37,Moderado
+Hogar_1305,Comercio,260,28,No,Muy Alta,Solar,Electricidad,550.3,Si,6,19,Eficiente
+Hogar_1306,Pyme,252,69,No,Baja,Solar,Electricidad,896.7,Si,15,51,Ineficiente
+Hogar_1307,Comercio,1574,94,No,Muy Baja,Electricidad,Solar,300.6,No,6,100,Moderado
+Hogar_1308,Comercio,1362,21,No,Baja,Otros,Electricidad,182.6,No,24,34,Moderado
+Hogar_1309,Casa,74,68,No,Alta,Solar,Solar,446.3,Si,21,71,Moderado
+Hogar_1310,Comercio,143,88,No,Baja,Otros,Solar,245.1,No,15,60,Eficiente
+Hogar_1311,Casa,79,71,No,Baja,Otros,Otros,528.3,Si,12,84,Moderado
+Hogar_1312,Pyme,1699,128,Si,Baja,Otros,Electricidad,276.0,Si,16,53,Moderado
+Hogar_1313,Departamento,590,86,No,Alta,Electricidad,Electricidad,864.6,Si,8,12,Moderado
+Hogar_1314,Comercio,1093,95,Si,Muy Baja,Electricidad,Electricidad,607.7,No,11,62,Ineficiente
+Hogar_1315,Departamento,1864,74,No,Baja,Electricidad,Solar,1.2,No,12,96,Moderado
+Hogar_1316,Departamento,78,53,Si,Baja,Electricidad,Otros,805.7,Si,8,66,Ineficiente
+Hogar_1317,Departamento,1635,87,No,Media,Solar,Solar,330.9,Si,4,86,Eficiente
+Hogar_1318,Comercio,583,53,No,Alta,Solar,Solar,320.9,No,6,48,Eficiente
+Hogar_1319,Casa,1574,15,Si,Media,Solar,Electricidad,383.7,Si,0,40,Moderado
+Hogar_1320,Casa,1726,98,Si,Muy Alta,Electricidad,Solar,630.6,No,3,24,Eficiente
+Hogar_1321,Casa,1151,19,Si,Muy Alta,Otros,Electricidad,442.6,Si,3,50,Moderado
+Hogar_1322,Casa,1841,45,No,Media,Electricidad,Solar,629.0,Si,15,95,Moderado
+Hogar_1323,Pyme,1819,126,Si,Alta,Electricidad,Solar,147.6,Si,4,68,Moderado
+Hogar_1324,Casa,1898,57,Si,Alta,Solar,Electricidad,970.2,No,21,88,Moderado
+Hogar_1325,Pyme,893,110,Si,Muy Alta,Solar,Electricidad,729.9,No,3,43,Moderado
+Hogar_1326,Casa,423,128,No,Media,Electricidad,Otros,251.0,Si,5,17,Eficiente
+Hogar_1327,Casa,1187,80,Si,Media,Electricidad,Electricidad,724.4,Si,22,83,Ineficiente
+Hogar_1328,Comercio,700,83,No,Media,Solar,Electricidad,575.5,Si,2,55,Moderado
+Hogar_1329,Comercio,1970,69,Si,Alta,Electricidad,Electricidad,110.1,No,24,34,Moderado
+Hogar_1330,Departamento,412,7,No,Baja,Electricidad,Electricidad,179.0,No,7,97,Moderado
+Hogar_1331,Departamento,136,28,Si,Baja,Solar,Solar,42.3,No,16,70,Eficiente
+Hogar_1332,Comercio,639,111,No,Media,Electricidad,Solar,809.4,No,17,60,Moderado
+Hogar_1333,Casa,42,130,Si,Baja,Electricidad,Solar,552.2,No,17,51,Moderado
+Hogar_1334,Pyme,1829,107,No,Media,Solar,Electricidad,317.4,Si,24,100,Moderado
+Hogar_1335,Pyme,1231,108,No,Baja,Otros,Solar,127.2,Si,11,77,Moderado
+Hogar_1336,Comercio,909,19,No,Baja,Otros,Otros,484.6,No,24,73,Moderado
+Hogar_1337,Casa,1585,72,No,Muy Alta,Electricidad,Electricidad,525.7,Si,24,35,Moderado
+Hogar_1338,Comercio,566,3,No,Media,Electricidad,Electricidad,702.2,Si,0,34,Moderado
+Hogar_1339,Casa,196,18,No,Alta,Electricidad,Otros,970.0,Si,22,16,Moderado
+Hogar_1340,Casa,434,101,No,Muy Baja,Electricidad,Electricidad,435.5,Si,11,82,Ineficiente
+Hogar_1341,Casa,765,140,Si,Baja,Solar,Electricidad,406.6,Si,10,18,Moderado
+Hogar_1342,Departamento,1427,140,No,Alta,Solar,Electricidad,370.6,Si,12,38,Moderado
+Hogar_1343,Pyme,1237,85,No,Alta,Solar,Electricidad,827.1,Si,2,43,Moderado
+Hogar_1344,Comercio,883,51,Si,Media,Electricidad,Electricidad,157.2,Si,24,32,Moderado
+Hogar_1345,Comercio,255,110,Si,Muy Alta,Electricidad,Electricidad,344.5,Si,7,7,Moderado
+Hogar_1346,Departamento,1882,108,Si,Muy Alta,Solar,Solar,725.2,No,2,87,Moderado
+Hogar_1347,Casa,1901,85,No,Muy Alta,Electricidad,Electricidad,16.7,Si,16,87,Moderado
+Hogar_1348,Departamento,144,42,Si,Media,Solar,Otros,290.1,No,24,46,Eficiente
+Hogar_1349,Pyme,1205,41,Si,Baja,Solar,Electricidad,641.8,No,12,61,Moderado
+Hogar_1350,Casa,809,89,Si,Media,Solar,Otros,186.8,No,9,18,Eficiente
+Hogar_1351,Pyme,1736,114,No,Media,Solar,Otros,303.4,No,16,71,Moderado
+Hogar_1352,Departamento,490,25,No,Baja,Solar,Solar,486.6,Si,2,40,Eficiente
+Hogar_1353,Departamento,129,150,Si,Alta,Electricidad,Otros,422.6,Si,12,88,Moderado
+Hogar_1354,Comercio,1653,42,Si,Muy Baja,Electricidad,Solar,106.9,No,21,78,Moderado
+Hogar_1355,Departamento,723,76,Si,Media,Solar,Otros,938.3,Si,5,50,Moderado
+Hogar_1356,Pyme,1844,136,No,Baja,Electricidad,Electricidad,45.2,Si,13,5,Moderado
+Hogar_1357,Pyme,1551,19,No,Alta,Solar,Electricidad,750.0,Si,9,54,Moderado
+Hogar_1358,Departamento,1742,38,No,Baja,Solar,Solar,72.4,No,19,86,Eficiente
+Hogar_1359,Casa,1731,11,Si,Alta,Otros,Electricidad,467.8,Si,15,58,Moderado
+Hogar_1360,Departamento,1748,10,No,Media,Otros,Otros,176.2,Si,17,22,Moderado
+Hogar_1361,Pyme,200,41,No,Alta,Electricidad,Otros,142.0,No,12,74,Eficiente
+Hogar_1362,Casa,1783,10,Si,Muy Alta,Otros,Electricidad,126.8,No,9,90,Eficiente
+Hogar_1363,Departamento,770,37,Si,Media,Solar,Otros,453.3,Si,5,79,Moderado
+Hogar_1364,Departamento,1723,97,Si,Muy Alta,Solar,Electricidad,516.0,No,9,38,Moderado
+Hogar_1365,Comercio,1470,18,No,Muy Baja,Electricidad,Electricidad,134.3,Si,4,49,Moderado
+Hogar_1366,Casa,1183,133,No,Baja,Otros,Solar,979.4,No,5,1,Moderado
+Hogar_1367,Comercio,1440,115,No,Muy Baja,Electricidad,Electricidad,258.5,Si,6,78,Ineficiente
+Hogar_1368,Pyme,1785,112,No,Baja,Otros,Solar,459.4,Si,10,36,Moderado
+Hogar_1369,Casa,1550,64,Si,Alta,Electricidad,Solar,217.1,No,15,95,Eficiente
+Hogar_1370,Casa,690,98,No,Muy Baja,Solar,Electricidad,494.4,Si,24,28,Moderado
+Hogar_1371,Pyme,58,71,No,Media,Electricidad,Solar,756.3,Si,11,98,Ineficiente
+Hogar_1372,Casa,80,51,Si,Media,Electricidad,Solar,521.6,No,11,35,Moderado
+Hogar_1373,Pyme,544,117,No,Media,Electricidad,Electricidad,286.4,Si,22,60,Moderado
+Hogar_1374,Departamento,781,119,Si,Media,Electricidad,Electricidad,249.1,No,19,62,Moderado
+Hogar_1375,Casa,1874,6,Si,Alta,Electricidad,Otros,759.2,Si,4,87,Ineficiente
+Hogar_1376,Pyme,1687,10,No,Baja,Solar,Otros,119.1,Si,15,46,Moderado
+Hogar_1377,Departamento,37,102,No,Baja,Solar,Electricidad,370.6,No,5,83,Moderado
+Hogar_1378,Departamento,1577,60,No,Media,Otros,Electricidad,152.3,Si,8,82,Moderado
+Hogar_1379,Departamento,745,67,Si,Media,Solar,Otros,258.7,Si,4,79,Moderado
+Hogar_1380,Departamento,580,139,No,Media,Electricidad,Solar,153.5,Si,20,61,Moderado
+Hogar_1381,Casa,398,101,No,Alta,Electricidad,Electricidad,886.9,No,22,65,Moderado
+Hogar_1382,Departamento,509,109,No,Media,Electricidad,Solar,732.2,Si,15,89,Moderado
+Hogar_1383,Pyme,998,139,No,Media,Otros,Solar,561.4,Si,17,26,Moderado
+Hogar_1384,Casa,1696,50,No,Muy Baja,Otros,Solar,225.2,Si,18,35,Moderado
+Hogar_1385,Comercio,1277,116,Si,Media,Electricidad,Electricidad,510.7,Si,11,57,Ineficiente
+Hogar_1386,Casa,648,45,No,Alta,Electricidad,Solar,521.3,Si,1,79,Moderado
+Hogar_1387,Comercio,332,52,Si,Muy Baja,Otros,Electricidad,590.8,No,9,63,Moderado
+Hogar_1388,Casa,482,87,Si,Baja,Otros,Otros,61.0,No,11,4,Eficiente
+Hogar_1389,Pyme,185,120,No,Alta,Otros,Solar,972.9,Si,13,79,Moderado
+Hogar_1390,Departamento,356,12,No,Media,Otros,Solar,466.0,Si,17,42,Moderado
+Hogar_1391,Casa,801,88,Si,Baja,Solar,Solar,926.6,No,18,45,Moderado
+Hogar_1392,Casa,250,124,No,Media,Electricidad,Electricidad,10.8,Si,5,39,Moderado
+Hogar_1393,Casa,1008,117,Si,Baja,Solar,Otros,248.3,Si,4,65,Moderado
+Hogar_1394,Departamento,754,53,No,Muy Alta,Solar,Electricidad,104.9,No,15,22,Eficiente
+Hogar_1395,Casa,1553,115,No,Muy Baja,Solar,Otros,769.8,No,13,11,Moderado
+Hogar_1396,Comercio,1505,117,No,Alta,Solar,Electricidad,320.8,Si,12,37,Moderado
+Hogar_1397,Departamento,1094,3,Si,Media,Electricidad,Electricidad,840.7,Si,20,90,Ineficiente
+Hogar_1398,Casa,1263,74,No,Alta,Electricidad,Solar,832.6,Si,1,51,Moderado
+Hogar_1399,Departamento,1108,48,No,Baja,Electricidad,Solar,668.1,Si,1,91,Ineficiente
+Hogar_1400,Comercio,669,6,No,Media,Electricidad,Otros,666.1,No,11,58,Moderado
+Hogar_1401,Casa,641,109,No,Media,Solar,Solar,700.5,Si,0,77,Moderado
+Hogar_1402,Casa,220,121,No,Media,Otros,Electricidad,674.1,No,18,7,Moderado
+Hogar_1403,Casa,1974,10,Si,Media,Otros,Otros,387.5,Si,15,8,Moderado
+Hogar_1404,Comercio,514,91,No,Alta,Electricidad,Electricidad,683.1,Si,6,51,Ineficiente
+Hogar_1405,Comercio,182,22,No,Muy Alta,Solar,Otros,897.5,Si,20,23,Moderado
+Hogar_1406,Departamento,635,27,Si,Muy Baja,Electricidad,Solar,333.2,No,6,90,Eficiente
+Hogar_1407,Comercio,1275,110,No,Muy Baja,Solar,Electricidad,944.9,No,15,91,Ineficiente
+Hogar_1408,Comercio,437,56,Si,Alta,Electricidad,Electricidad,14.6,Si,24,9,Moderado
+Hogar_1409,Departamento,1254,25,No,Muy Baja,Electricidad,Electricidad,349.7,Si,5,46,Moderado
+Hogar_1410,Pyme,1128,53,No,Muy Alta,Otros,Electricidad,133.0,No,17,38,Eficiente
+Hogar_1411,Casa,1173,28,Si,Media,Solar,Electricidad,127.5,Si,0,13,Eficiente
+Hogar_1412,Casa,496,96,No,Media,Electricidad,Electricidad,815.6,Si,0,7,Moderado
+Hogar_1413,Casa,1989,13,Si,Baja,Electricidad,Electricidad,918.4,Si,24,11,Ineficiente
+Hogar_1414,Casa,1267,77,Si,Baja,Solar,Solar,778.0,Si,13,74,Moderado
+Hogar_1415,Departamento,541,34,Si,Media,Electricidad,Otros,976.6,No,5,97,Moderado
+Hogar_1416,Pyme,1651,29,No,Muy Alta,Otros,Electricidad,217.1,Si,5,50,Moderado
+Hogar_1417,Casa,1153,91,Si,Muy Alta,Solar,Electricidad,141.7,No,3,67,Eficiente
+Hogar_1418,Casa,418,16,No,Baja,Solar,Electricidad,521.2,No,11,41,Eficiente
+Hogar_1419,Departamento,656,92,No,Baja,Solar,Solar,829.2,No,17,29,Moderado
+Hogar_1420,Pyme,1694,78,Si,Muy Baja,Electricidad,Otros,40.8,Si,9,37,Ineficiente
+Hogar_1421,Casa,1873,109,No,Alta,Electricidad,Solar,995.6,Si,2,56,Moderado
+Hogar_1422,Departamento,633,101,No,Baja,Electricidad,Otros,602.6,Si,2,80,Moderado
+Hogar_1423,Casa,1005,105,No,Muy Baja,Solar,Solar,979.0,Si,7,16,Moderado
+Hogar_1424,Casa,459,46,Si,Baja,Electricidad,Solar,365.7,No,21,44,Moderado
+Hogar_1425,Pyme,1380,63,Si,Baja,Otros,Electricidad,458.6,No,22,50,Moderado
+Hogar_1426,Pyme,1192,63,Si,Muy Alta,Electricidad,Otros,752.6,No,24,71,Ineficiente
+Hogar_1427,Casa,1849,86,Si,Media,Electricidad,Otros,792.9,Si,0,79,Ineficiente
+Hogar_1428,Pyme,565,6,Si,Baja,Electricidad,Solar,233.8,Si,17,6,Moderado
+Hogar_1429,Departamento,303,21,Si,Baja,Electricidad,Otros,929.9,Si,14,18,Ineficiente
+Hogar_1430,Pyme,258,80,Si,Baja,Electricidad,Electricidad,867.6,No,24,19,Ineficiente
+Hogar_1431,Departamento,1578,73,Si,Muy Baja,Electricidad,Otros,19.2,Si,20,51,Moderado
+Hogar_1432,Departamento,1620,137,Si,Baja,Electricidad,Electricidad,129.4,Si,19,66,Ineficiente
+Hogar_1433,Departamento,1139,134,Si,Media,Solar,Electricidad,496.6,Si,16,3,Moderado
+Hogar_1434,Comercio,1541,124,No,Baja,Solar,Electricidad,461.5,No,24,89,Moderado
+Hogar_1435,Casa,1248,49,Si,Baja,Electricidad,Otros,708.7,No,10,100,Ineficiente
+Hogar_1436,Casa,387,51,No,Media,Solar,Otros,90.6,No,12,54,Eficiente
+Hogar_1437,Casa,1490,0,Si,Alta,Solar,Otros,645.2,No,24,49,Moderado
+Hogar_1438,Comercio,51,3,No,Media,Otros,Otros,616.8,Si,19,28,Moderado
+Hogar_1439,Casa,1074,144,Si,Media,Solar,Solar,234.4,Si,24,38,Moderado
+Hogar_1440,Comercio,1443,131,No,Media,Electricidad,Otros,542.9,Si,9,28,Moderado
+Hogar_1441,Pyme,532,3,No,Media,Solar,Otros,223.0,Si,12,32,Eficiente
+Hogar_1442,Casa,1350,0,Si,Muy Baja,Solar,Solar,147.8,No,16,41,Eficiente
+Hogar_1443,Comercio,1388,70,No,Muy Alta,Electricidad,Electricidad,573.6,Si,20,36,Moderado
+Hogar_1444,Departamento,292,34,No,Muy Baja,Otros,Solar,977.5,Si,0,36,Moderado
+Hogar_1445,Pyme,486,7,Si,Media,Electricidad,Otros,237.7,Si,19,87,Moderado
+Hogar_1446,Casa,1742,35,No,Alta,Otros,Otros,356.0,Si,15,66,Moderado
+Hogar_1447,Comercio,481,122,No,Media,Solar,Otros,257.3,No,15,10,Eficiente
+Hogar_1448,Comercio,1409,42,No,Muy Alta,Solar,Otros,267.2,Si,20,70,Moderado
+Hogar_1449,Pyme,1117,26,Si,Media,Solar,Otros,404.8,Si,2,72,Moderado
+Hogar_1450,Comercio,1032,31,No,Alta,Solar,Solar,702.2,Si,1,79,Moderado
+Hogar_1451,Departamento,888,77,No,Alta,Solar,Solar,39.8,Si,5,93,Eficiente
+Hogar_1452,Departamento,1461,120,No,Muy Alta,Otros,Electricidad,957.2,Si,10,63,Ineficiente
+Hogar_1453,Pyme,516,145,No,Muy Alta,Solar,Solar,47.2,Si,2,92,Eficiente
+Hogar_1454,Departamento,1882,15,Si,Muy Alta,Otros,Solar,881.4,No,0,22,Moderado
+Hogar_1455,Casa,1098,98,No,Alta,Otros,Otros,894.5,Si,10,98,Moderado
+Hogar_1456,Pyme,1736,46,Si,Media,Otros,Solar,525.0,Si,12,20,Moderado
+Hogar_1457,Comercio,589,30,Si,Muy Baja,Solar,Electricidad,137.9,No,4,33,Eficiente
+Hogar_1458,Comercio,1151,3,No,Media,Solar,Electricidad,565.6,Si,17,15,Moderado
+Hogar_1459,Casa,241,16,No,Muy Alta,Electricidad,Solar,629.0,Si,14,7,Eficiente
+Hogar_1460,Comercio,1487,38,Si,Alta,Solar,Solar,857.9,No,17,88,Moderado
+Hogar_1461,Departamento,1749,47,No,Muy Alta,Electricidad,Electricidad,551.3,No,14,90,Moderado
+Hogar_1462,Comercio,1618,38,Si,Alta,Electricidad,Electricidad,411.3,No,19,50,Moderado
+Hogar_1463,Casa,584,131,No,Baja,Electricidad,Solar,838.5,Si,19,10,Moderado
+Hogar_1464,Comercio,184,29,No,Baja,Otros,Electricidad,981.0,Si,19,79,Ineficiente
+Hogar_1465,Pyme,514,21,Si,Baja,Otros,Electricidad,645.5,Si,6,37,Moderado
+Hogar_1466,Casa,711,65,Si,Baja,Solar,Electricidad,874.5,Si,16,59,Ineficiente
+Hogar_1467,Pyme,1291,107,Si,Media,Solar,Solar,599.1,No,7,88,Moderado
+Hogar_1468,Departamento,819,11,No,Muy Alta,Solar,Solar,690.1,Si,12,75,Moderado
+Hogar_1469,Pyme,1802,35,Si,Alta,Solar,Electricidad,688.5,Si,15,63,Ineficiente
+Hogar_1470,Comercio,1931,17,Si,Media,Electricidad,Otros,705.1,No,24,21,Moderado
+Hogar_1471,Departamento,30,89,No,Muy Baja,Electricidad,Electricidad,321.7,No,9,79,Moderado
+Hogar_1472,Comercio,1645,0,No,Baja,Electricidad,Electricidad,576.1,No,13,79,Moderado
+Hogar_1473,Pyme,1869,126,Si,Media,Solar,Electricidad,594.5,No,5,37,Moderado
+Hogar_1474,Departamento,386,89,No,Baja,Solar,Electricidad,315.8,Si,19,45,Moderado
+Hogar_1475,Casa,484,86,Si,Muy Baja,Solar,Electricidad,350.5,No,21,14,Moderado
+Hogar_1476,Comercio,273,89,No,Media,Otros,Electricidad,762.5,Si,6,43,Ineficiente
+Hogar_1477,Comercio,1615,133,Si,Baja,Electricidad,Solar,583.1,Si,5,85,Ineficiente
+Hogar_1478,Comercio,1722,69,Si,Muy Alta,Electricidad,Solar,150.1,No,16,84,Moderado
+Hogar_1479,Comercio,971,43,No,Muy Baja,Electricidad,Solar,837.8,No,20,33,Moderado
+Hogar_1480,Departamento,447,85,Si,Muy Baja,Electricidad,Solar,883.2,No,23,3,Moderado
+Hogar_1481,Comercio,1972,18,No,Muy Baja,Electricidad,Electricidad,466.7,No,7,87,Moderado
+Hogar_1482,Casa,1787,100,Si,Baja,Electricidad,Otros,209.7,No,11,44,Moderado
+Hogar_1483,Departamento,40,145,Si,Media,Solar,Electricidad,947.7,Si,24,87,Ineficiente
+Hogar_1484,Casa,761,94,No,Alta,Electricidad,Solar,882.4,No,3,91,Moderado
+Hogar_1485,Casa,1622,100,No,Media,Solar,Electricidad,245.1,No,9,35,Eficiente
+Hogar_1486,Departamento,1171,29,No,Media,Solar,Otros,96.5,No,5,25,Eficiente
+Hogar_1487,Departamento,302,32,Si,Media,Electricidad,Solar,441.2,Si,6,96,Moderado
+Hogar_1488,Comercio,1607,11,Si,Media,Solar,Electricidad,676.7,Si,20,86,Ineficiente
+Hogar_1489,Departamento,478,117,Si,Muy Baja,Electricidad,Solar,176.2,No,7,8,Eficiente
+Hogar_1490,Departamento,1439,93,Si,Media,Otros,Electricidad,513.7,Si,2,62,Moderado
+Hogar_1491,Casa,1343,136,No,Alta,Otros,Solar,426.0,Si,7,18,Eficiente
+Hogar_1492,Departamento,1623,148,No,Alta,Electricidad,Solar,890.7,Si,14,92,Ineficiente
+Hogar_1493,Casa,623,75,Si,Alta,Otros,Electricidad,430.1,Si,20,28,Moderado
+Hogar_1494,Casa,471,28,Si,Baja,Solar,Electricidad,534.2,No,0,75,Moderado
+Hogar_1495,Departamento,235,116,Si,Baja,Otros,Electricidad,955.3,Si,12,12,Ineficiente
+Hogar_1496,Comercio,1639,14,Si,Muy Alta,Solar,Solar,300.4,No,21,64,Eficiente
+Hogar_1497,Departamento,739,1,Si,Muy Baja,Electricidad,Electricidad,289.7,Si,17,2,Moderado
+Hogar_1498,Departamento,327,116,No,Baja,Otros,Solar,799.8,Si,14,59,Moderado
+Hogar_1499,Departamento,1958,17,No,Baja,Electricidad,Otros,278.3,Si,6,37,Moderado
+Hogar_1500,Pyme,1272,2,No,Baja,Electricidad,Electricidad,832.0,No,14,4,Moderado
+Hogar_1501,Departamento,1783,134,No,Baja,Electricidad,Otros,96.4,Si,24,41,Moderado
+Hogar_1502,Departamento,28,107,No,Media,Electricidad,Solar,112.1,No,2,45,Eficiente
+Hogar_1503,Casa,1015,94,No,Media,Solar,Electricidad,901.4,No,13,34,Moderado
+Hogar_1504,Casa,1567,121,Si,Muy Alta,Solar,Electricidad,541.3,No,19,87,Moderado
+Hogar_1505,Departamento,1142,10,No,Muy Baja,Otros,Solar,719.1,No,3,13,Moderado
+Hogar_1506,Departamento,545,67,No,Baja,Electricidad,Electricidad,226.1,Si,3,7,Moderado
+Hogar_1507,Departamento,1477,122,Si,Media,Otros,Electricidad,167.1,Si,2,32,Moderado
+Hogar_1508,Departamento,518,112,No,Media,Otros,Electricidad,835.1,Si,4,23,Moderado
+Hogar_1509,Departamento,1284,97,Si,Media,Electricidad,Solar,359.3,Si,24,49,Moderado
+Hogar_1510,Comercio,645,92,No,Alta,Electricidad,Solar,455.6,No,10,72,Moderado
+Hogar_1511,Comercio,1210,21,No,Muy Baja,Otros,Solar,28.9,No,7,47,Eficiente
+Hogar_1512,Comercio,1770,126,No,Alta,Solar,Electricidad,386.5,Si,1,37,Moderado
+Hogar_1513,Pyme,1801,133,No,Media,Solar,Otros,770.7,Si,15,98,Ineficiente
+Hogar_1514,Casa,356,24,No,Baja,Solar,Otros,821.5,No,24,48,Moderado
+Hogar_1515,Casa,358,84,No,Muy Alta,Solar,Electricidad,699.1,Si,9,29,Moderado
+Hogar_1516,Casa,75,54,No,Media,Electricidad,Electricidad,692.5,No,17,37,Moderado
+Hogar_1517,Departamento,1572,143,No,Baja,Solar,Otros,506.7,Si,6,23,Moderado
+Hogar_1518,Pyme,888,94,No,Muy Baja,Electricidad,Otros,538.8,Si,4,38,Moderado
+Hogar_1519,Casa,1717,141,No,Baja,Solar,Solar,742.9,No,6,93,Moderado
+Hogar_1520,Pyme,1541,118,No,Media,Otros,Otros,248.1,Si,20,44,Moderado
+Hogar_1521,Casa,1631,8,No,Baja,Solar,Solar,232.3,No,5,5,Eficiente
+Hogar_1522,Pyme,1730,149,No,Baja,Otros,Electricidad,950.0,No,23,52,Ineficiente
+Hogar_1523,Departamento,297,41,No,Muy Baja,Solar,Solar,28.7,No,0,40,Eficiente
+Hogar_1524,Casa,605,52,Si,Alta,Solar,Solar,140.3,No,10,11,Eficiente
+Hogar_1525,Departamento,1916,73,Si,Alta,Solar,Otros,570.8,Si,12,78,Moderado
+Hogar_1526,Casa,1301,38,No,Alta,Otros,Electricidad,738.1,No,11,2,Moderado
+Hogar_1527,Casa,585,121,Si,Baja,Solar,Solar,538.4,No,0,35,Eficiente
+Hogar_1528,Casa,721,14,Si,Muy Alta,Electricidad,Solar,355.7,No,20,45,Moderado
+Hogar_1529,Comercio,1881,122,No,Media,Otros,Electricidad,978.0,No,14,49,Moderado
+Hogar_1530,Departamento,1748,110,Si,Muy Alta,Solar,Electricidad,704.1,No,0,35,Moderado
+Hogar_1531,Casa,1139,130,Si,Media,Electricidad,Otros,831.6,Si,2,92,Ineficiente
+Hogar_1532,Departamento,471,82,No,Media,Solar,Electricidad,41.2,No,14,72,Eficiente
+Hogar_1533,Comercio,1042,9,No,Alta,Otros,Solar,236.7,No,8,32,Eficiente
+Hogar_1534,Casa,1381,91,No,Muy Baja,Solar,Otros,374.8,No,13,68,Moderado
+Hogar_1535,Departamento,1188,28,No,Media,Electricidad,Electricidad,183.4,Si,22,71,Moderado
+Hogar_1536,Casa,382,34,No,Alta,Otros,Otros,73.8,No,21,39,Eficiente
+Hogar_1537,Casa,1650,5,Si,Alta,Solar,Solar,225.9,Si,23,48,Eficiente
+Hogar_1538,Comercio,299,139,No,Muy Alta,Solar,Solar,534.1,Si,7,91,Eficiente
+Hogar_1539,Casa,1068,110,No,Media,Electricidad,Electricidad,696.0,No,21,37,Moderado
+Hogar_1540,Departamento,336,37,Si,Baja,Electricidad,Otros,774.2,No,3,60,Moderado
+Hogar_1541,Comercio,895,76,Si,Muy Baja,Solar,Electricidad,43.9,Si,19,81,Moderado
+Hogar_1542,Casa,911,92,No,Media,Otros,Electricidad,428.6,No,19,74,Moderado
+Hogar_1543,Departamento,179,146,Si,Media,Electricidad,Electricidad,123.1,Si,5,4,Moderado
+Hogar_1544,Casa,1439,66,No,Baja,Electricidad,Electricidad,431.8,Si,0,23,Moderado
+Hogar_1545,Pyme,1309,135,Si,Baja,Electricidad,Solar,434.5,Si,17,14,Moderado
+Hogar_1546,Departamento,645,7,No,Media,Solar,Otros,498.7,No,5,5,Eficiente
+Hogar_1547,Comercio,908,121,No,Alta,Electricidad,Otros,892.9,Si,13,66,Ineficiente
+Hogar_1548,Departamento,822,83,Si,Muy Alta,Electricidad,Electricidad,805.3,Si,10,24,Ineficiente
+Hogar_1549,Casa,1620,131,Si,Alta,Electricidad,Electricidad,637.1,No,16,18,Moderado
+Hogar_1550,Departamento,150,84,No,Alta,Solar,Solar,885.5,Si,8,27,Moderado
+Hogar_1551,Pyme,1403,44,No,Media,Electricidad,Electricidad,678.8,No,21,24,Ineficiente
+Hogar_1552,Departamento,1322,135,No,Muy Alta,Electricidad,Otros,819.0,No,6,29,Moderado
+Hogar_1553,Comercio,644,86,No,Media,Otros,Otros,564.2,No,13,11,Moderado
+Hogar_1554,Pyme,1860,15,No,Alta,Electricidad,Otros,525.7,Si,16,18,Moderado
+Hogar_1555,Casa,270,76,Si,Muy Alta,Electricidad,Electricidad,724.4,Si,7,4,Moderado
+Hogar_1556,Casa,873,8,Si,Muy Alta,Otros,Solar,20.7,No,15,33,Eficiente
+Hogar_1557,Departamento,475,59,Si,Media,Electricidad,Electricidad,690.7,Si,11,78,Ineficiente
+Hogar_1558,Departamento,955,77,No,Muy Baja,Solar,Electricidad,934.6,Si,11,42,Ineficiente
+Hogar_1559,Comercio,1296,76,Si,Baja,Electricidad,Solar,714.2,Si,4,32,Ineficiente
+Hogar_1560,Pyme,545,70,Si,Muy Baja,Solar,Otros,37.8,Si,4,51,Moderado
+Hogar_1561,Departamento,1190,14,No,Muy Baja,Electricidad,Otros,378.5,No,13,4,Moderado
+Hogar_1562,Casa,387,70,No,Baja,Otros,Otros,809.8,No,5,20,Moderado
+Hogar_1563,Comercio,33,101,Si,Baja,Electricidad,Otros,958.6,Si,6,85,Ineficiente
+Hogar_1564,Casa,503,21,Si,Media,Electricidad,Electricidad,370.8,Si,22,67,Moderado
+Hogar_1565,Comercio,1401,112,No,Alta,Solar,Solar,841.4,No,20,89,Moderado
+Hogar_1566,Departamento,520,0,No,Baja,Otros,Electricidad,863.9,Si,16,68,Ineficiente
+Hogar_1567,Comercio,1655,9,No,Media,Electricidad,Electricidad,124.2,No,8,62,Moderado
+Hogar_1568,Casa,858,109,Si,Alta,Otros,Solar,845.9,Si,21,58,Moderado
+Hogar_1569,Departamento,1476,112,No,Media,Electricidad,Solar,324.9,No,12,47,Eficiente
+Hogar_1570,Departamento,1088,49,No,Muy Alta,Solar,Solar,593.6,No,8,75,Eficiente
+Hogar_1571,Departamento,618,11,Si,Muy Baja,Electricidad,Electricidad,539.4,Si,15,80,Ineficiente
+Hogar_1572,Casa,212,88,No,Baja,Solar,Electricidad,663.4,Si,3,59,Moderado
+Hogar_1573,Comercio,1645,111,Si,Media,Electricidad,Electricidad,740.7,Si,1,100,Ineficiente
+Hogar_1574,Pyme,1649,77,Si,Baja,Electricidad,Electricidad,441.4,No,12,6,Moderado
+Hogar_1575,Casa,779,120,No,Media,Electricidad,Electricidad,888.4,Si,12,95,Ineficiente
+Hogar_1576,Casa,1903,22,Si,Media,Electricidad,Solar,809.7,No,18,40,Moderado
+Hogar_1577,Casa,118,133,Si,Baja,Otros,Otros,785.6,Si,11,77,Ineficiente
+Hogar_1578,Departamento,111,24,No,Baja,Otros,Electricidad,458.8,No,3,23,Eficiente
+Hogar_1579,Departamento,1093,17,No,Baja,Solar,Solar,38.5,No,9,52,Eficiente
+Hogar_1580,Departamento,162,140,No,Media,Electricidad,Electricidad,492.8,Si,15,4,Moderado
+Hogar_1581,Casa,446,42,No,Media,Electricidad,Otros,898.5,Si,23,37,Ineficiente
+Hogar_1582,Departamento,99,77,Si,Baja,Solar,Electricidad,191.3,Si,18,42,Moderado
+Hogar_1583,Departamento,1597,27,No,Baja,Otros,Otros,982.6,No,7,44,Moderado
+Hogar_1584,Departamento,1662,145,No,Muy Baja,Solar,Otros,807.9,Si,5,97,Ineficiente
+Hogar_1585,Pyme,1561,58,No,Muy Baja,Otros,Otros,710.1,Si,3,42,Ineficiente
+Hogar_1586,Casa,1205,62,No,Alta,Otros,Electricidad,677.5,No,6,29,Moderado
+Hogar_1587,Comercio,1987,91,No,Muy Baja,Otros,Solar,587.4,Si,13,19,Moderado
+Hogar_1588,Departamento,1304,55,No,Alta,Electricidad,Electricidad,720.9,No,12,84,Moderado
+Hogar_1589,Departamento,196,110,No,Alta,Electricidad,Electricidad,422.5,Si,20,32,Moderado
+Hogar_1590,Comercio,1777,136,Si,Muy Baja,Solar,Electricidad,845.4,Si,4,44,Ineficiente
+Hogar_1591,Comercio,195,67,No,Media,Solar,Otros,696.6,Si,8,55,Moderado
+Hogar_1592,Pyme,1813,45,Si,Muy Alta,Electricidad,Otros,771.5,No,2,80,Moderado
+Hogar_1593,Casa,897,66,Si,Alta,Electricidad,Electricidad,792.7,Si,9,5,Ineficiente
+Hogar_1594,Casa,347,135,Si,Media,Solar,Solar,93.0,No,14,46,Eficiente
+Hogar_1595,Comercio,1616,5,No,Alta,Solar,Otros,56.6,Si,19,76,Moderado
+Hogar_1596,Departamento,481,23,No,Alta,Electricidad,Solar,801.2,Si,20,45,Moderado
+Hogar_1597,Casa,969,93,No,Baja,Solar,Electricidad,260.1,No,16,21,Eficiente
+Hogar_1598,Casa,1652,12,No,Muy Alta,Solar,Solar,582.4,Si,22,78,Moderado
+Hogar_1599,Casa,815,24,No,Media,Solar,Solar,444.3,Si,23,22,Eficiente
+Hogar_1600,Pyme,638,147,Si,Media,Electricidad,Solar,23.0,Si,5,30,Moderado
+Hogar_1601,Casa,1204,117,Si,Muy Alta,Solar,Solar,41.2,No,24,23,Eficiente
+Hogar_1602,Casa,914,81,No,Alta,Solar,Electricidad,827.3,No,2,5,Eficiente
+Hogar_1603,Casa,374,110,No,Media,Electricidad,Electricidad,608.1,Si,17,63,Moderado
+Hogar_1604,Departamento,1500,81,No,Muy Baja,Solar,Electricidad,524.3,Si,4,93,Moderado
+Hogar_1605,Casa,1925,65,No,Media,Electricidad,Electricidad,944.4,No,12,59,Moderado
+Hogar_1606,Departamento,1702,44,Si,Alta,Electricidad,Solar,173.9,No,24,94,Moderado
+Hogar_1607,Casa,1222,113,No,Media,Electricidad,Electricidad,258.7,Si,0,82,Moderado
+Hogar_1608,Comercio,35,62,No,Muy Alta,Electricidad,Otros,757.0,No,16,52,Moderado
+Hogar_1609,Casa,765,75,No,Alta,Electricidad,Electricidad,775.5,Si,2,65,Moderado
+Hogar_1610,Departamento,1314,113,Si,Media,Otros,Solar,405.5,Si,18,39,Moderado
+Hogar_1611,Pyme,1487,110,No,Muy Baja,Electricidad,Otros,951.0,Si,20,81,Ineficiente
+Hogar_1612,Comercio,1809,146,No,Media,Otros,Otros,938.3,Si,19,3,Ineficiente
+Hogar_1613,Departamento,1296,34,Si,Media,Solar,Otros,13.4,Si,21,42,Moderado
+Hogar_1614,Casa,692,52,No,Media,Electricidad,Solar,173.2,No,11,71,Eficiente
+Hogar_1615,Casa,571,25,No,Media,Electricidad,Electricidad,820.4,Si,7,27,Moderado
+Hogar_1616,Comercio,1548,13,No,Media,Solar,Otros,335.9,Si,7,28,Moderado
+Hogar_1617,Pyme,154,117,No,Baja,Solar,Otros,96.4,Si,14,54,Moderado
+Hogar_1618,Comercio,1721,44,No,Baja,Electricidad,Otros,785.2,No,10,95,Ineficiente
+Hogar_1619,Departamento,626,50,No,Media,Electricidad,Solar,455.1,No,19,15,Eficiente
+Hogar_1620,Comercio,630,118,Si,Baja,Solar,Solar,492.9,Si,0,53,Moderado
+Hogar_1621,Departamento,352,150,Si,Baja,Electricidad,Electricidad,187.2,Si,15,72,Moderado
+Hogar_1622,Casa,1802,18,Si,Baja,Otros,Solar,661.2,Si,13,70,Moderado
+Hogar_1623,Departamento,1884,81,No,Media,Solar,Electricidad,551.7,Si,6,92,Moderado
+Hogar_1624,Pyme,1005,75,No,Muy Baja,Electricidad,Electricidad,207.5,Si,5,4,Moderado
+Hogar_1625,Casa,429,91,No,Alta,Electricidad,Solar,341.0,Si,20,94,Moderado
+Hogar_1626,Comercio,654,32,No,Media,Electricidad,Solar,597.3,No,3,17,Eficiente
+Hogar_1627,Casa,1655,146,No,Media,Otros,Electricidad,924.9,Si,21,34,Ineficiente
+Hogar_1628,Departamento,1724,27,No,Alta,Electricidad,Otros,920.5,Si,7,6,Moderado
+Hogar_1629,Casa,1660,122,Si,Baja,Electricidad,Otros,288.6,Si,21,36,Moderado
+Hogar_1630,Departamento,1674,125,No,Media,Solar,Solar,735.9,No,18,99,Moderado
+Hogar_1631,Comercio,1408,36,No,Muy Alta,Electricidad,Solar,775.7,Si,24,39,Moderado
+Hogar_1632,Casa,1652,98,No,Alta,Solar,Otros,809.0,Si,2,80,Moderado
+Hogar_1633,Comercio,1907,97,No,Muy Alta,Otros,Electricidad,571.2,No,3,66,Moderado
+Hogar_1634,Comercio,743,126,No,Alta,Solar,Solar,11.5,Si,12,8,Eficiente
+Hogar_1635,Pyme,1066,79,Si,Baja,Otros,Electricidad,761.9,Si,20,15,Ineficiente
+Hogar_1636,Casa,299,37,No,Muy Baja,Otros,Electricidad,107.5,Si,1,63,Moderado
+Hogar_1637,Departamento,710,76,No,Media,Electricidad,Solar,117.8,No,10,91,Eficiente
+Hogar_1638,Casa,141,125,No,Media,Electricidad,Solar,606.0,Si,15,80,Moderado
+Hogar_1639,Pyme,886,86,No,Baja,Electricidad,Electricidad,983.5,No,9,65,Ineficiente
+Hogar_1640,Pyme,718,53,No,Alta,Solar,Electricidad,243.3,Si,14,59,Moderado
+Hogar_1641,Departamento,1140,149,No,Media,Electricidad,Solar,646.2,Si,9,10,Moderado
+Hogar_1642,Comercio,1131,15,No,Baja,Otros,Solar,304.3,No,1,7,Eficiente
+Hogar_1643,Departamento,349,27,No,Alta,Solar,Solar,898.8,Si,5,74,Moderado
+Hogar_1644,Departamento,986,45,No,Alta,Electricidad,Electricidad,593.9,Si,13,76,Moderado
+Hogar_1645,Casa,139,71,No,Media,Solar,Solar,208.3,Si,1,81,Eficiente
+Hogar_1646,Comercio,1818,84,No,Alta,Electricidad,Electricidad,262.9,No,9,12,Moderado
+Hogar_1647,Casa,1107,25,No,Alta,Otros,Electricidad,433.0,Si,16,79,Moderado
+Hogar_1648,Comercio,179,84,Si,Media,Solar,Solar,122.9,Si,7,46,Eficiente
+Hogar_1649,Comercio,1926,64,No,Muy Baja,Electricidad,Solar,79.7,Si,15,32,Moderado
+Hogar_1650,Comercio,1453,133,Si,Muy Baja,Electricidad,Electricidad,680.4,Si,13,32,Ineficiente
+Hogar_1651,Casa,1677,150,No,Media,Otros,Electricidad,407.8,Si,9,90,Moderado
+Hogar_1652,Casa,1904,114,Si,Baja,Solar,Solar,726.5,Si,12,78,Ineficiente
+Hogar_1653,Casa,1315,63,Si,Muy Alta,Otros,Electricidad,110.9,Si,0,90,Moderado
+Hogar_1654,Departamento,340,86,Si,Alta,Electricidad,Electricidad,610.3,No,9,61,Moderado
+Hogar_1655,Casa,1764,106,Si,Alta,Electricidad,Electricidad,443.9,Si,21,69,Ineficiente
+Hogar_1656,Pyme,1090,150,Si,Muy Alta,Electricidad,Electricidad,58.9,Si,11,61,Moderado
+Hogar_1657,Departamento,130,95,No,Muy Alta,Solar,Electricidad,545.3,No,16,46,Eficiente
+Hogar_1658,Casa,1950,76,No,Baja,Electricidad,Otros,83.7,No,23,68,Moderado
+Hogar_1659,Departamento,1939,145,No,Baja,Electricidad,Solar,827.9,No,13,92,Moderado
+Hogar_1660,Departamento,1242,86,No,Alta,Solar,Solar,632.3,Si,4,55,Eficiente
+Hogar_1661,Departamento,1450,148,Si,Media,Solar,Solar,557.4,No,18,1,Moderado
+Hogar_1662,Departamento,1327,56,No,Media,Electricidad,Solar,134.3,No,4,77,Eficiente
+Hogar_1663,Pyme,379,102,Si,Media,Solar,Otros,288.2,Si,14,67,Moderado
+Hogar_1664,Departamento,1041,150,Si,Muy Alta,Solar,Solar,493.4,Si,12,49,Moderado
+Hogar_1665,Pyme,1798,90,No,Media,Electricidad,Electricidad,633.7,Si,16,25,Moderado
+Hogar_1666,Pyme,1986,44,Si,Alta,Electricidad,Solar,184.0,No,0,16,Eficiente
+Hogar_1667,Casa,758,87,No,Baja,Electricidad,Electricidad,9.9,Si,13,85,Moderado
+Hogar_1668,Pyme,1629,114,Si,Media,Solar,Solar,345.4,Si,3,13,Moderado
+Hogar_1669,Casa,734,46,No,Muy Baja,Otros,Solar,483.4,Si,24,52,Moderado
+Hogar_1670,Comercio,1305,134,No,Alta,Electricidad,Otros,185.2,No,8,36,Eficiente
+Hogar_1671,Departamento,676,49,Si,Muy Baja,Electricidad,Solar,492.7,Si,16,72,Moderado
+Hogar_1672,Pyme,849,83,No,Alta,Otros,Electricidad,339.1,No,2,44,Moderado
+Hogar_1673,Pyme,972,90,Si,Muy Baja,Otros,Electricidad,455.6,No,12,83,Ineficiente
+Hogar_1674,Comercio,686,133,No,Baja,Solar,Electricidad,348.1,Si,11,47,Moderado
+Hogar_1675,Comercio,124,90,Si,Media,Otros,Electricidad,628.8,Si,15,80,Ineficiente
+Hogar_1676,Casa,613,136,No,Media,Solar,Electricidad,43.9,Si,3,76,Moderado
+Hogar_1677,Casa,307,108,No,Baja,Solar,Electricidad,171.7,No,17,20,Eficiente
+Hogar_1678,Departamento,1932,56,Si,Baja,Electricidad,Electricidad,433.3,No,22,18,Moderado
+Hogar_1679,Casa,428,30,No,Alta,Electricidad,Otros,356.9,No,2,54,Eficiente
+Hogar_1680,Comercio,1158,20,No,Media,Electricidad,Electricidad,392.2,Si,16,12,Moderado
+Hogar_1681,Casa,725,89,No,Muy Baja,Otros,Electricidad,804.0,Si,0,25,Moderado
+Hogar_1682,Pyme,224,39,No,Alta,Otros,Electricidad,886.4,Si,18,60,Ineficiente
+Hogar_1683,Departamento,1352,111,Si,Muy Baja,Solar,Solar,249.4,Si,21,75,Moderado
+Hogar_1684,Comercio,352,44,No,Media,Electricidad,Electricidad,836.6,No,3,86,Moderado
+Hogar_1685,Casa,179,76,Si,Baja,Electricidad,Solar,459.3,Si,16,34,Moderado
+Hogar_1686,Pyme,577,86,Si,Media,Electricidad,Electricidad,274.5,Si,6,13,Moderado
+Hogar_1687,Pyme,1694,147,No,Baja,Electricidad,Solar,985.5,Si,1,38,Ineficiente
+Hogar_1688,Departamento,430,100,No,Muy Alta,Solar,Otros,825.0,Si,11,12,Moderado
+Hogar_1689,Departamento,487,116,No,Baja,Otros,Electricidad,994.3,Si,4,36,Ineficiente
+Hogar_1690,Comercio,157,91,Si,Baja,Electricidad,Electricidad,169.0,Si,15,28,Moderado
+Hogar_1691,Casa,816,144,No,Baja,Electricidad,Solar,144.7,No,7,91,Eficiente
+Hogar_1692,Departamento,899,27,Si,Muy Alta,Solar,Solar,503.9,Si,22,39,Moderado
+Hogar_1693,Departamento,109,24,Si,Media,Electricidad,Solar,639.0,No,7,77,Moderado
+Hogar_1694,Casa,1448,57,Si,Alta,Otros,Solar,171.9,Si,12,43,Moderado
+Hogar_1695,Departamento,779,40,No,Muy Alta,Electricidad,Solar,860.6,No,13,91,Moderado
+Hogar_1696,Casa,653,133,No,Muy Alta,Electricidad,Solar,532.5,Si,10,31,Eficiente
+Hogar_1697,Casa,1158,74,Si,Alta,Electricidad,Electricidad,411.5,No,5,2,Moderado
+Hogar_1698,Casa,246,37,No,Baja,Electricidad,Electricidad,602.5,No,15,82,Moderado
+Hogar_1699,Pyme,1953,133,Si,Alta,Solar,Solar,635.3,Si,22,90,Moderado
+Hogar_1700,Departamento,578,74,No,Baja,Electricidad,Otros,43.7,Si,24,42,Moderado
+Hogar_1701,Pyme,1417,141,No,Alta,Electricidad,Otros,999.9,Si,21,31,Ineficiente
+Hogar_1702,Departamento,1196,65,No,Media,Solar,Otros,364.6,No,24,61,Moderado
+Hogar_1703,Casa,137,2,No,Alta,Electricidad,Solar,62.5,Si,14,56,Eficiente
+Hogar_1704,Departamento,640,116,No,Media,Electricidad,Solar,852.5,Si,15,86,Ineficiente
+Hogar_1705,Departamento,1607,98,No,Media,Solar,Solar,993.0,Si,12,100,Moderado
+Hogar_1706,Casa,949,18,No,Muy Alta,Solar,Electricidad,816.5,No,11,83,Moderado
+Hogar_1707,Departamento,1543,145,No,Muy Baja,Otros,Solar,852.0,No,17,14,Moderado
+Hogar_1708,Casa,1554,115,Si,Baja,Electricidad,Electricidad,626.3,Si,17,14,Ineficiente
+Hogar_1709,Departamento,500,124,Si,Media,Electricidad,Electricidad,922.4,Si,13,29,Ineficiente
+Hogar_1710,Comercio,861,87,No,Muy Alta,Electricidad,Solar,36.7,No,1,81,Eficiente
+Hogar_1711,Casa,1939,34,No,Muy Baja,Electricidad,Solar,767.0,No,21,50,Moderado
+Hogar_1712,Casa,296,0,Si,Muy Baja,Solar,Electricidad,671.0,Si,1,50,Moderado
+Hogar_1713,Comercio,446,125,No,Muy Baja,Otros,Electricidad,50.5,Si,2,63,Moderado
+Hogar_1714,Departamento,1946,88,No,Muy Baja,Solar,Otros,544.4,No,23,73,Moderado
+Hogar_1715,Casa,732,143,No,Muy Alta,Electricidad,Solar,515.5,Si,7,65,Moderado
+Hogar_1716,Pyme,1416,146,No,Alta,Solar,Solar,691.8,Si,10,68,Moderado
+Hogar_1717,Casa,1329,150,No,Media,Otros,Electricidad,78.5,No,11,71,Moderado
+Hogar_1718,Comercio,1332,24,No,Media,Electricidad,Electricidad,805.5,Si,3,11,Moderado
+Hogar_1719,Pyme,65,15,No,Alta,Solar,Electricidad,140.3,No,8,14,Eficiente
+Hogar_1720,Casa,214,72,No,Baja,Otros,Solar,419.2,Si,23,83,Moderado
+Hogar_1721,Casa,1213,128,No,Media,Solar,Solar,881.4,No,16,3,Eficiente
+Hogar_1722,Casa,1019,41,No,Media,Solar,Electricidad,561.0,Si,23,8,Moderado
+Hogar_1723,Casa,1585,146,Si,Muy Baja,Electricidad,Electricidad,380.2,No,15,93,Ineficiente
+Hogar_1724,Casa,561,79,No,Media,Electricidad,Electricidad,49.2,Si,16,43,Moderado
+Hogar_1725,Comercio,1053,103,No,Baja,Electricidad,Solar,672.6,Si,14,9,Moderado
+Hogar_1726,Casa,1884,145,Si,Muy Baja,Solar,Electricidad,986.6,Si,19,19,Ineficiente
+Hogar_1727,Departamento,315,33,Si,Baja,Electricidad,Solar,911.9,No,21,12,Moderado
+Hogar_1728,Pyme,458,88,No,Alta,Otros,Solar,717.6,Si,6,27,Moderado
+Hogar_1729,Comercio,496,124,No,Muy Baja,Otros,Otros,106.2,Si,9,58,Moderado
+Hogar_1730,Departamento,1230,44,Si,Muy Alta,Solar,Solar,240.2,Si,3,25,Eficiente
+Hogar_1731,Casa,1297,133,Si,Muy Baja,Electricidad,Electricidad,187.7,Si,23,45,Ineficiente
+Hogar_1732,Departamento,653,20,Si,Alta,Electricidad,Solar,356.1,No,23,48,Moderado
+Hogar_1733,Departamento,304,121,No,Muy Alta,Solar,Solar,236.3,No,13,50,Eficiente
+Hogar_1734,Departamento,902,69,Si,Muy Alta,Solar,Electricidad,245.2,Si,13,81,Moderado
+Hogar_1735,Casa,606,95,Si,Alta,Solar,Solar,617.1,Si,13,44,Moderado
+Hogar_1736,Pyme,888,104,No,Baja,Electricidad,Otros,319.4,No,24,59,Moderado
+Hogar_1737,Departamento,279,47,No,Baja,Solar,Electricidad,677.5,No,13,33,Moderado
+Hogar_1738,Casa,206,38,No,Media,Solar,Solar,947.9,No,21,78,Moderado
+Hogar_1739,Departamento,1879,30,Si,Baja,Solar,Otros,638.8,Si,19,28,Moderado
+Hogar_1740,Departamento,706,9,No,Muy Baja,Solar,Solar,751.9,Si,17,18,Moderado
+Hogar_1741,Comercio,850,29,No,Alta,Solar,Solar,751.8,Si,14,55,Moderado
+Hogar_1742,Comercio,1558,17,No,Media,Electricidad,Electricidad,331.4,Si,22,33,Moderado
+Hogar_1743,Comercio,1810,87,No,Media,Electricidad,Electricidad,15.9,No,18,15,Moderado
+Hogar_1744,Casa,725,124,No,Muy Alta,Solar,Solar,56.0,Si,12,61,Eficiente
+Hogar_1745,Departamento,591,72,Si,Media,Electricidad,Solar,282.8,Si,11,11,Moderado
+Hogar_1746,Departamento,1375,14,No,Media,Solar,Otros,689.9,No,18,36,Moderado
+Hogar_1747,Casa,1406,3,Si,Alta,Solar,Electricidad,906.8,Si,18,15,Moderado
+Hogar_1748,Casa,1874,8,No,Muy Baja,Otros,Solar,958.8,No,19,53,Moderado
+Hogar_1749,Comercio,1699,108,Si,Media,Solar,Electricidad,26.8,Si,1,62,Moderado
+Hogar_1750,Casa,705,136,Si,Muy Alta,Electricidad,Electricidad,990.1,Si,20,48,Ineficiente
+Hogar_1751,Departamento,416,131,No,Muy Alta,Electricidad,Electricidad,323.2,Si,2,94,Moderado
+Hogar_1752,Casa,1664,15,Si,Muy Alta,Otros,Electricidad,843.1,Si,9,15,Moderado
+Hogar_1753,Casa,1983,142,No,Media,Electricidad,Electricidad,181.1,Si,4,63,Moderado
+Hogar_1754,Casa,1134,98,Si,Alta,Solar,Electricidad,63.8,Si,11,87,Moderado
+Hogar_1755,Pyme,1366,120,Si,Muy Baja,Solar,Electricidad,379.0,Si,6,43,Ineficiente
+Hogar_1756,Comercio,237,51,No,Baja,Electricidad,Otros,859.1,No,8,50,Moderado
+Hogar_1757,Pyme,1564,68,No,Media,Electricidad,Solar,221.6,Si,1,60,Moderado
+Hogar_1758,Departamento,409,4,No,Media,Solar,Electricidad,154.8,Si,24,59,Moderado
+Hogar_1759,Casa,1740,19,Si,Baja,Otros,Otros,909.9,Si,9,15,Ineficiente
+Hogar_1760,Departamento,367,78,No,Media,Electricidad,Solar,938.4,Si,5,29,Moderado
+Hogar_1761,Departamento,1864,145,No,Baja,Otros,Otros,13.5,Si,11,75,Moderado
+Hogar_1762,Comercio,869,110,No,Media,Solar,Electricidad,727.7,Si,5,82,Ineficiente
+Hogar_1763,Casa,1087,1,No,Alta,Otros,Solar,309.9,Si,2,40,Eficiente
+Hogar_1764,Departamento,1560,92,No,Media,Electricidad,Otros,375.3,Si,9,31,Moderado
+Hogar_1765,Casa,445,12,No,Muy Baja,Electricidad,Electricidad,469.6,Si,8,73,Moderado
+Hogar_1766,Casa,776,3,No,Media,Otros,Otros,427.4,No,19,86,Moderado
+Hogar_1767,Comercio,1218,108,No,Media,Otros,Otros,515.5,Si,4,11,Moderado
+Hogar_1768,Departamento,1958,73,No,Media,Electricidad,Otros,582.8,Si,2,81,Moderado
+Hogar_1769,Departamento,1392,94,Si,Media,Solar,Electricidad,466.1,No,4,97,Moderado
+Hogar_1770,Departamento,1875,104,Si,Media,Otros,Electricidad,701.9,No,7,62,Moderado
+Hogar_1771,Departamento,331,7,No,Muy Alta,Electricidad,Electricidad,718.9,No,7,75,Moderado
+Hogar_1772,Comercio,1591,66,Si,Muy Baja,Solar,Otros,440.9,Si,13,8,Moderado
+Hogar_1773,Pyme,727,109,Si,Media,Otros,Electricidad,143.3,No,23,51,Moderado
+Hogar_1774,Pyme,894,8,Si,Media,Electricidad,Solar,641.0,No,21,57,Moderado
+Hogar_1775,Comercio,562,116,Si,Media,Electricidad,Electricidad,773.2,No,16,4,Moderado
+Hogar_1776,Casa,1161,10,No,Baja,Solar,Electricidad,638.5,Si,10,36,Moderado
+Hogar_1777,Comercio,1460,98,No,Baja,Electricidad,Electricidad,588.5,Si,15,19,Ineficiente
+Hogar_1778,Departamento,1996,41,No,Baja,Electricidad,Solar,230.2,No,5,24,Eficiente
+Hogar_1779,Casa,231,140,Si,Muy Alta,Otros,Otros,645.5,Si,10,41,Moderado
+Hogar_1780,Comercio,1234,119,No,Alta,Solar,Electricidad,335.5,Si,9,49,Moderado
+Hogar_1781,Casa,1431,140,No,Media,Otros,Otros,919.6,Si,22,82,Ineficiente
+Hogar_1782,Pyme,521,11,No,Alta,Otros,Solar,654.1,Si,8,97,Moderado
+Hogar_1783,Departamento,1428,36,No,Baja,Electricidad,Solar,278.9,Si,23,46,Moderado
+Hogar_1784,Departamento,1096,73,Si,Alta,Electricidad,Solar,473.5,Si,23,36,Moderado
+Hogar_1785,Comercio,1935,72,No,Media,Electricidad,Electricidad,846.7,No,14,10,Moderado
+Hogar_1786,Pyme,1789,51,No,Baja,Electricidad,Electricidad,336.1,Si,6,78,Ineficiente
+Hogar_1787,Departamento,1600,129,No,Alta,Solar,Solar,525.9,Si,17,7,Moderado
+Hogar_1788,Departamento,1577,55,No,Alta,Solar,Electricidad,680.0,No,0,12,Moderado
+Hogar_1789,Casa,529,59,Si,Alta,Solar,Solar,754.8,Si,14,86,Moderado
+Hogar_1790,Departamento,1071,22,No,Muy Baja,Electricidad,Electricidad,174.7,Si,1,91,Moderado
+Hogar_1791,Casa,238,102,No,Muy Alta,Electricidad,Solar,565.6,Si,21,48,Moderado
+Hogar_1792,Comercio,335,39,Si,Muy Alta,Solar,Electricidad,912.3,Si,1,37,Moderado
+Hogar_1793,Departamento,686,63,No,Media,Solar,Solar,968.4,Si,9,75,Moderado
+Hogar_1794,Comercio,778,84,Si,Muy Baja,Electricidad,Electricidad,656.5,No,19,36,Ineficiente
+Hogar_1795,Casa,297,150,Si,Baja,Solar,Otros,983.7,No,14,60,Moderado
+Hogar_1796,Casa,1620,88,Si,Muy Alta,Electricidad,Electricidad,571.2,No,9,77,Moderado
+Hogar_1797,Comercio,1848,30,Si,Media,Electricidad,Solar,443.2,Si,18,96,Ineficiente
+Hogar_1798,Casa,963,19,No,Media,Solar,Solar,552.0,Si,21,8,Eficiente
+Hogar_1799,Casa,1251,129,Si,Baja,Electricidad,Solar,116.6,Si,12,7,Moderado
+Hogar_1800,Casa,57,12,Si,Baja,Solar,Electricidad,402.3,Si,23,43,Moderado
+Hogar_1801,Pyme,468,121,No,Media,Electricidad,Solar,458.9,Si,10,58,Moderado
+Hogar_1802,Comercio,187,102,No,Media,Electricidad,Electricidad,848.8,No,21,81,Ineficiente
+Hogar_1803,Departamento,792,105,No,Muy Alta,Electricidad,Electricidad,758.9,Si,1,86,Ineficiente
+Hogar_1804,Casa,279,118,No,Media,Otros,Solar,601.8,Si,20,46,Moderado
+Hogar_1805,Casa,546,69,No,Alta,Solar,Solar,347.9,Si,12,34,Eficiente
+Hogar_1806,Comercio,1002,98,Si,Baja,Otros,Solar,187.8,Si,21,84,Moderado
+Hogar_1807,Comercio,1700,81,No,Muy Baja,Solar,Otros,348.4,No,24,72,Moderado
+Hogar_1808,Casa,1529,74,Si,Media,Solar,Electricidad,680.1,No,21,22,Moderado
+Hogar_1809,Casa,35,117,No,Baja,Electricidad,Otros,263.8,Si,20,91,Moderado
+Hogar_1810,Casa,751,83,Si,Baja,Electricidad,Electricidad,427.5,Si,0,98,Ineficiente
+Hogar_1811,Comercio,530,68,No,Muy Alta,Electricidad,Solar,387.4,No,4,21,Eficiente
+Hogar_1812,Comercio,810,58,No,Media,Electricidad,Solar,765.8,No,20,15,Moderado
+Hogar_1813,Casa,1885,125,No,Baja,Solar,Solar,883.9,No,21,5,Moderado
+Hogar_1814,Casa,1609,110,Si,Baja,Electricidad,Electricidad,699.7,Si,6,17,Ineficiente
+Hogar_1815,Casa,461,61,No,Baja,Electricidad,Solar,342.3,Si,12,72,Moderado
+Hogar_1816,Pyme,1160,143,No,Muy Alta,Electricidad,Electricidad,433.7,Si,12,19,Moderado
+Hogar_1817,Casa,178,127,No,Baja,Electricidad,Electricidad,144.2,Si,19,5,Moderado
+Hogar_1818,Comercio,1684,104,Si,Baja,Solar,Electricidad,168.9,No,22,23,Moderado
+Hogar_1819,Departamento,942,67,Si,Media,Otros,Solar,165.1,Si,20,83,Moderado
+Hogar_1820,Departamento,894,14,No,Baja,Electricidad,Electricidad,131.5,Si,5,14,Moderado
+Hogar_1821,Casa,1151,34,No,Baja,Electricidad,Electricidad,180.4,Si,19,10,Moderado
+Hogar_1822,Casa,778,13,No,Baja,Electricidad,Electricidad,203.5,No,11,31,Eficiente
+Hogar_1823,Departamento,1882,101,No,Baja,Otros,Electricidad,112.7,Si,7,13,Moderado
+Hogar_1824,Comercio,1240,99,No,Muy Baja,Electricidad,Otros,640.6,Si,8,22,Moderado
+Hogar_1825,Departamento,1778,6,No,Muy Baja,Solar,Otros,990.4,No,17,37,Moderado
+Hogar_1826,Departamento,588,29,No,Alta,Solar,Electricidad,879.3,Si,10,39,Moderado
+Hogar_1827,Casa,1853,48,Si,Baja,Electricidad,Solar,46.6,Si,19,10,Moderado
+Hogar_1828,Pyme,1130,143,No,Alta,Electricidad,Solar,423.6,Si,10,31,Moderado
+Hogar_1829,Comercio,514,110,Si,Alta,Electricidad,Solar,859.5,No,23,43,Moderado
+Hogar_1830,Casa,920,71,Si,Media,Otros,Solar,135.5,No,23,99,Eficiente
+Hogar_1831,Pyme,1137,79,Si,Baja,Solar,Electricidad,847.8,No,14,77,Ineficiente
+Hogar_1832,Departamento,1243,82,Si,Baja,Solar,Solar,593.1,No,8,94,Moderado
+Hogar_1833,Departamento,129,41,No,Alta,Solar,Electricidad,931.4,No,2,98,Moderado
+Hogar_1834,Comercio,1832,16,No,Media,Solar,Electricidad,876.2,No,16,36,Moderado
+Hogar_1835,Comercio,1145,6,No,Media,Solar,Solar,677.4,Si,24,35,Moderado
+Hogar_1836,Comercio,1472,9,Si,Muy Baja,Electricidad,Solar,658.2,No,16,68,Moderado
+Hogar_1837,Casa,1940,33,No,Muy Alta,Electricidad,Electricidad,214.0,Si,2,55,Moderado
+Hogar_1838,Casa,1247,35,Si,Muy Baja,Electricidad,Solar,117.6,No,18,68,Moderado
+Hogar_1839,Pyme,1050,5,No,Media,Solar,Solar,416.0,No,8,47,Eficiente
+Hogar_1840,Casa,1032,145,No,Media,Electricidad,Otros,187.4,Si,16,6,Moderado
+Hogar_1841,Departamento,432,133,No,Muy Baja,Solar,Solar,103.3,Si,22,28,Eficiente
+Hogar_1842,Departamento,1427,28,No,Media,Electricidad,Solar,303.0,Si,17,30,Moderado
+Hogar_1843,Departamento,192,125,No,Alta,Otros,Solar,860.6,Si,22,27,Moderado
+Hogar_1844,Departamento,534,80,Si,Alta,Electricidad,Electricidad,18.1,Si,14,69,Moderado
+Hogar_1845,Pyme,1687,74,No,Alta,Electricidad,Electricidad,293.3,Si,0,39,Moderado
+Hogar_1846,Casa,338,25,No,Media,Otros,Electricidad,424.6,Si,9,35,Moderado
+Hogar_1847,Casa,1642,126,Si,Media,Electricidad,Solar,511.1,No,7,44,Moderado
+Hogar_1848,Casa,1467,114,No,Muy Baja,Otros,Solar,182.4,Si,9,15,Moderado
+Hogar_1849,Pyme,788,125,No,Media,Electricidad,Otros,964.3,Si,1,83,Ineficiente
+Hogar_1850,Departamento,706,27,No,Baja,Electricidad,Solar,579.3,Si,18,94,Moderado
+Hogar_1851,Casa,502,130,Si,Media,Solar,Electricidad,522.6,No,13,32,Moderado
+Hogar_1852,Comercio,98,74,Si,Baja,Otros,Electricidad,9.8,Si,7,29,Moderado
+Hogar_1853,Pyme,1190,77,No,Media,Electricidad,Electricidad,486.2,Si,18,63,Ineficiente
+Hogar_1854,Comercio,607,89,Si,Media,Otros,Solar,837.8,Si,0,6,Moderado
+Hogar_1855,Pyme,287,20,No,Muy Alta,Solar,Solar,220.4,Si,15,90,Eficiente
+Hogar_1856,Casa,1389,53,No,Media,Otros,Otros,351.9,Si,24,27,Moderado
+Hogar_1857,Comercio,1357,102,No,Muy Alta,Electricidad,Solar,21.6,Si,23,99,Moderado
+Hogar_1858,Departamento,270,58,No,Alta,Electricidad,Otros,977.0,Si,14,28,Moderado
+Hogar_1859,Comercio,1564,71,No,Media,Otros,Solar,67.6,No,19,5,Eficiente
+Hogar_1860,Comercio,1386,19,Si,Media,Otros,Otros,898.3,No,23,41,Ineficiente
+Hogar_1861,Comercio,1624,111,Si,Muy Baja,Solar,Solar,313.7,Si,4,56,Moderado
+Hogar_1862,Comercio,586,58,No,Alta,Electricidad,Solar,588.0,No,2,54,Eficiente
+Hogar_1863,Casa,1125,70,No,Media,Electricidad,Solar,679.6,Si,16,80,Moderado
+Hogar_1864,Departamento,1929,136,No,Muy Alta,Solar,Solar,141.7,Si,9,18,Eficiente
+Hogar_1865,Pyme,200,108,No,Media,Electricidad,Electricidad,444.3,Si,4,77,Moderado
+Hogar_1866,Pyme,134,128,No,Alta,Electricidad,Electricidad,326.1,Si,10,43,Moderado
+Hogar_1867,Casa,208,55,Si,Alta,Electricidad,Electricidad,57.5,Si,5,89,Moderado
+Hogar_1868,Casa,217,34,Si,Baja,Solar,Solar,833.4,No,3,74,Moderado
+Hogar_1869,Casa,90,122,Si,Baja,Electricidad,Solar,46.1,No,6,29,Eficiente
+Hogar_1870,Comercio,1898,130,No,Media,Solar,Electricidad,653.6,Si,18,10,Moderado
+Hogar_1871,Comercio,988,103,No,Media,Solar,Electricidad,314.8,Si,6,6,Eficiente
+Hogar_1872,Casa,1523,6,No,Baja,Solar,Electricidad,192.9,Si,13,80,Moderado
+Hogar_1873,Departamento,1832,26,No,Muy Alta,Electricidad,Solar,667.4,Si,16,89,Moderado
+Hogar_1874,Comercio,1149,0,No,Media,Electricidad,Electricidad,575.0,Si,22,4,Moderado
+Hogar_1875,Comercio,1593,86,No,Muy Alta,Solar,Electricidad,315.9,No,16,34,Eficiente
+Hogar_1876,Departamento,889,40,Si,Alta,Otros,Electricidad,513.4,Si,12,83,Moderado
+Hogar_1877,Departamento,1177,122,No,Media,Solar,Electricidad,247.0,No,0,33,Eficiente
+Hogar_1878,Departamento,1501,74,No,Muy Alta,Otros,Otros,863.8,Si,1,4,Moderado
+Hogar_1879,Casa,1963,41,Si,Media,Solar,Electricidad,314.5,No,17,44,Eficiente
+Hogar_1880,Departamento,394,116,No,Muy Alta,Solar,Solar,245.9,No,3,98,Eficiente
+Hogar_1881,Comercio,876,62,No,Media,Electricidad,Solar,752.1,No,12,76,Moderado
+Hogar_1882,Pyme,68,126,Si,Media,Electricidad,Otros,18.6,No,0,31,Eficiente
+Hogar_1883,Departamento,1933,132,No,Media,Solar,Electricidad,268.7,Si,3,80,Moderado
+Hogar_1884,Comercio,1468,47,No,Media,Electricidad,Electricidad,376.0,Si,1,66,Moderado
+Hogar_1885,Casa,513,2,Si,Media,Solar,Electricidad,882.4,No,3,58,Moderado
+Hogar_1886,Departamento,103,115,No,Media,Electricidad,Electricidad,950.5,Si,15,60,Ineficiente
+Hogar_1887,Casa,851,98,Si,Baja,Solar,Solar,716.8,No,3,2,Moderado
+Hogar_1888,Casa,1850,115,No,Muy Alta,Solar,Electricidad,493.0,Si,24,36,Moderado
+Hogar_1889,Comercio,1319,13,Si,Media,Solar,Electricidad,641.0,Si,8,70,Moderado
+Hogar_1890,Pyme,699,111,No,Media,Otros,Otros,414.6,Si,16,60,Moderado
+Hogar_1891,Casa,726,60,No,Media,Electricidad,Solar,299.5,No,20,23,Eficiente
+Hogar_1892,Departamento,784,94,Si,Alta,Electricidad,Electricidad,950.7,No,22,47,Ineficiente
+Hogar_1893,Comercio,1949,16,No,Muy Alta,Electricidad,Electricidad,116.3,Si,19,46,Moderado
+Hogar_1894,Casa,753,123,No,Media,Otros,Electricidad,347.0,Si,20,80,Moderado
+Hogar_1895,Departamento,1364,23,No,Muy Baja,Solar,Otros,899.2,No,1,44,Moderado
+Hogar_1896,Comercio,950,115,No,Media,Solar,Otros,723.4,No,2,19,Moderado
+Hogar_1897,Departamento,1900,150,No,Media,Electricidad,Otros,30.1,Si,22,49,Moderado
+Hogar_1898,Casa,927,81,Si,Muy Alta,Solar,Otros,24.1,No,14,88,Eficiente
+Hogar_1899,Departamento,914,49,Si,Media,Electricidad,Solar,517.0,Si,6,58,Moderado
+Hogar_1900,Comercio,1018,78,No,Muy Alta,Solar,Electricidad,484.8,Si,3,91,Moderado
+Hogar_1901,Departamento,1994,78,No,Media,Otros,Electricidad,443.5,Si,11,7,Moderado
+Hogar_1902,Casa,1217,69,Si,Muy Alta,Solar,Solar,303.0,No,0,94,Eficiente
+Hogar_1903,Comercio,364,26,No,Muy Baja,Solar,Otros,986.7,No,16,41,Moderado
+Hogar_1904,Casa,218,14,Si,Muy Alta,Solar,Electricidad,272.7,No,3,78,Eficiente
+Hogar_1905,Comercio,1502,49,No,Muy Alta,Solar,Solar,490.6,No,3,15,Eficiente
+Hogar_1906,Casa,308,35,Si,Muy Alta,Electricidad,Otros,405.5,Si,21,76,Moderado
+Hogar_1907,Pyme,1385,7,Si,Muy Baja,Solar,Electricidad,171.1,No,22,53,Moderado
+Hogar_1908,Departamento,415,78,No,Baja,Electricidad,Otros,203.4,Si,24,93,Moderado
+Hogar_1909,Casa,1025,130,Si,Media,Electricidad,Electricidad,918.4,No,8,23,Moderado
+Hogar_1910,Casa,550,46,No,Muy Baja,Electricidad,Solar,858.4,Si,20,77,Ineficiente
+Hogar_1911,Casa,1289,104,Si,Muy Baja,Solar,Electricidad,199.8,No,9,73,Moderado
+Hogar_1912,Pyme,1881,97,No,Baja,Electricidad,Solar,875.8,No,18,88,Ineficiente
+Hogar_1913,Pyme,1532,95,No,Media,Solar,Solar,210.0,No,18,94,Eficiente
+Hogar_1914,Departamento,684,115,Si,Media,Electricidad,Electricidad,626.9,No,14,65,Moderado
+Hogar_1915,Departamento,741,12,No,Muy Baja,Electricidad,Otros,82.2,Si,21,60,Moderado
+Hogar_1916,Comercio,1641,0,No,Baja,Solar,Solar,880.5,No,16,10,Moderado
+Hogar_1917,Pyme,916,33,No,Media,Electricidad,Solar,52.4,Si,6,58,Moderado
+Hogar_1918,Departamento,1604,78,No,Media,Solar,Electricidad,555.4,No,2,47,Moderado
+Hogar_1919,Departamento,1507,77,No,Baja,Solar,Otros,779.9,No,4,15,Moderado
+Hogar_1920,Departamento,1138,120,Si,Media,Otros,Electricidad,117.7,Si,15,9,Moderado
+Hogar_1921,Comercio,1709,92,Si,Muy Alta,Solar,Electricidad,405.1,No,22,13,Moderado
+Hogar_1922,Casa,1144,97,No,Muy Alta,Electricidad,Electricidad,42.9,Si,6,23,Eficiente
+Hogar_1923,Departamento,477,81,No,Muy Alta,Electricidad,Electricidad,683.1,No,15,33,Moderado
+Hogar_1924,Departamento,453,37,Si,Muy Alta,Electricidad,Otros,308.1,No,8,9,Eficiente
+Hogar_1925,Comercio,1200,13,No,Media,Otros,Electricidad,559.8,Si,0,3,Moderado
+Hogar_1926,Casa,1563,135,No,Media,Electricidad,Electricidad,932.8,Si,2,94,Ineficiente
+Hogar_1927,Departamento,1425,90,No,Media,Electricidad,Otros,306.6,Si,24,73,Moderado
+Hogar_1928,Departamento,1071,53,Si,Media,Electricidad,Solar,49.6,No,7,25,Eficiente
+Hogar_1929,Departamento,908,129,No,Baja,Otros,Solar,676.0,No,17,88,Moderado
+Hogar_1930,Casa,338,100,Si,Media,Electricidad,Electricidad,787.1,Si,23,96,Ineficiente
+Hogar_1931,Departamento,865,88,No,Media,Otros,Solar,957.9,No,23,71,Moderado
+Hogar_1932,Departamento,544,55,No,Muy Baja,Electricidad,Electricidad,158.6,Si,17,36,Moderado
+Hogar_1933,Departamento,1255,93,No,Alta,Electricidad,Otros,392.7,Si,23,89,Moderado
+Hogar_1934,Departamento,400,92,Si,Muy Baja,Electricidad,Solar,844.3,Si,18,20,Ineficiente
+Hogar_1935,Comercio,476,83,Si,Baja,Otros,Solar,807.1,Si,6,81,Ineficiente
+Hogar_1936,Comercio,1675,84,No,Muy Baja,Otros,Electricidad,625.2,Si,24,54,Ineficiente
+Hogar_1937,Casa,1833,21,No,Media,Electricidad,Electricidad,270.1,Si,19,100,Moderado
+Hogar_1938,Comercio,1040,34,Si,Muy Baja,Electricidad,Electricidad,284.8,Si,5,90,Moderado
+Hogar_1939,Departamento,620,15,No,Muy Alta,Solar,Electricidad,124.9,No,24,19,Eficiente
+Hogar_1940,Casa,1228,49,Si,Media,Electricidad,Electricidad,921.9,Si,10,60,Ineficiente
+Hogar_1941,Casa,1259,121,Si,Media,Electricidad,Solar,173.8,Si,4,37,Moderado
+Hogar_1942,Casa,525,127,Si,Baja,Electricidad,Electricidad,573.3,Si,11,3,Moderado
+Hogar_1943,Comercio,489,112,Si,Media,Electricidad,Solar,584.8,Si,0,92,Moderado
+Hogar_1944,Comercio,1889,16,Si,Alta,Electricidad,Electricidad,370.2,Si,18,86,Ineficiente
+Hogar_1945,Comercio,1173,79,No,Media,Electricidad,Electricidad,353.2,Si,10,19,Moderado
+Hogar_1946,Departamento,138,129,No,Alta,Electricidad,Solar,668.9,No,14,53,Moderado
+Hogar_1947,Departamento,1061,131,No,Muy Alta,Otros,Solar,388.9,No,24,46,Eficiente
+Hogar_1948,Casa,1175,84,Si,Alta,Electricidad,Solar,255.9,Si,15,80,Moderado
+Hogar_1949,Casa,1614,93,Si,Media,Solar,Electricidad,399.7,Si,2,56,Moderado
+Hogar_1950,Departamento,356,133,Si,Baja,Electricidad,Solar,807.9,Si,10,70,Ineficiente
+Hogar_1951,Casa,1950,80,Si,Media,Solar,Electricidad,966.5,Si,10,31,Moderado
+Hogar_1952,Casa,1332,68,No,Media,Electricidad,Electricidad,636.3,No,9,53,Moderado
+Hogar_1953,Departamento,165,68,No,Alta,Solar,Solar,782.3,No,1,34,Eficiente
+Hogar_1954,Comercio,1450,147,Si,Alta,Electricidad,Electricidad,533.3,No,19,31,Moderado
+Hogar_1955,Pyme,927,15,Si,Alta,Otros,Electricidad,625.2,Si,4,60,Moderado
+Hogar_1956,Pyme,1146,50,Si,Alta,Electricidad,Otros,988.1,No,22,11,Moderado
+Hogar_1957,Departamento,542,104,Si,Muy Baja,Electricidad,Solar,439.0,Si,22,100,Ineficiente
+Hogar_1958,Departamento,594,65,No,Muy Baja,Otros,Electricidad,67.2,Si,24,6,Moderado
+Hogar_1959,Departamento,1973,8,Si,Baja,Solar,Solar,957.0,Si,7,27,Moderado
+Hogar_1960,Comercio,871,106,No,Muy Alta,Electricidad,Electricidad,793.3,No,12,7,Moderado
+Hogar_1961,Casa,1118,99,No,Alta,Otros,Otros,398.9,No,14,49,Eficiente
+Hogar_1962,Departamento,143,85,No,Media,Electricidad,Solar,982.4,Si,1,96,Moderado
+Hogar_1963,Comercio,913,63,No,Alta,Electricidad,Electricidad,346.2,Si,11,72,Moderado
+Hogar_1964,Departamento,1108,21,No,Alta,Otros,Electricidad,372.7,No,23,60,Moderado
+Hogar_1965,Departamento,1082,109,Si,Muy Alta,Electricidad,Electricidad,610.1,No,7,33,Moderado
+Hogar_1966,Departamento,1367,96,No,Alta,Otros,Solar,275.1,Si,20,47,Moderado
+Hogar_1967,Casa,75,17,No,Media,Electricidad,Solar,698.9,No,18,44,Moderado
+Hogar_1968,Departamento,1929,70,Si,Media,Solar,Electricidad,153.7,Si,24,79,Moderado
+Hogar_1969,Casa,1538,126,No,Baja,Solar,Electricidad,108.9,No,22,27,Eficiente
+Hogar_1970,Casa,44,96,No,Media,Otros,Electricidad,535.3,Si,0,94,Moderado
+Hogar_1971,Casa,751,0,No,Media,Solar,Electricidad,555.9,Si,7,22,Moderado
+Hogar_1972,Comercio,222,131,Si,Baja,Electricidad,Electricidad,107.5,No,9,47,Moderado
+Hogar_1973,Casa,1940,3,Si,Alta,Solar,Solar,964.2,No,12,93,Moderado
+Hogar_1974,Departamento,1499,124,No,Media,Electricidad,Solar,573.7,Si,4,48,Moderado
+Hogar_1975,Casa,584,81,Si,Muy Alta,Solar,Otros,151.9,Si,21,30,Eficiente
+Hogar_1976,Pyme,1728,26,No,Baja,Otros,Otros,312.1,Si,8,2,Moderado
+Hogar_1977,Casa,477,58,No,Media,Solar,Solar,800.4,Si,9,15,Moderado
+Hogar_1978,Departamento,314,31,Si,Media,Solar,Solar,523.7,No,13,47,Eficiente
+Hogar_1979,Pyme,1190,27,No,Baja,Electricidad,Otros,189.0,Si,23,27,Moderado
+Hogar_1980,Comercio,1133,105,No,Media,Solar,Electricidad,103.7,No,10,71,Eficiente
+Hogar_1981,Casa,1743,104,Si,Baja,Electricidad,Electricidad,431.3,Si,13,27,Ineficiente
+Hogar_1982,Comercio,416,69,No,Baja,Solar,Electricidad,338.1,No,2,85,Moderado
+Hogar_1983,Departamento,1640,61,No,Baja,Electricidad,Solar,656.3,Si,20,13,Moderado
+Hogar_1984,Departamento,240,33,No,Baja,Solar,Solar,925.3,Si,15,55,Moderado
+Hogar_1985,Casa,1575,86,No,Alta,Electricidad,Electricidad,248.5,Si,19,17,Moderado
+Hogar_1986,Casa,240,113,No,Muy Baja,Solar,Solar,855.4,No,16,75,Moderado
+Hogar_1987,Comercio,1452,105,No,Media,Electricidad,Solar,920.5,Si,4,59,Moderado
+Hogar_1988,Departamento,153,55,No,Alta,Otros,Electricidad,902.1,Si,6,10,Moderado
+Hogar_1989,Departamento,1871,112,No,Media,Electricidad,Electricidad,952.1,No,16,33,Moderado
+Hogar_1990,Comercio,1526,12,No,Muy Alta,Solar,Electricidad,842.3,No,19,78,Moderado
+Hogar_1991,Comercio,785,17,No,Alta,Electricidad,Electricidad,593.9,No,21,37,Moderado
+Hogar_1992,Casa,429,112,Si,Alta,Solar,Otros,410.4,Si,10,8,Moderado
+Hogar_1993,Departamento,1078,38,No,Baja,Electricidad,Otros,492.2,Si,11,33,Moderado
+Hogar_1994,Casa,1841,78,No,Alta,Solar,Otros,872.7,No,24,7,Moderado
+Hogar_1995,Comercio,363,145,Si,Alta,Electricidad,Solar,302.1,Si,23,34,Moderado
+Hogar_1996,Comercio,856,150,No,Media,Solar,Solar,160.1,Si,1,71,Eficiente
+Hogar_1997,Pyme,739,29,Si,Baja,Electricidad,Solar,141.7,Si,18,7,Moderado
+Hogar_1998,Casa,386,97,Si,Media,Electricidad,Solar,827.2,No,4,41,Moderado
+Hogar_1999,Casa,594,57,No,Alta,Solar,Solar,761.7,Si,10,100,Moderado
+Hogar_2000,Casa,1441,66,No,Media,Electricidad,Solar,498.1,No,22,55,Moderado

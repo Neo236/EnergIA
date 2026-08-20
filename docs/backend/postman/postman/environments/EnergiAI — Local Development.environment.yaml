@@ -1,0 +1,6 @@
+name: EnergiAI — Local Development
+values:
+  - key: baseUrl
+    value: 'http://localhost:8080'
+  - key: mlUrl
+    value: 'http://localhost:8000'

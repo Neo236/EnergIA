@@ -1,4 +1,9 @@
-import { defineConfig, loadEnv } from 'vite'
+// defineConfig sale de 'vitest/config' (no de 'vite') para que TypeScript
+// reconozca el campo `test` de abajo — es un re-export que fusiona los tipos
+// de Vite con los de Vitest, así no hace falta duplicar config en otro archivo.
+// loadEnv sigue viniendo de 'vite': 'vitest/config' no lo reexporta.
+import { defineConfig } from 'vitest/config'
+import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // El front habla con la API en el MISMO ORIGEN (/api/v1/...). En la VM eso
@@ -34,6 +39,14 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       sourcemap: true,
+    },
+    test: {
+      environment: 'jsdom',
+      // Fija la zona horaria del proceso de test a UTC: fechaLegible/
+      // fechaRelativa usan getters locales (getHours, getDate) a propósito
+      // (ver formato.ts), así que sin esto las aserciones dependerían de en
+      // qué zona horaria corra quien ejecute los tests o el CI.
+      env: { TZ: 'UTC' },
     },
   }
 })

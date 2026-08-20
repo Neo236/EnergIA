@@ -1,14 +1,28 @@
 /* ============================================================
-   Contrato V1.2 — FUENTE ÚNICA del front.
-   Espejo de DatosRegistroConsumo del back-end (Spring Boot).
-   Si el contrato cambia, se toca solo este archivo.
+   Contrato V2 — FUENTE ÚNICA del front.
 
-   Nota: el front habla con la API de Java, no con el servicio de ML.
-   El ML tiene su propio esquema y las diferencias entre ambos las
-   resuelve el back-end.
+   Espejo de DatosRegistroConsumo (entrada) y DatosRegistroAnalisis
+   (salida) del back-end Spring Boot. Si el contrato del back cambia,
+   se toca solo este archivo.
+
+   El front habla con la API de Java, nunca con el servicio de ML.
+   Las diferencias entre ambos esquemas las resuelve el back-end.
+
+   Novedad respecto de V1.2: la API ahora persiste cada análisis y lo
+   devuelve con `id` (UUID v7) y `fecha`. Eso es lo que hace que un
+   resultado tenga URL propia y sobreviva a una recarga.
    ============================================================ */
 
 export const ENDPOINT = '/api/v1/analisis-energetico'
+
+/* Tarifa usada para mostrar la referencia por kWh y la proyección anual.
+
+   ADVERTENCIA: el back-end NO devuelve la tarifa. `costo_estimado_mensual`
+   lo calcula el modelo de ML con su propio criterio, que no conocemos. Esta
+   constante es una referencia del front y puede no explicar exactamente el
+   costo mostrado a su lado. Decisión tomada a conciencia para no bloquear
+   el front en un cambio de back-end; si algún día la API expone el consumo
+   o la tarifa, hay que derivarla de ahí y borrar esta constante. */
 export const TARIFA_KWH = 0.75
 
 export const TIPOS_INMUEBLE = ['Casa', 'Departamento', 'Comercio', 'Pyme'] as const
@@ -21,7 +35,7 @@ export type FuenteEnergia = (typeof FUENTES_ENERGIA)[number]
 
 export type Categoria = 'Eficiente' | 'Moderado' | 'Ineficiente'
 
-/** Lo que el usuario carga. Los opcionales pueden faltar: el back aplica su default. */
+/** Lo que se carga en el formulario. Los opcionales pueden faltar: el back aplica su defecto. */
 export interface Solicitud {
   consumo_kwh: number
   tipo_inmueble: TipoInmueble
@@ -37,20 +51,27 @@ export interface Solicitud {
   uso_horario_pico?: boolean
 }
 
-/** Respuesta 200. La API no devuelve identificador ni fecha (PA-19). */
+/** Respuesta 200 de POST y de GET /{id}. */
 export interface Analisis {
+  /** UUID v7 asignado al persistir. Es la clave de la URL del resultado. */
+  id: string
+  /** ISO-8601 sin zona, tal como lo serializa LocalDateTime. */
+  fecha: string
   categoria: Categoria
   probabilidad: number
   costo_estimado_mensual: number
   recomendaciones: string[]
 }
 
-/** Formato uniforme de error del back-end (DatosErrorRespuesta). */
+/* ---------- errores ---------- */
+
+/** Espejo de DatosErrorCampo. */
 export interface DetalleError {
   campo: string
   mensaje: string
 }
 
+/** Espejo de DatosErrorRespuesta. */
 export interface RespuestaError {
   timestamp?: string
   status: number
@@ -68,17 +89,23 @@ export class ErrorApi extends Error {
   }
 }
 
-/* ---------- descripción de los campos, para la interfaz ---------- */
+/* ---------- descripción de los campos ----------
+
+   Las etiquetas y los textos de ayuda son los del diseño, palabra por
+   palabra. Los campos sin `ayuda` no la llevan en el diseño tampoco:
+   los tres desplegables comunican su defecto dentro del propio valor. */
 
 type Base = {
   nombre: keyof Solicitud
   etiqueta: string
   requerido: boolean
-  ayuda: string
+  ayuda?: string
 }
 
 export type Campo =
   | (Base & { tipo: 'numero'; min: number; max: number; unidad?: string; defecto?: number; decimal?: boolean })
+  | (Base & { tipo: 'contador'; min: number; max: number; defecto?: number })
+  | (Base & { tipo: 'deslizador'; min: number; max: number; unidad: string })
   | (Base & { tipo: 'opciones'; valores: readonly string[]; etiquetasCortas?: Record<string, string> })
   | (Base & { tipo: 'seleccion'; valores: readonly string[]; defecto: string })
   | (Base & { tipo: 'booleano'; defecto: boolean })
@@ -93,16 +120,17 @@ export const CAMPOS_REQUERIDOS: Campo[] = [
   {
     nombre: 'tipo_inmueble', etiqueta: 'Tipo de inmueble', tipo: 'opciones', requerido: true,
     valores: TIPOS_INMUEBLE,
+    // El chip dice «Depto.» por espacio; al back viaja «Departamento».
     etiquetasCortas: { Departamento: 'Depto.' },
-    ayuda: 'Valores del contrato: Casa · Departamento · Comercio · Pyme',
   },
   {
-    nombre: 'cantidad_equipos', etiqueta: 'Cantidad de equipos', tipo: 'numero', requerido: true,
-    min: 1, max: 100, ayuda: 'Entre 1 y 100',
+    nombre: 'cantidad_equipos', etiqueta: 'Cantidad de equipos', tipo: 'contador', requerido: true,
+    min: 1, max: 100, defecto: 10,
+    ayuda: 'Electrodomésticos enchufados · 1 a 100',
   },
   {
-    nombre: 'horas_alto_consumo', etiqueta: 'Horas de alto consumo por día', tipo: 'numero', requerido: true,
-    min: 0, max: 24, unidad: 'h', ayuda: 'De 0 a 24 horas',
+    nombre: 'horas_alto_consumo', etiqueta: 'Horas de alto consumo por día', tipo: 'deslizador', requerido: true,
+    min: 0, max: 24, unidad: 'h',
   },
 ]
 
@@ -125,17 +153,14 @@ export const CAMPOS_OPCIONALES: Campo[] = [
   {
     nombre: 'calidad_aislamiento', etiqueta: 'Calidad del aislamiento', tipo: 'seleccion', requerido: false,
     valores: CALIDADES_AISLAMIENTO, defecto: 'Media',
-    ayuda: 'Muy Alta · Alta · Media · Baja · Muy Baja',
   },
   {
     nombre: 'fuente_calefaccion', etiqueta: 'Fuente de calefacción', tipo: 'seleccion', requerido: false,
     valores: FUENTES_ENERGIA, defecto: 'Electricidad',
-    ayuda: 'Solar · Electricidad · Otros',
   },
   {
     nombre: 'fuente_agua_caliente', etiqueta: 'Fuente de agua caliente', tipo: 'seleccion', requerido: false,
     valores: FUENTES_ENERGIA, defecto: 'Electricidad',
-    ayuda: 'Solar · Electricidad · Otros',
   },
   {
     nombre: 'uso_horario_pico', etiqueta: 'Uso en horario pico', tipo: 'booleano', requerido: false, defecto: false,
@@ -145,13 +170,32 @@ export const CAMPOS_OPCIONALES: Campo[] = [
 
 export const CAMPOS: Campo[] = [...CAMPOS_REQUERIDOS, ...CAMPOS_OPCIONALES]
 
-/** Completa una solicitud parcial con los defaults que aplicaría el back. */
+/** Valores con los que arranca el formulario, iguales a los del diseño. */
+export const VALORES_INICIALES = {
+  consumo_kwh: '420',
+  tipo_inmueble: 'Casa' as TipoInmueble,
+  cantidad_equipos: 10,
+  horas_alto_consumo: 12,
+} as const
+
+/** Completa una solicitud parcial con los defectos que aplicaría el back. */
 export function conDefectos(solicitud: Solicitud): Record<string, unknown> {
   const completo: Record<string, unknown> = { ...solicitud }
   for (const campo of CAMPOS_OPCIONALES) {
-    if (completo[campo.nombre] === undefined) {
-      completo[campo.nombre] = 'defecto' in campo ? campo.defecto : undefined
+    if (completo[campo.nombre] === undefined && 'defecto' in campo) {
+      completo[campo.nombre] = campo.defecto
     }
   }
   return completo
+}
+
+/**
+ * El defecto de un campo numérico opcional, como texto para usar de
+ * placeholder: se ve en gris mientras el campo está vacío, sin ocupar el
+ * `value` — dejarlo vacío de verdad sigue siendo la opción válida.
+ */
+export function defectoComoPlaceholder(nombre: keyof Solicitud): string | undefined {
+  const campo = CAMPOS.find((c) => c.nombre === nombre)
+  if (!campo || (campo.tipo !== 'numero' && campo.tipo !== 'contador')) return undefined
+  return campo.defecto !== undefined ? String(campo.defecto) : undefined
 }

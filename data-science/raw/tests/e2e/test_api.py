@@ -1,3 +1,7 @@
+import hashlib
+import os
+from pathlib import Path
+
 import pytest
 
 from interfaces.api.schemas import AnalisisRequest
@@ -42,6 +46,42 @@ class TestApiEndponts:
         r = fastapi_client.get("/health")
         assert r.status_code == 200
         assert r.json() == {"status": "healthy"}
+
+    def test_model_info(self, fastapi_client, trained_model):
+        """El hash reportado debe ser el del .joblib real, no uno arbitrario.
+
+        Es la garantia que sostiene el informe de certificacion: si este
+        endpoint devolviera un hash que no corresponde al archivo en disco,
+        identificar la version del modelo desplegado dejaria de ser posible.
+        """
+        ruta = Path(trained_model["model_path"])
+        esperado = hashlib.sha256(ruta.read_bytes()).hexdigest()
+
+        r = fastapi_client.get("/model-info")
+        assert r.status_code == 200
+        body = r.json()
+        assert body["sha256"] == esperado
+        assert body["size_bytes"] == ruta.stat().st_size
+        assert body["model_path"] == str(ruta)
+        assert body["mtime_utc"].endswith("Z")
+        assert isinstance(body["loaded"], bool)
+        assert body["storage_backend"] == os.getenv("STORAGE_BACKEND", "local")
+
+    def test_model_info_sin_modelo(self, fastapi_client, monkeypatch, tmp_path):
+        """Sin archivo de modelo el endpoint responde 503, no 500.
+
+        Mismo criterio que /health: la ausencia del artefacto es
+        indisponibilidad temporal del servicio, no un error del cliente ni una
+        falla interna. Cubre tambien el camino sin chequeo previo de
+        os.path.exists() - el FileNotFoundError del open() se traduce a 503.
+        """
+        from interfaces.api import app as app_module
+
+        monkeypatch.setattr(app_module, "MODEL_PATH", str(tmp_path / "no-existe.joblib"))
+
+        r = fastapi_client.get("/model-info")
+        assert r.status_code == 503
+        assert "no encontrado" in r.json()["detail"]
 
     def test_analisis_energetico_exitoso(self, fastapi_client):
         r = fastapi_client.post("/analisis-energetico", json=PAYLOAD_COMPLETO)

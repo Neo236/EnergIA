@@ -9,11 +9,16 @@
 #
 # Asume que el servicio ML esta corriendo en http://127.0.0.1:8000
 # con STORAGE_BACKEND=local. Para staging/produccion, cambiar URL.
+#
+# Variables de entorno:
+#   ML_SERVICE_URL     default http://127.0.0.1:8000
+#   BINDING_FILE       default data-science/data/MODEL_BINDING.sha256
 
-set -u  # fail en variable sin definir, pero NO abortar en error (queremos ver todos los checks)
+set -u  # falla en variable sin definir, pero NO abortar en error
+        # (queremos ver todos los checks incluso si uno falla)
 
 URL="${ML_SERVICE_URL:-http://127.0.0.1:8000}"
-BINDING="data-science/data/MODEL_BINDING.sha256"
+BINDING_FILE="${BINDING_FILE:-data-science/data/MODEL_BINDING.sha256}"
 DATA_DIR="data-science/data"
 PASS=0
 FAIL=0
@@ -38,13 +43,26 @@ section() {
 }
 
 # --- Check 1: hashes locales (CHECKSUMS.sha256) -----------------------------
+# IMPORTANTE: comprobar AMBOS archivos y verificar exit code 0 de sha256sum.
+# Antes verificaba solo "grep : OK" lo que aprueba con 1 OK + 1 FAILED.
 
-section "1. Dataset canonico (CHECKSUMS.sha256)"
+section "1. Dataset canónico (CHECKSUMS.sha256)"
 cd "$DATA_DIR"
-if sha256sum -c CHECKSUMS.sha256 2>&1 | grep -q ": OK"; then
-    check_pass "database_beta.csv y database_beta.json OK"
+CHECKSUM_OUT=$(sha256sum -c CHECKSUMS.sha256 2>&1)
+CHECKSUM_EXIT=$?
+if [ $CHECKSUM_EXIT -eq 0 ]; then
+    # Exit 0 = todos OK. Validamos tambien cada archivo individualmente.
+    CSV_OK=$(echo "$CHECKSUM_OUT" | grep -c "database_beta.csv: OK" || true)
+    JSON_OK=$(echo "$CHECKSUM_OUT" | grep -c "database_beta.json: OK" || true)
+    if [ "$CSV_OK" -eq 1 ] && [ "$JSON_OK" -eq 1 ]; then
+        check_pass "database_beta.csv OK"
+        check_pass "database_beta.json OK"
+    else
+        check_fail "exit 0 pero faltan lineas OK (CSV=$CSV_OK, JSON=$JSON_OK)"
+    fi
 else
-    check_fail "dataset canario no matchea CHECKSUMS.sha256"
+    check_fail "sha256sum -c CHECKSUMS.sha256 fallo (exit=$CHECKSUM_EXIT)"
+    echo "$CHECKSUM_OUT" | sed 's/^/         /'
 fi
 cd - > /dev/null
 
@@ -53,14 +71,20 @@ cd - > /dev/null
 section "2. Binding modelo+dataset+metricas (MODEL_BINDING.sha256)"
 cd "$DATA_DIR"
 BIND_OUT=$(sha256sum -c MODEL_BINDING.sha256 2>&1)
-if echo "$BIND_OUT" | grep -q "modelo_eficiencia_v1.joblib: OK" && \
-   echo "$BIND_OUT" | grep -q "metricas_v1.joblib: OK" && \
-   echo "$BIND_OUT" | grep -q "database_beta.json: OK" && \
-   echo "$BIND_OUT" | grep -q "database_beta.csv: OK"; then
-    check_pass "4/4 hashes match contra MODEL_BINDING"
+BIND_EXIT=$?
+if [ $BIND_EXIT -eq 0 ]; then
+    # Validar cada uno de los 4 archivos explicitamente.
+    for f in modelo_eficiencia_v1.joblib metricas_v1.joblib database_beta.json database_beta.csv; do
+        if echo "$BIND_OUT" | grep -q "$f: OK"; then
+            check_pass "$f OK"
+        else
+            check_fail "$f falta o no es OK en MODEL_BINDING.sha256"
+        fi
+    done
     BIND_MODEL_SHA=$(grep modelo_eficiencia_v1.joblib MODEL_BINDING.sha256 | awk '{print $1}')
 else
-    check_fail "MODEL_BINDING.sha256 no valida 4/4"
+    check_fail "sha256sum -c MODEL_BINDING.sha256 fallo (exit=$BIND_EXIT)"
+    echo "$BIND_OUT" | sed 's/^/         /'
     BIND_MODEL_SHA=""
 fi
 cd - > /dev/null
@@ -87,13 +111,16 @@ if [ "$MODEL_CODE" = "200" ]; then
     SERVED_SHA=$(echo "$MODEL_BODY" | python3 -c "import sys, json; print(json.load(sys.stdin).get('sha256', ''))" 2>/dev/null)
     SERVED_PATH=$(echo "$MODEL_BODY" | python3 -c "import sys, json; print(json.load(sys.stdin).get('model_path', ''))" 2>/dev/null)
     SERVED_LOADED=$(echo "$MODEL_BODY" | python3 -c "import sys, json; print(json.load(sys.stdin).get('loaded', ''))" 2>/dev/null)
+    SERVED_SIZE=$(echo "$MODEL_BODY" | python3 -c "import sys, json; print(json.load(sys.stdin).get('size_bytes', ''))" 2>/dev/null)
 
-    check_pass "/model-info -> 200 (path=$SERVED_PATH, loaded=$SERVED_LOADED)"
+    check_pass "/model-info -> 200 (path=$SERVED_PATH, loaded=$SERVED_LOADED, size=$SERVED_SIZE bytes)"
 
     if [ -n "$BIND_MODEL_SHA" ] && [ "$SERVED_SHA" = "$BIND_MODEL_SHA" ]; then
         check_pass "sha256 servido ($SERVED_SHA) == binding ($BIND_MODEL_SHA)"
     elif [ -n "$BIND_MODEL_SHA" ]; then
         check_fail "sha256 servido ($SERVED_SHA) != binding ($BIND_MODEL_SHA)"
+    else
+        check_fail "no se pudo comparar SHA (binding no disponible)"
     fi
 else
     check_fail "/model-info no respondio 200 (code=$MODEL_CODE)"

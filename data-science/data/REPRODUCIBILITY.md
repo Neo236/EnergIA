@@ -5,10 +5,18 @@
 
 ---
 
-## TL;DR — 4 comandos para regenerar todo + 1 comando para verificar
+## TL;DR — 5 pasos para regenerar + verificar
 
 ```bash
-# 1. Entrenar (regenera dataset + modelo + métricas en data-science/data/)
+# (0) Construir la imagen Docker del servicio ML. La imagen es el contrato
+#     entre el codigo y el runtime; cualquier diferencia en dependencias
+#     puede cambiar los hashes. El Dockerfile vive en data-science/Dockerfile.
+docker build \
+  -t energiai-ml-service:$(git rev-parse --short HEAD) \
+  -f data-science/Dockerfile \
+  data-science/
+
+# (1) Entrenar (regenera dataset + modelo + métricas en data-science/data/)
 cd data-science/raw
 NUM_CLIENTES=2000 RANDOM_SEED=42 \
   OUTPUT_JSON_PATH=../data/database_beta.json \
@@ -17,29 +25,52 @@ NUM_CLIENTES=2000 RANDOM_SEED=42 \
   OUTPUT_METRICAS_PATH=../data/metricas_v1.joblib \
   python3 -m interfaces.cli.train --dry-run
 
-# 2. Validar artefactos
+# (2) Validar artefactos con el validador oficial del proyecto
 NUM_CLIENTES=2000 \
   OUTPUT_JSON_PATH=../data/database_beta.json \
   OUTPUT_MODEL_PATH=../data/modelo_eficiencia_v1.joblib \
   OUTPUT_METRICAS_PATH=../data/metricas_v1.joblib \
   python3 -m interfaces.cli.validate
 
-# 3. Verificar binding criptográfico
+# (3) Verificar binding criptográfico
 cd ../..
 sha256sum -c data-science/data/MODEL_BINDING.sha256
 
-# 4. Verificar identidad runtime del modelo servido
-docker run -d --rm -p 127.0.0.1:8765:8000 -e STORAGE_BACKEND=local \
-  energiai-ml-service:fea27b7
+# (4) Levantar servicio y correr verificacion automatizada end-to-end
+IMAGE_TAG=$(git rev-parse --short HEAD)
+docker run -d --rm --name ml-cert \
+  -p 127.0.0.1:8765:8000 \
+  -e STORAGE_BACKEND=local \
+  energiai-ml-service:$IMAGE_TAG
 sleep 4
-curl -s localhost:8765/model-info | python3 -m json.tool
-# Debe reportar sha256: "2c06370a7e379d8a1b01e507bdccce3a64831ef23809d142333dca8f4560eba2"
-docker stop $(docker ps -q --filter ancestor=energiai-ml-service:fea27b7)
-
-# 5. Verificación end-to-end automatizada (8 checks: dataset, binding,
-#    /health, /model-info, identidad SHA, 3 perfiles golden)
-ML_SERVICE_URL=http://127.0.0.1:8765 bash data-science/data/verify_certification.sh
+ML_SERVICE_URL=http://127.0.0.1:8765 \
+  bash data-science/data/verify_certification.sh
+docker stop ml-cert
 ```
+
+El script `verify_certification.sh` corre 12 checks: CHECKSUMS
+(ambos archivos), MODEL_BINDING (los 4 archivos), /health,
+/model-info (path + loaded + size), identidad SHA binding vs
+servido, y 3 perfiles golden (Eficiente, Moderado, Ineficiente).
+
+---
+
+## Sobre la imagen Docker
+
+- **Origen**: `data-science/Dockerfile` (versionado en este repo, base
+  `python:3.10-slim`)
+- **Build reproducible**: `docker build -t energiai-ml-service:$SHA -f data-science/Dockerfile data-science/`
+  donde `$SHA` es el commit actual. El tag por SHA hace la imagen
+  inmutable: si alguien reconstruye con el mismo codigo, obtiene la
+  misma imagen (mismo SHA de capa).
+- **No se asume imagen publicada**: el repo no publica a ningun
+  registry (Docker Hub / OCI / GHCR). Cada build se hace desde el
+  Dockerfile local. Si en el futuro se publica, el tag por SHA
+  permite referenciar builds exactos.
+- **Para CI**: el job `data-science-ci` en `.github/workflows/ci.yml`
+  hace exactamente este build + corre `verify_certification.sh` contra
+  el contenedor resultante. La ejecucion del CI es la fuente de verdad
+  de "que el modelo en este commit cumple la certificacion".
 
 ---
 
@@ -61,6 +92,14 @@ cd data-science/data && sha256sum -c CHECKSUMS.sha256
 |---|---:|---|
 | `data-science/data/modelo_eficiencia_v1.joblib` | `2c06370a7e379d8a1b01e507bdccce3a64831ef23809d142333dca8f4560eba2` | `python -m interfaces.cli.train` |
 | `data-science/data/metricas_v1.joblib` | `2945e5048db2ca39253ce788731ef86bccbd078cb78bbbde2223c5f8bcec56d9` | mismo train.py (split interno) |
+
+> ⚠️ El SHA-256 del `.joblib` puede variar entre versiones de
+> scikit-learn (el random_state interno del RF se serializa con
+> detalle de version). El **contrato** es: misma accuracy (0.81),
+> misma classification report, mismas predicciones para los 3 perfiles
+> golden (ver §3 perfiles). Si sklearn cambia major version, los
+> hashes cambian — eso se documenta en el siguiente commit de
+> binding.
 
 ---
 
@@ -123,14 +162,14 @@ print('Macro F1:', f1_score(m['y_test'], m['y_pred'], average='macro', zero_divi
 ## 3 perfiles canónicos (golden tests)
 
 Para validar que el modelo entrenado se comporta como el esperado.
-Mejor correrlos via `verify_certification.sh` (paso 5 del TL;DR) — el
+Mejor correrlos via `verify_certification.sh` (paso 4 del TL;DR) — el
 script hace los 3 POST + asserts automáticamente.
 
 Manualmente:
 
 ```bash
 docker run -d --rm -p 127.0.0.1:8765:8000 -e STORAGE_BACKEND=local \
-  energiai-ml-service:fea27b7
+  energiai-ml-service:$(git rev-parse --short HEAD)
 sleep 4
 
 # Perfil 1: esperado Eficiente
@@ -163,7 +202,7 @@ curl -s -X POST localhost:8765/analisis-energetico \
        "calidad_aislamiento":"Muy Baja"}'
 # Esperado: {"categoria": "Ineficiente", "probabilidad": ~0.79, ...}
 
-docker stop $(docker ps -q --filter ancestor=energiai-ml-service:fea27b7)
+docker stop $(docker ps -q --filter ancestor=energiai-ml-service:$(git rev-parse --short HEAD))
 ```
 
 ---
@@ -172,13 +211,13 @@ docker stop $(docker ps -q --filter ancestor=energiai-ml-service:fea27b7)
 
 | Punto | Comando | Resultado esperado |
 |---|---|---|
-| Dataset canónico intacto | `cd data-science/data && sha256sum -c CHECKSUMS.sha256` | 2/2 OK |
-| Binding modelo+dataset+metricas | `sha256sum -c data-science/data/MODEL_BINDING.sha256` | 4/4 OK |
+| Dataset canónico intacto | `cd data-science/data && sha256sum -c CHECKSUMS.sha256` | exit 0 + 2/2 OK |
+| Binding modelo+dataset+metricas | `sha256sum -c data-science/data/MODEL_BINDING.sha256` | exit 0 + 4/4 OK |
 | Validador oficial | `python -m interfaces.cli.validate` | RESULTADO GLOBAL: PASS |
 | Identidad runtime | `curl localhost:8765/model-info` | sha256 = `2c06370a...` |
 | Healthcheck | `curl localhost:8765/health` | HTTP 200, `{"status":"healthy"}` |
 | Tests pytest | `pytest tests/` | 244 passed |
-| 3 perfiles golden | `verify_certification.sh` | 8/8 checks OK |
-| Certificación end-to-end | `ML_SERVICE_URL=http://localhost:8000 bash data-science/data/verify_certification.sh` | "Certificación VERIFICADA. Exit 0." |
+| Certificación end-to-end | `bash data-science/data/verify_certification.sh` | 12/12 checks OK, exit 0 |
+| Certificación en CI | Ver GitHub Actions run del commit | job `data-science-ci` pasa todos los steps |
 
 Si falla cualquiera de estos puntos, el modelo no está en estado certificable.

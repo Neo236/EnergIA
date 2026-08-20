@@ -100,8 +100,21 @@ jobs:
             echo "Waiting... attempt $i"
             sleep 3
           done
-          docker stop ml-test
-          docker rm ml-test
+
+      - name: Certificación end-to-end (verify_certification.sh)
+        # Ejecuta 12 checks contra el contenedor arriba:
+        # CHECKSUMS (ambos archivos), MODEL_BINDING (4 archivos),
+        # /health, /model-info (path + loaded + size),
+        # identidad SHA binding vs servido, 3 perfiles golden.
+        # Falla el step si cualquier check falla.
+        run: |
+          ML_SERVICE_URL=http://localhost:8765 bash data-science/data/verify_certification.sh
+
+      - name: Cleanup test container
+        if: always()
+        run: |
+          docker stop ml-test 2>/dev/null || true
+          docker rm ml-test 2>/dev/null || true
 
   frontend-ci:
     name: Build & Smoke Test Front-End

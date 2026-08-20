@@ -2,26 +2,30 @@
 
 > **Versión**: `modelo_eficiencia_v1.joblib`
 > **SHA-256**: `2c06370a7e379d8a1b01e507bdccce3a64831ef23809d142333dca8f4560eba2`
-> **Dataset**: `data-science/data/database_beta.{json,csv}` (2000 hogares, canónico)
+> **Dataset**: `data-science/data/database_beta.{json,csv}` (2000 hogares, **sintético**)
 > **Algoritmo**: `RandomForestClassifier(n_estimators=200, random_state=42)`
 > **Test set**: 400 hogares (split 80/20 estratificado, `RANDOM_SEED=42`)
 > **Fecha**: 2026-08-20
 
+> ⚠️ **Limitación importante**: las métricas reportadas acá se midieron sobre el
+> test set del dataset sintético. **No son directamente extrapolables a
+> performance en datos reales.** El dataset sintético replica patrones típicos
+> del consumo energético argentino, pero no captura variabilidad real
+> (estacional, regional, hábitos puntuales). Ver `PARA_CONSTANZA.md` §3.
+
 ---
 
-## Métricas agregadas
+## Métricas agregadas (test set, n=400)
 
-| Métrica | Valor | Interpretación |
+| Métrica | Valor | Lectura técnica |
 |---|---:|---|
-| **Accuracy** | **0.81** | De cada 100 hogares nuevos, ~81 son clasificados correctamente en su categoría IEE |
-| **Macro F1** | 0.72 | Promedio no ponderado del F1 por clase — útil cuando las clases están desbalanceadas |
-| **Weighted F1** | 0.80 | Promedio ponderado por soporte — refleja lo que "se ve" en producción |
-| **Macro Precision** | 0.87 | Cuando el modelo dice "X categoría", acierta ~87% de las veces (promedio) |
-| **Macro Recall** | 0.66 | El modelo detecta ~66% de los hogares de cada categoría (promedio) |
+| **Accuracy** | **0.81** | Proporción de predicciones correctas sobre el test sintético |
+| **Macro F1** | 0.72 | Promedio no ponderado de F1 por clase — sensible al desbalance |
+| **Weighted F1** | 0.80 | Promedio ponderado por soporte — **es un promedio matemático, no una proyección de performance en producción** |
 
 ---
 
-## Métricas por clase (test set)
+## Métricas por clase (test set, n=400)
 
 | Clase | Precision | Recall | F1 | Support (test) |
 |---|---:|---:|---:|---:|
@@ -29,19 +33,45 @@
 | **Ineficiente** | 0.90 | 0.45 | **0.60** | 62 |
 | **Moderado** | 0.79 | 0.97 | **0.88** | 266 |
 
-Lectura:
-- **`Moderado`** es la clase dominante y el modelo la detecta muy bien (recall 0.97).
-- **`Ineficiente`** tiene alta precision (0.90) pero recall moderado (0.45) — cuando el modelo dice "Ineficiente" acierta, pero se le escapan ~55% de los ineficientes reales (los clasifica como Moderado).
-- **`Eficiente`** tiene precision alta (0.91) pero recall bajo (0.54) — similar a Ineficiente.
+> ⚠️ **Sobre precision = 0.90**: significa que, **dentro del test sintético**,
+> el 90% de los hogares que el modelo clasifica como `Ineficiente`
+> REALMENTE son `Ineficiente` en el dataset simulado. Esto **no equivale**
+> a "en producción, cuando el modelo diga Ineficiente, acertará el 90%
+> de las veces". En datos reales el patrón puede ser distinto.
 
-> **Implicación práctica**: si el modelo clasifica un hogar como `Ineficiente`, esa predicción es muy confiable (precision 0.90). Pero si lo clasifica como `Moderado`, podría haber un 5–10% de probabilidad de que en realidad sea Ineficiente — vale la pena revisar manualmente los casos borderline.
+---
+
+## Matriz de confusión (test set, n=400)
+
+|              | pred Eficiente | pred Ineficiente | pred Moderado | **total real** |
+|---|---:|---:|---:|---:|
+| **true Eficiente** | 39 | 0 | 33 | 72 |
+| **true Ineficiente** | 0 | 28 | 34 | 62 |
+| **true Moderado** | 4 | 3 | 259 | 266 |
+| **total predicho** | 43 | 31 | 326 | 400 |
+
+Lecturas concretas (sobre el test sintético):
+
+- De cada **266 Moderados reales**, el modelo clasifica:
+  - 259 como Moderado (97.4%)
+  - 4 como Eficiente (1.5%)
+  - **34 como Ineficiente (12.8%)**
+- De cada **62 Ineficientes reales**, el modelo detecta 28 (45.2%) y
+  pierde 34 (54.8% los manda a Moderado).
+- Cuando el modelo dice "Ineficiente" (31 casos en test), 28 son
+  Ineficientes reales (precision 90.3%) y 3 son Moderados.
+
+> ⚠️ **Sobre el 12.8% (Moderado → Ineficiente)**: este número sale
+> directamente de la matriz de confusión sobre el test sintético. Es un
+> dato empírico de la performance del modelo en datos simulados, **no
+> una estimación de lo que pasará en producción** con datos reales.
 
 ---
 
 ## Distribución del dataset
 
-Estos números se calcularon directamente desde `data-science/data/database_beta.json`
-(2000 registros) y desde `metricas_v1.joblib` (400 test rows):
+Calculado desde `data-science/data/database_beta.json` (2000 registros) y
+`metricas_v1.joblib` (400 test rows):
 
 | Clase | Train (1600) | Test (400) | Total (2000) | % Total |
 |---|---:|---:|---:|---:|
@@ -50,10 +80,9 @@ Estos números se calcularon directamente desde `data-science/data/database_beta
 | Ineficiente | 250 | 62 | 312 | 15.60% |
 | **Total** | **1600** | **400** | **2000** | **100.00%** |
 
-> El dataset está desbalanceado: Moderado representa 2/3 de los hogares. Esto
-> explica el sesgo del modelo hacia esa clase. Para mejorar recall de
-> Ineficiente en futuras versiones, considerar técnicas de balanceo
-> (`class_weight='balanced'`, SMOTE, o sobre-muestreo).
+> El dataset está desbalanceado: Moderado representa 2/3 de los hogares.
+> El sesgo del modelo hacia esa clase (recall 0.97 en Moderado, 0.45 en
+> Ineficiente) es consecuencia directa de esa distribución.
 
 ---
 
@@ -64,7 +93,7 @@ cd data-science/raw
 python3 -c "
 import joblib, collections
 import pandas as pd
-from sklearn.metrics import classification_report, accuracy_score, f1_score
+from sklearn.metrics import classification_report, accuracy_score, f1_score, confusion_matrix
 
 m = joblib.load('../data/metricas_v1.joblib')
 y_test, y_pred = m['y_test'], m['y_pred']
@@ -75,15 +104,15 @@ print(f'Macro F1:    {f1_score(y_test, y_pred, average=\"macro\", zero_division=
 print(f'Weighted F1: {f1_score(y_test, y_pred, average=\"weighted\", zero_division=0):.4f}')
 print()
 
-# Distribución real (test)
-print('Distribución test (y_test):')
-for k, v in sorted(collections.Counter(y_test).items()):
-    print(f'  {k}: {v}')
+# Confusion matrix
+labels = ['Eficiente', 'Ineficiente', 'Moderado']
+cm = confusion_matrix(y_test, y_pred, labels=labels)
+print('Confusion matrix:')
+print(cm)
 print()
 
 # Classification report
 print(classification_report(y_test, y_pred, zero_division=0))
-print()
 
 # Distribución del dataset completo
 data = pd.read_json('../data/database_beta.json')

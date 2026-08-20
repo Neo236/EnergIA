@@ -36,7 +36,7 @@ votaron por esa categoría.
 más bien un indicador de cuánta evidencia interna encontró el modelo
 a favor de esa categoría. Para una calibración real habría que
 aplicar Platt scaling o isotonic regression y luego medir con
-diagrams de reliability — eso no se hizo en este modelo.
+diagramas de reliability — eso no se hizo en este modelo.
 
 En la práctica, usalo así:
 
@@ -51,9 +51,9 @@ En la práctica, usalo así:
 modelo encontró evidencia consistente, pero **no garantiza** que la
 predicción sea correcta. Siempre conviene cruzar con la métrica de
 precision de esa clase específica (ver METRICS.md). Por ejemplo, para
-`Ineficiente` la precision es 0.90, así que cuando el modelo dice
-"Ineficiente" con probabilidad alta, hay ~90% de chances de que sea
-correcto.
+`Ineficiente` la precision es 0.90 sobre el test sintético, así que
+cuando el modelo dice "Ineficiente" con probabilidad alta, hay ~90%
+de chances de que sea correcto **dentro del dataset sintético**.
 
 ---
 
@@ -64,9 +64,9 @@ que hay que tener presentes antes de tomar decisiones con él.
 
 ### a) Recall bajo en hogares Ineficientes
 
-De cada 10 hogares que **realmente** son ineficientes, el modelo
-detectará correctamente solo ~4-5. Los otros los va a marcar como
-"Moderado". Esto es por dos razones combinadas:
+De cada 10 hogares que **realmente** son ineficientes (en el test
+sintético), el modelo detecta correctamente solo ~4-5. Los otros los
+va a marcar como "Moderado". Esto es por dos razones combinadas:
 - El dataset de entrenamiento tiene 2/3 de hogares Moderados y solo
   ~16% Ineficientes — el modelo aprende que "Moderado" es la respuesta
   más probable.
@@ -113,13 +113,20 @@ aislamiento, fuentes de energía, etc.). NO mira:
 preguntale al usuario qué pasó ese mes. La predicción es un mapa,
 no un satélite.
 
-### d) La precision/recall se midió sobre el mismo tipo de dataset
+### d) Métricas medidas sobre datos similares, no sobre producción
 
-Las métricas de accuracy (0.81), F1, etc. se midieron sobre los 400
-hogares de test del dataset sintético. Esas métricas describen qué
-tan bien le va al modelo **en datos similares a los de
-entrenamiento**. En datos muy diferentes (ej: usuarios reales con
-patrones no simulados), el desempeño puede ser peor.
+Las métricas de accuracy (0.81), precision, recall, F1 se midieron
+sobre los 400 hogares de test del dataset **sintético**. Esas métricas
+describen qué tan bien le va al modelo **en datos con la misma
+distribución que los de entrenamiento**. En datos muy diferentes (ej:
+usuarios reales con patrones no simulados), el desempeño puede ser
+peor.
+
+Concretamente: la métrica "precision = 0.90 para Ineficiente"
+significa que, dentro del test sintético, el 90% de los hogares que
+el modelo clasifica como Ineficiente efectivamente lo son en el
+simulador. **Esto no equivale a decir que en producción acertará el
+90% de las veces.**
 
 ---
 
@@ -165,7 +172,7 @@ Moderado, no descarta que sea Ineficiente."**
 | Categoría | Eficiente / Moderado / Ineficiente |
 | Probabilidad | Cuánta evidencia encontró el modelo a favor de esa respuesta (no es un porcentaje calibrado) |
 | Features | Las 11 variables que el modelo mira del hogar |
-| Accuracy | De cada 100 predicciones, ~81 son correctas |
+| Accuracy | De cada 100 predicciones, ~81 son correctas (sobre test sintético) |
 | Recall (Ineficiente) | De cada 10 hogares ineficientes reales, detecta ~4-5 |
 | F1 | Número que combina precision y recall (más alto = mejor) |
 | Calibración | Ajuste para que la probabilidad refleje chances reales — no se hizo en este modelo |

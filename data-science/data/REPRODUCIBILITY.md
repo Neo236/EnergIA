@@ -5,7 +5,7 @@
 
 ---
 
-## TL;DR — 4 comandos para regenerar todo
+## TL;DR — 4 comandos para regenerar todo + 1 comando para verificar
 
 ```bash
 # 1. Entrenar (regenera dataset + modelo + métricas en data-science/data/)
@@ -35,6 +35,10 @@ sleep 4
 curl -s localhost:8765/model-info | python3 -m json.tool
 # Debe reportar sha256: "2c06370a7e379d8a1b01e507bdccce3a64831ef23809d142333dca8f4560eba2"
 docker stop $(docker ps -q --filter ancestor=energiai-ml-service:fea27b7)
+
+# 5. Verificación end-to-end automatizada (8 checks: dataset, binding,
+#    /health, /model-info, identidad SHA, 3 perfiles golden)
+ML_SERVICE_URL=http://127.0.0.1:8765 bash data-science/data/verify_certification.sh
 ```
 
 ---
@@ -118,7 +122,11 @@ print('Macro F1:', f1_score(m['y_test'], m['y_pred'], average='macro', zero_divi
 
 ## 3 perfiles canónicos (golden tests)
 
-Para validar que el modelo entrenado se comporta como el esperado:
+Para validar que el modelo entrenado se comporta como el esperado.
+Mejor correrlos via `verify_certification.sh` (paso 5 del TL;DR) — el
+script hace los 3 POST + asserts automáticamente.
+
+Manualmente:
 
 ```bash
 docker run -d --rm -p 127.0.0.1:8765:8000 -e STORAGE_BACKEND=local \
@@ -170,6 +178,7 @@ docker stop $(docker ps -q --filter ancestor=energiai-ml-service:fea27b7)
 | Identidad runtime | `curl localhost:8765/model-info` | sha256 = `2c06370a...` |
 | Healthcheck | `curl localhost:8765/health` | HTTP 200, `{"status":"healthy"}` |
 | Tests pytest | `pytest tests/` | 244 passed |
-| 3 perfiles golden | curl x3 | Eficiente, Moderado, Ineficiente |
+| 3 perfiles golden | `verify_certification.sh` | 8/8 checks OK |
+| Certificación end-to-end | `ML_SERVICE_URL=http://localhost:8000 bash data-science/data/verify_certification.sh` | "Certificación VERIFICADA. Exit 0." |
 
 Si falla cualquiera de estos puntos, el modelo no está en estado certificable.

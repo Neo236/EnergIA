@@ -1,4 +1,4 @@
-# Métricas finales del modelo v1 (reentrenado)
+# Métricas finales del modelo v1
 
 > **Versión**: `modelo_eficiencia_v1.joblib`
 > **SHA-256**: `2c06370a7e379d8a1b01e507bdccce3a64831ef23809d142333dca8f4560eba2`
@@ -21,7 +21,7 @@
 
 ---
 
-## Métricas por clase
+## Métricas por clase (test set)
 
 | Clase | Precision | Recall | F1 | Support (test) |
 |---|---:|---:|---:|---:|
@@ -30,7 +30,7 @@
 | **Moderado** | 0.79 | 0.97 | **0.88** | 266 |
 
 Lectura:
-- **`Moderado`** es la clase dominante (66% del dataset) y el modelo la detecta muy bien (recall 0.97).
+- **`Moderado`** es la clase dominante y el modelo la detecta muy bien (recall 0.97).
 - **`Ineficiente`** tiene alta precision (0.90) pero recall moderado (0.45) — cuando el modelo dice "Ineficiente" acierta, pero se le escapan ~55% de los ineficientes reales (los clasifica como Moderado).
 - **`Eficiente`** tiene precision alta (0.91) pero recall bajo (0.54) — similar a Ineficiente.
 
@@ -38,31 +38,62 @@ Lectura:
 
 ---
 
-## Distribución del dataset (entrenamiento)
+## Distribución del dataset
 
-| Clase | Entrenamiento (1600) | Test (400) | % Total |
-|---|---:|---:|---:|
-| Eficiente | 285 | 72 | 17.85% |
-| Moderado | 1334 | 266 | 66.55% |
-| Ineficiente | 248 | 62 | 15.60% |
+Estos números se calcularon directamente desde `data-science/data/database_beta.json`
+(2000 registros) y desde `metricas_v1.joblib` (400 test rows):
 
-> El dataset está desbalanceado: Moderado representa 2/3 de los hogares. Esto explica el sesgo del modelo hacia esa clase. Para mejorar recall de Ineficiente en futuras versiones, considerar técnicas de balanceo (`class_weight='balanced'`, SMOTE, o sobre-muestreo).
+| Clase | Train (1600) | Test (400) | Total (2000) | % Total |
+|---|---:|---:|---:|---:|
+| Eficiente | 285 | 72 | 357 | 17.85% |
+| Moderado | 1065 | 266 | 1331 | 66.55% |
+| Ineficiente | 250 | 62 | 312 | 15.60% |
+| **Total** | **1600** | **400** | **2000** | **100.00%** |
+
+> El dataset está desbalanceado: Moderado representa 2/3 de los hogares. Esto
+> explica el sesgo del modelo hacia esa clase. Para mejorar recall de
+> Ineficiente en futuras versiones, considerar técnicas de balanceo
+> (`class_weight='balanced'`, SMOTE, o sobre-muestreo).
 
 ---
 
-## Reproducir estas métricas
+## Reproducir estas métricas desde el artefacto
 
 ```bash
 cd data-science/raw
 python3 -c "
-import joblib
+import joblib, collections
+import pandas as pd
 from sklearn.metrics import classification_report, accuracy_score, f1_score
+
 m = joblib.load('../data/metricas_v1.joblib')
-print(f'Accuracy: {accuracy_score(m[\"y_test\"], m[\"y_pred\"]):.4f}')
-print(f'Macro F1:  {f1_score(m[\"y_test\"], m[\"y_pred\"], average=\"macro\", zero_division=0):.4f}')
-print(f'Weighted F1: {f1_score(m[\"y_test\"], m[\"y_pred\"], average=\"weighted\", zero_division=0):.4f}')
+y_test, y_pred = m['y_test'], m['y_pred']
+
+# Métricas globales
+print(f'Accuracy:    {accuracy_score(y_test, y_pred):.4f}')
+print(f'Macro F1:    {f1_score(y_test, y_pred, average=\"macro\", zero_division=0):.4f}')
+print(f'Weighted F1: {f1_score(y_test, y_pred, average=\"weighted\", zero_division=0):.4f}')
 print()
-print(classification_report(m['y_test'], m['y_pred'], zero_division=0))
+
+# Distribución real (test)
+print('Distribución test (y_test):')
+for k, v in sorted(collections.Counter(y_test).items()):
+    print(f'  {k}: {v}')
+print()
+
+# Classification report
+print(classification_report(y_test, y_pred, zero_division=0))
+print()
+
+# Distribución del dataset completo
+data = pd.read_json('../data/database_beta.json')
+print('Distribución total dataset:')
+total = collections.Counter(data['categoria'])
+total_n = sum(total.values())
+for k in sorted(total):
+    n = total[k]
+    train = n - (72 if k == 'Eficiente' else 266 if k == 'Moderado' else 62)
+    print(f'  {k}: {n} total ({n/total_n*100:.2f}%) -> train={train}, test={n-train}')
 "
 ```
 

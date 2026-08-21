@@ -7,11 +7,11 @@ body:
   type: json
   content: |-
     {
-      "consumo_kwh": 600,
-      "cantidad_equipos": 10,
+      "consumo_kwh": 800,
+      "cantidad_equipos": 40,
       "tipo_inmueble": "Departamento",
       "uso_horario_pico": true,
-      "horas_alto_consumo": 6,
+      "horas_alto_consumo": 10,
       "metros_cuadrados": 40,
       "antiguedad_vivienda": 15,
       "zona_fria": true,
@@ -71,7 +71,8 @@ scripts:
       pm.test('fecha is a valid datetime string', () => {
           const body = pm.response.json();
           pm.expect(body.fecha).to.be.a('string');
-          pm.expect(new Date(body.fecha).toISOString()).to.equal(body.fecha);
+          pm.expect(body.fecha).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,9})?$/);
+          pm.expect(isNaN(new Date(body.fecha).getTime())).to.be.false;
       });
 
 

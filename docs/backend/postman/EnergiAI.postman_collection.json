@@ -211,7 +211,8 @@
 									"pm.test('fecha is a valid datetime string', () => {",
 									"    const body = pm.response.json();",
 									"    pm.expect(body.fecha).to.be.a('string');",
-									"    pm.expect(new Date(body.fecha).toISOString()).to.equal(body.fecha);",
+									"    pm.expect(body.fecha).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?$/);",
+									"    pm.expect(isNaN(new Date(body.fecha).getTime())).to.be.false;",
 									"});",
 									"",
 									"",
@@ -304,7 +305,8 @@
 									"pm.test('fecha is a valid datetime string', () => {",
 									"    const body = pm.response.json();",
 									"    pm.expect(body.fecha).to.be.a('string');",
-									"    pm.expect(new Date(body.fecha).toISOString()).to.equal(body.fecha);",
+									"    pm.expect(body.fecha).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?$/);",
+									"    pm.expect(isNaN(new Date(body.fecha).getTime())).to.be.false;",
 									"});",
 									"",
 									"",
@@ -334,7 +336,7 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"consumo_kwh\": 600,\n  \"cantidad_equipos\": 10,\n  \"tipo_inmueble\": \"Departamento\",\n  \"uso_horario_pico\": true,\n  \"horas_alto_consumo\": 6,\n  \"metros_cuadrados\": 40,\n  \"antiguedad_vivienda\": 15,\n  \"zona_fria\": true,\n  \"calidad_aislamiento\": \"Baja\",\n  \"fuente_calefaccion\": \"Electricidad\",\n  \"fuente_agua_caliente\": \"Electricidad\"\n}",
+							"raw": "{\n  \"consumo_kwh\": 800,\n  \"cantidad_equipos\": 40,\n  \"tipo_inmueble\": \"Departamento\",\n  \"uso_horario_pico\": true,\n  \"horas_alto_consumo\": 10,\n  \"metros_cuadrados\": 40,\n  \"antiguedad_vivienda\": 15,\n  \"zona_fria\": true,\n  \"calidad_aislamiento\": \"Baja\",\n  \"fuente_calefaccion\": \"Electricidad\",\n  \"fuente_agua_caliente\": \"Electricidad\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -397,7 +399,8 @@
 									"pm.test('fecha is a valid datetime string', () => {",
 									"    const body = pm.response.json();",
 									"    pm.expect(body.fecha).to.be.a('string');",
-									"    pm.expect(new Date(body.fecha).toISOString()).to.equal(body.fecha);",
+									"    pm.expect(body.fecha).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?$/);",
+									"    pm.expect(isNaN(new Date(body.fecha).getTime())).to.be.false;",
 									"});",
 									"",
 									"",

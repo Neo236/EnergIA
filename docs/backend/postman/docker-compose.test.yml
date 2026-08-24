@@ -1,0 +1,16 @@
+# docker-compose.test.yml
+# Override para ejecutar tests con mock ML servers.
+#
+# Nota: las rutas relativas se respetan al docker-compose.yml de la raiz
+# (primer -f), por eso el context sigue apuntando a ./docs/backend/postman.
+#
+# Test 502 (respuesta no-JSON):
+#   docker compose -f docker-compose.yml -f docs/backend/postman/docker-compose.test.yml up --build ml-service
+#
+
+services:
+  ml-service:
+    image: ml-mock:latest
+    build:
+      context: ./docs/backend/postman
+    restart: "no"

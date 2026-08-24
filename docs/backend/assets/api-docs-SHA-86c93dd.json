@@ -1,0 +1,445 @@
+﻿{
+    "openapi":  "3.1.0",
+    "info":  {
+                 "title":  "OpenAPI definition",
+                 "version":  "v0"
+             },
+    "servers":  [
+                    {
+                        "url":  "http://localhost:8080",
+                        "description":  "Generated server url"
+                    }
+                ],
+    "tags":  [
+                 {
+                     "name":  "Analisis Energetico",
+                     "description":  "Endpoints para el diagnostico y evaluacion de consumo electronico"
+                 }
+             ],
+    "paths":  {
+                  "/api/v1/analisis-energetico":  {
+                                                      "post":  {
+                                                                   "tags":  [
+                                                                                "Analisis Energetico"
+                                                                            ],
+                                                                   "summary":  "Realizar analisis de consumo energetico",
+                                                                   "description":  "Evalua los datos de consumo de un inmueble y devuelve la clasificacion, costos estimados y recomendaciones.",
+                                                                   "operationId":  "analizarConsumo",
+                                                                   "requestBody":  {
+                                                                                       "content":  {
+                                                                                                       "application/json":  {
+                                                                                                                                "schema":  {
+                                                                                                                                               "$ref":  "#/components/schemas/DatosRegistroConsumo"
+                                                                                                                                           }
+                                                                                                                            }
+                                                                                                   },
+                                                                                       "required":  true
+                                                                                   },
+                                                                   "responses":  {
+                                                                                     "200":  {
+                                                                                                 "description":  "AnÃ¡lisis realizado exitosamente.",
+                                                                                                 "content":  {
+                                                                                                                 "application/json":  {
+                                                                                                                                          "schema":  {
+                                                                                                                                                         "$ref":  "#/components/schemas/DatosRegistroAnalisis"
+                                                                                                                                                     },
+                                                                                                                                          "example":  {
+                                                                                                                                                          "id":  "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10",
+                                                                                                                                                          "fecha":  "2026-08-10T11:45:00",
+                                                                                                                                                          "categoria":  "Eficiente",
+                                                                                                                                                          "probabilidad":  0.25,
+                                                                                                                                                          "costo_estimado_mensual":  337.87,
+                                                                                                                                                          "recomendaciones":  [
+                                                                                                                                                                                  "Excelente nivel de consumo.",
+                                                                                                                                                                                  "Mantener los hÃ¡bitos actuales de ahorro.",
+                                                                                                                                                                                  "Continuar monitoreando el consumo mensual."
+                                                                                                                                                                              ]
+                                                                                                                                                      }
+                                                                                                                                      }
+                                                                                                             }
+                                                                                             },
+                                                                                     "400":  {
+                                                                                                 "description":  "Datos de entrada invÃ¡lidos o formato JSON incorrecto.",
+                                                                                                 "content":  {
+                                                                                                                 "application/json":  {
+                                                                                                                                          "schema":  {
+                                                                                                                                                         "$ref":  "#/components/schemas/DatosErrorRespuesta"
+                                                                                                                                                     },
+                                                                                                                                          "example":  {
+                                                                                                                                                          "timestamp":  "2026-08-01T16:45:00",
+                                                                                                                                                          "status":  400,
+                                                                                                                                                          "error":  "BAD_REQUEST",
+                                                                                                                                                          "mensaje":  "Errores de validacion en los datos de entrada",
+                                                                                                                                                          "detalles":  [
+                                                                                                                                                                           {
+                                                                                                                                                                               "campo":  "cantidad_equipos",
+                                                                                                                                                                               "mensaje":  "no debe ser nulo"
+                                                                                                                                                                           },
+                                                                                                                                                                           {
+                                                                                                                                                                               "campo":  "horas_alto_consumo",
+                                                                                                                                                                               "mensaje":  "no debe ser nulo"
+                                                                                                                                                                           }
+                                                                                                                                                                       ]
+                                                                                                                                                      }
+                                                                                                                                      }
+                                                                                                             }
+                                                                                             },
+                                                                                     "404":  {
+                                                                                                 "description":  "El recurso solicitado o la ruta no fueron encontrados.",
+                                                                                                 "content":  {
+                                                                                                                 "application/json":  {
+                                                                                                                                          "schema":  {
+                                                                                                                                                         "$ref":  "#/components/schemas/DatosErrorRespuesta"
+                                                                                                                                                     },
+                                                                                                                                          "example":  {
+                                                                                                                                                          "timestamp":  "2026-08-01T16:45:00",
+                                                                                                                                                          "status":  404,
+                                                                                                                                                          "error":  "NOT_FOUND",
+                                                                                                                                                          "mensaje":  "El recurso solicitado no fue encontrado"
+                                                                                                                                                      }
+                                                                                                                                      }
+                                                                                                             }
+                                                                                             },
+                                                                                     "500":  {
+                                                                                                 "description":  "Error interno del servidor.",
+                                                                                                 "content":  {
+                                                                                                                 "application/json":  {
+                                                                                                                                          "schema":  {
+                                                                                                                                                         "$ref":  "#/components/schemas/DatosErrorRespuesta"
+                                                                                                                                                     },
+                                                                                                                                          "example":  {
+                                                                                                                                                          "timestamp":  "2026-08-01T16:45:00",
+                                                                                                                                                          "status":  500,
+                                                                                                                                                          "error":  "INTERNAL_SERVER_ERROR",
+                                                                                                                                                          "mensaje":  "Ocurrio un error interno en el servidor. Por favor, intente mas tarde."
+                                                                                                                                                      }
+                                                                                                                                      }
+                                                                                                             }
+                                                                                             },
+                                                                                     "503":  {
+                                                                                                 "description":  "El servicio de Machine Learning no se encuentra disponible.",
+                                                                                                 "content":  {
+                                                                                                                 "application/json":  {
+                                                                                                                                          "schema":  {
+                                                                                                                                                         "$ref":  "#/components/schemas/DatosErrorRespuesta"
+                                                                                                                                                     },
+                                                                                                                                          "example":  {
+                                                                                                                                                          "timestamp":  "2026-08-01T16:45:00",
+                                                                                                                                                          "status":  503,
+                                                                                                                                                          "error":  "SERVICE_UNAVAILABLE",
+                                                                                                                                                          "mensaje":  "El servicio de Machine Learning no se encuentra disponible."
+                                                                                                                                                      }
+                                                                                                                                      }
+                                                                                                             }
+                                                                                             },
+                                                                                     "502":  {
+                                                                                                 "description":  "El servicio de Machine Learning devolviÃ³ una respuesta inesperada o invÃ¡lida.",
+                                                                                                 "content":  {
+                                                                                                                 "application/json":  {
+                                                                                                                                          "schema":  {
+                                                                                                                                                         "$ref":  "#/components/schemas/DatosErrorRespuesta"
+                                                                                                                                                     },
+                                                                                                                                          "example":  {
+                                                                                                                                                          "timestamp":  "2026-08-01T16:45:00",
+                                                                                                                                                          "status":  502,
+                                                                                                                                                          "error":  "BAD_GATEWAY",
+                                                                                                                                                          "mensaje":  "El servicio de Machine Learning devolviÃ³ una respuesta inesperada o invÃ¡lida"
+                                                                                                                                                      }
+                                                                                                                                      }
+                                                                                                             }
+                                                                                             }
+                                                                                 }
+                                                               }
+                                                  },
+                  "/api/v1/analisis-energetico/{id}":  {
+                                                           "get":  {
+                                                                       "tags":  [
+                                                                                    "Analisis Energetico"
+                                                                                ],
+                                                                       "summary":  "Consultar un analisis previamente realizado",
+                                                                       "description":  "Devuelve un analisis de consumo energetico ya guardado, a partir de su identificador.",
+                                                                       "operationId":  "obtenerAnalisis",
+                                                                       "parameters":  [
+                                                                                          {
+                                                                                              "name":  "id",
+                                                                                              "in":  "path",
+                                                                                              "description":  "Identificador del analisis",
+                                                                                              "required":  true,
+                                                                                              "schema":  {
+                                                                                                             "type":  "string",
+                                                                                                             "format":  "uuid"
+                                                                                                         },
+                                                                                              "example":  "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10"
+                                                                                          }
+                                                                                      ],
+                                                                       "responses":  {
+                                                                                         "200":  {
+                                                                                                     "description":  "Analisis encontrado.",
+                                                                                                     "content":  {
+                                                                                                                     "application/json":  {
+                                                                                                                                              "schema":  {
+                                                                                                                                                             "$ref":  "#/components/schemas/DatosRegistroAnalisis"
+                                                                                                                                                         },
+                                                                                                                                              "example":  {
+                                                                                                                                                              "id":  "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10",
+                                                                                                                                                              "fecha":  "2026-08-10T11:45:00",
+                                                                                                                                                              "categoria":  "Eficiente",
+                                                                                                                                                              "probabilidad":  0.25,
+                                                                                                                                                              "costo_estimado_mensual":  337.87,
+                                                                                                                                                              "recomendaciones":  [
+                                                                                                                                                                                      "Excelente nivel de consumo.",
+                                                                                                                                                                                      "Mantener los hÃ¡bitos actuales de ahorro.",
+                                                                                                                                                                                      "Continuar monitoreando el consumo mensual."
+                                                                                                                                                                                  ]
+                                                                                                                                                          }
+                                                                                                                                          }
+                                                                                                                 }
+                                                                                                 },
+                                                                                         "404":  {
+                                                                                                     "description":  "No existe un analisis con el id indicado.",
+                                                                                                     "content":  {
+                                                                                                                     "application/json":  {
+                                                                                                                                              "schema":  {
+                                                                                                                                                             "$ref":  "#/components/schemas/DatosErrorRespuesta"
+                                                                                                                                                         },
+                                                                                                                                              "example":  {
+                                                                                                                                                              "timestamp":  "2026-08-10T11:45:00",
+                                                                                                                                                              "status":  404,
+                                                                                                                                                              "error":  "NOT_FOUND",
+                                                                                                                                                              "mensaje":  "Analisis no encontrado con ID 018f4e2a-0000-7000-8000-000000000000"
+                                                                                                                                                          }
+                                                                                                                                          }
+                                                                                                                 }
+                                                                                                 },
+                                                                                         "500":  {
+                                                                                                     "description":  "Error interno del servidor.",
+                                                                                                     "content":  {
+                                                                                                                     "application/json":  {
+                                                                                                                                              "schema":  {
+                                                                                                                                                             "$ref":  "#/components/schemas/DatosErrorRespuesta"
+                                                                                                                                                         },
+                                                                                                                                              "example":  {
+                                                                                                                                                              "timestamp":  "2026-08-10T11:45:00",
+                                                                                                                                                              "status":  500,
+                                                                                                                                                              "error":  "INTERNAL_SERVER_ERROR",
+                                                                                                                                                              "mensaje":  "Ocurrio un error interno en el servidor. Por favor, intente mas tarde."
+                                                                                                                                                          }
+                                                                                                                                          }
+                                                                                                                 }
+                                                                                                 }
+                                                                                     }
+                                                                   }
+                                                       }
+              },
+    "components":  {
+                       "schemas":  {
+                                       "DatosRegistroConsumo":  {
+                                                                    "type":  "object",
+                                                                    "properties":  {
+                                                                                       "consumo_kwh":  {
+                                                                                                           "type":  "number",
+                                                                                                           "format":  "double",
+                                                                                                           "description":  "Consumo electrico total en KWh",
+                                                                                                           "example":  "450.5",
+                                                                                                           "maximum":  1000.0,
+                                                                                                           "minimum":  1.0
+                                                                                                       },
+                                                                                       "cantidad_equipos":  {
+                                                                                                                "type":  "integer",
+                                                                                                                "format":  "int32",
+                                                                                                                "description":  "Cantidad de equipos activos.",
+                                                                                                                "example":  8,
+                                                                                                                "maximum":  100,
+                                                                                                                "minimum":  1
+                                                                                                            },
+                                                                                       "tipo_inmueble":  {
+                                                                                                             "type":  "string",
+                                                                                                             "description":  "Tipo de inmueble (Casa, Departamento, Comercio, Pyme)",
+                                                                                                             "enum":  [
+                                                                                                                          "Casa",
+                                                                                                                          "Departamento",
+                                                                                                                          "Comercio",
+                                                                                                                          "Pyme"
+                                                                                                                      ],
+                                                                                                             "example":  "Casa"
+                                                                                                         },
+                                                                                       "uso_horario_pico":  {
+                                                                                                                "type":  "boolean",
+                                                                                                                "description":  "Indica si la medicion incluye franja de horario pico (18hs a 23hs). Es un dato opcional.",
+                                                                                                                "example":  true
+                                                                                                            },
+                                                                                       "horas_alto_consumo":  {
+                                                                                                                  "type":  "integer",
+                                                                                                                  "format":  "int32",
+                                                                                                                  "description":  "Horas estimadas de uso de equipos de alto consumo al dia.",
+                                                                                                                  "example":  6,
+                                                                                                                  "maximum":  24,
+                                                                                                                  "minimum":  0
+                                                                                                              },
+                                                                                       "metros_cuadrados":  {
+                                                                                                                "type":  "integer",
+                                                                                                                "format":  "int32",
+                                                                                                                "description":  "Superficie total habitable de la vivienda, expresada en metros cuadrados. Es un dato opcional.",
+                                                                                                                "example":  30,
+                                                                                                                "maximum":  2000,
+                                                                                                                "minimum":  26
+                                                                                                            },
+                                                                                       "antiguedad_vivienda":  {
+                                                                                                                   "type":  "integer",
+                                                                                                                   "format":  "int32",
+                                                                                                                   "description":  "Cantidad de aÃ±os transcurridos desde la construccion. Es un dato opcional.",
+                                                                                                                   "example":  34,
+                                                                                                                   "maximum":  150,
+                                                                                                                   "minimum":  0
+                                                                                                               },
+                                                                                       "zona_fria":  {
+                                                                                                         "type":  "boolean",
+                                                                                                         "description":  "Indica si la vivienda se encuentra ubicada en una zona climatica considerada fria. Es un dato opcional.",
+                                                                                                         "example":  false
+                                                                                                     },
+                                                                                       "calidad_aislamiento":  {
+                                                                                                                   "type":  "string",
+                                                                                                                   "description":  "Nivel de eficiencia del aislamiento tÃ©rmico. Tipo de aislamiento (Muy alta, Alta, Medio, Baja, Muy baja). Es un dato opcional.",
+                                                                                                                   "enum":  [
+                                                                                                                                "Muy Alta",
+                                                                                                                                "Alta",
+                                                                                                                                "Media",
+                                                                                                                                "Baja",
+                                                                                                                                "Muy Baja"
+                                                                                                                            ],
+                                                                                                                   "example":  "MEDIA"
+                                                                                                               },
+                                                                                       "fuente_calefaccion":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "description":  "Fuente principal de energia utilizada para la calefaccion. Fuente de calefacciÃ³n (Solar, Electricidad, Otros). Es un dato opcional.",
+                                                                                                                  "enum":  [
+                                                                                                                               "Solar",
+                                                                                                                               "Electricidad",
+                                                                                                                               "Otros"
+                                                                                                                           ],
+                                                                                                                  "example":  "SOLAR"
+                                                                                                              },
+                                                                                       "fuente_agua_caliente":  {
+                                                                                                                    "type":  "string",
+                                                                                                                    "description":  "Fuente de energia uitlizada para la produccion de agua caliente sanitaria. Fuente de agua caliente (Solar, Electricidad, Otros). Es un dato opcional.",
+                                                                                                                    "enum":  [
+                                                                                                                                 "Solar",
+                                                                                                                                 "Electricidad",
+                                                                                                                                 "Otros"
+                                                                                                                             ],
+                                                                                                                    "example":  "ELECTRICIDAD"
+                                                                                                                }
+                                                                                   },
+                                                                    "required":  [
+                                                                                     "cantidad_equipos",
+                                                                                     "consumo_kwh",
+                                                                                     "horas_alto_consumo",
+                                                                                     "tipo_inmueble"
+                                                                                 ]
+                                                                },
+                                       "DatosRegistroAnalisis":  {
+                                                                     "type":  "object",
+                                                                     "properties":  {
+                                                                                        "id":  {
+                                                                                                   "type":  "string",
+                                                                                                   "format":  "uuid",
+                                                                                                   "description":  "Identificador unico del analisis (UUID v7), asignado al persistirlo",
+                                                                                                   "example":  "018f4e2a-7c3b-7b9e-8b1a-2f6c9d3e5a10"
+                                                                                               },
+                                                                                        "fecha":  {
+                                                                                                      "type":  "string",
+                                                                                                      "format":  "date-time",
+                                                                                                      "description":  "Fecha y hora en que se realizo el analisis",
+                                                                                                      "example":  "2026-08-10T11:45:00"
+                                                                                                  },
+                                                                                        "categoria":  {
+                                                                                                          "type":  "string",
+                                                                                                          "description":  "Categoria del consumo (Eficiente, Moderado, Ineficiente)",
+                                                                                                          "enum":  [
+                                                                                                                       "Eficiente",
+                                                                                                                       "Moderado",
+                                                                                                                       "Ineficiente"
+                                                                                                                   ],
+                                                                                                          "example":  "Ineficiente"
+                                                                                                      },
+                                                                                        "probabilidad":  {
+                                                                                                             "type":  "number",
+                                                                                                             "format":  "double",
+                                                                                                             "description":  "Nivel de probalidad de diagnostico (0.0 a 1.0)",
+                                                                                                             "example":  "0.64",
+                                                                                                             "maximum":  1.0,
+                                                                                                             "minimum":  0.0
+                                                                                                         },
+                                                                                        "costo_estimado_mensual":  {
+                                                                                                                       "type":  "number",
+                                                                                                                       "format":  "double",
+                                                                                                                       "description":  "Costo mensual estimado en moneda local",
+                                                                                                                       "example":  "377.88"
+                                                                                                                   },
+                                                                                        "recomendaciones":  {
+                                                                                                                "type":  "array",
+                                                                                                                "description":  "Lista de recomendaciones sugeridas por el sistema",
+                                                                                                                "example":  [
+                                                                                                                                "Reducir el uso de equipos durante los horarios pico",
+                                                                                                                                "Evaluar equipos con alto consumo energÃ©tico"
+                                                                                                                            ],
+                                                                                                                "items":  {
+                                                                                                                              "type":  "string"
+                                                                                                                          }
+                                                                                                            }
+                                                                                    }
+                                                                 },
+                                       "DatosErrorCampo":  {
+                                                               "type":  "object",
+                                                               "description":  "Detalle de error en un campo especifico durante la validacion",
+                                                               "properties":  {
+                                                                                  "campo":  {
+                                                                                                "type":  "string",
+                                                                                                "description":  "Nombre del campo con error",
+                                                                                                "example":  "consumo_kwh"
+                                                                                            },
+                                                                                  "mensaje":  {
+                                                                                                  "type":  "string",
+                                                                                                  "description":  "Mensaje de error especifico del campo",
+                                                                                                  "example":  "Debe ser mayor que 0"
+                                                                                              }
+                                                                              }
+                                                           },
+                                       "DatosErrorRespuesta":  {
+                                                                   "type":  "object",
+                                                                   "description":  "Respuesta de error uniforme de la API",
+                                                                   "properties":  {
+                                                                                      "timestamp":  {
+                                                                                                        "type":  "string",
+                                                                                                        "format":  "date-time",
+                                                                                                        "description":  "Fecha y hora en que ocurrio el error",
+                                                                                                        "example":  "2026-07-23T11:45:00"
+                                                                                                    },
+                                                                                      "status":  {
+                                                                                                     "type":  "integer",
+                                                                                                     "format":  "int32",
+                                                                                                     "description":  "Codigo de estado HTTP numerico",
+                                                                                                     "example":  400
+                                                                                                 },
+                                                                                      "error":  {
+                                                                                                    "type":  "string",
+                                                                                                    "description":  "Tipo o nombre corto del error HTTP",
+                                                                                                    "example":  "BAD_REQUEST"
+                                                                                                },
+                                                                                      "mensaje":  {
+                                                                                                      "type":  "string",
+                                                                                                      "description":  "Mensaje general explicativo del error",
+                                                                                                      "example":  "Los datos ingresados son invalidos"
+                                                                                                  },
+                                                                                      "detalles":  {
+                                                                                                       "type":  "array",
+                                                                                                       "description":  "Lista detallada de errores por campo (solo si aplica)",
+                                                                                                       "items":  {
+                                                                                                                     "$ref":  "#/components/schemas/DatosErrorCampo"
+                                                                                                                 }
+                                                                                                   }
+                                                                                  }
+                                                               }
+                                   }
+                   }
+}

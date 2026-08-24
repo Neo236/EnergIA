@@ -580,12 +580,33 @@ class TestNotebookLocal:
         assert "cells" in parsed
         assert parsed["nbformat"] == 4
 
-    def test_notebook_tiene_celdas_de_pipeline(self):
+    def test_notebook_tiene_celdas_de_eda(self):
+        """La notebook es un consumidor EDA (no generador).
+
+        La fuente de verdad de generacion y scoring IEE vive en el codigo
+        Python (infrastructure/data/simulation.py + domain/scoring.py). La
+        notebook solo descarga el dataset publicado y hace EDA / visualiza-
+        ciones / tests estadisticos (chi², ANOVA).
+
+        Marcadores esperados del rol EDA real:
+          - pd.json_normalize: carga del JSON publicado
+          - requests.get: descarga del dataset
+          - chi2 / f_oneway: tests estadisticos
+          - px.bar / px.box: visualizaciones
+        """
         if not self.NOTEBOOK.exists():
             pytest.skip("Notebook no sincronizado aun")
-        parsed = json.loads(self.NOTEBOOK.read_bytes())
         src_concat = _extract_code_cells(self.NOTEBOOK.read_bytes())
-        # El colab genera el dataset con numpy directo y calcula categoria
-        # con reglas IEE. Estos marcadores deben estar presentes.
-        for keyword in ["consumo_kwh", "categoria", "score_consumo", "obtener_categoria"]:
-            assert keyword in src_concat, f"Falta marcador esperado: {keyword}"
+        expected = [
+            "pd.json_normalize",  # carga del dataset JSON
+            "requests.get",        # descarga desde GitHub
+            "chi2",                # test chi² (cat/bool vs categoria)
+            "f_oneway",            # ANOVA (num vs categoria)
+            "px.bar",              # visualizacion categorica
+        ]
+        for keyword in expected:
+            assert keyword in src_concat, (
+                f"Falta marcador EDA esperado: {keyword}. "
+                "La notebook deberia ser un consumidor EDA del dataset "
+                "publicado por el pipeline Python, no un generador."
+            )

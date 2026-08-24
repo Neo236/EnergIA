@@ -89,19 +89,47 @@ jobs:
         run: docker build -t energiai-ml:test -f data-science/Dockerfile data-science
 
       - name: Smoke test container /health
+        # Si el /health no responde despues de 5 intentos, abortamos con
+        # exit 1. Sin esto el step pasaba aunque el contenedor estuviera
+        # muerto, y el siguiente step (verify_certification.sh) fallaba
+        # con un mensaje menos util.
         run: |
           docker run -d --name ml-test -p 8765:8000 energiai-ml:test
           sleep 8
+          HEALTH_OK=0
           for i in 1 2 3 4 5; do
-            if curl -fsS http://localhost:8765/health; then
-              echo "Healthcheck OK"
+            if curl -fsS --max-time 5 http://localhost:8765/health; then
+              echo "Healthcheck OK (intento $i)"
+              HEALTH_OK=1
               break
             fi
             echo "Waiting... attempt $i"
             sleep 3
           done
-          docker stop ml-test
-          docker rm ml-test
+          if [ "$HEALTH_OK" -ne 1 ]; then
+            echo "El contenedor no respondio /health despues de 5 intentos"
+            docker logs ml-test
+            exit 1
+          fi
+
+      - name: Certificación end-to-end (verify_certification.sh)
+        # Ejecuta checks contra el contenedor arriba:
+        #   - /health
+        #   - /model-info (path + loaded + size)
+        #   - 3 perfiles golden (Eficiente, Moderado, Ineficiente)
+        # SKIP_LOCAL_FILES=1 porque el checkout de CI no tiene los .joblib
+        # (gitignored). Los checks locales de integridad (CHECKSUMS +
+        # MODEL_BINDING) se ejecutan localmente por el dev antes del push.
+        # Falla el step si cualquier check de runtime falla.
+        run: |
+          ML_SERVICE_URL=http://localhost:8765 SKIP_LOCAL_FILES=1 \
+            bash data-science/data/verify_certification.sh
+
+      - name: Cleanup test container
+        if: always()
+        run: |
+          docker stop ml-test 2>/dev/null || true
+          docker rm ml-test 2>/dev/null || true
 
   frontend-ci:
     name: Build & Smoke Test Front-End

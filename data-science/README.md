@@ -156,11 +156,38 @@ python -m interfaces.cli.train
 python -m interfaces.cli.validate     # valida los artefactos locales
 ```
 
-## Sincronizacion con el Colab (fuente de verdad)
+## Sincronizacion con el Colab (consumidor EDA)
 
-El Colab (`https://colab.research.google.com/drive/1LiisJEOadkTdBZ8nLMKb_T2a3El3nLJi`)
-es la fuente de verdad del dataset y de las reglas de scoring. El repo
-mantiene UNA copia local en `raw/notebooks/data_colab.ipynb`.
+> **Arquitectura**: la fuente de verdad de generacion y scoring IEE vive
+> en el codigo Python. La notebook Colab es un **consumidor EDA** que
+> descarga el dataset publicado y hace analisis / visualizacion / tests
+> estadisticos (chi², ANOVA).
+
+**Fuente de verdad (Python):**
+
+| Logica | Archivo |
+|---|---|
+| Distribuciones y rangos | `raw/infrastructure/config.py` |
+| Generacion sintetica | `raw/infrastructure/data/simulation.py` |
+| Scoring IEE + categoria | `raw/domain/scoring.py` |
+| Contrato API (Pydantic) | `raw/interfaces/api/schemas.py` |
+
+**Contrato del dataset** (`database_beta.json`, 2000 filas × 13 cols):
+
+- `hogar_id` (string)
+- `tipo_inmueble`, `calidad_aislamiento`, `fuente_calefaccion`,
+  `fuente_agua_caliente` (string categórico)
+- `zona_fria`, `uso_horario_pico` (string `"Si"`/`"No"`)
+- `metros_cuadrados`, `antiguedad_vivienda`, `horas_alto_consumo`,
+  `cantidad_equipos` (int)
+- `consumo_kwh` (float)
+- `categoria` (string ∈ {Eficiente, Moderado, Ineficiente})
+
+**Notebook Colab** (`https://colab.research.google.com/drive/1-vJVVndXAngkMmPkeBoVU2pDtBY2SF4y`):
+descarga `database_beta.json` desde la rama `develop` y ejecuta EDA,
+visualizaciones (`px.bar`, `px.box`, `px.pie`), outliers y tests
+estadisticos (`chi2`, `f_oneway`). El repo mantiene una copia local
+en `raw/notebooks/data_colab.ipynb`.
 
 ```bash
 python scripts/sync_colab_notebook.py             # check, exit 1 si difiere
@@ -169,8 +196,20 @@ python scripts/sync_colab_notebook.py --apply     # descarga y sobrescribe
 ```
 
 El script calcula SHA256 sobre las **celdas de codigo** del notebook
-(ignora outputs y execution_count). Cualquier cambio en la logica del
+(ignora outputs y execution_count). Cualquier cambio en el codigo del
 colab genera un diff por celda (added/removed/changed).
+
+**Validacion del contrato Python ↔ notebook:**
+
+```bash
+make verify-notebook-contract    # valida que database_beta.json tiene
+                                 # las 13 columnas y tipos que la
+                                 # notebook espera consumir.
+```
+
+Tambien hay tests automaticos en `tests/unit/test_simulation.py`
+(`TestSchemaContractWithNotebook`) que detectan drift entre el
+contrato Python y la notebook.
 
 ## Storage backends
 
@@ -283,3 +322,4 @@ El dataset canónico del proyecto se genera de forma reproducible utilizando una
 - GitHub: https://github.com/No-Country-simulation/G9-LATAM-TEAM-09/tree/develop/data-science/data
 - Google Drive: https://drive.google.com/drive/folders/1bEXHPQLwfNvHu__MO169G8rzLKQPdlg-
 - Google Colab: https://colab.research.google.com/drive/1LiisJEOadkTdBZ8nLMKb_T2a3El3nLJi
+- Diccionario de datos: https://docs.google.com/spreadsheets/d/1kf52FUPTGcFzxE7DEhvEo-ZhX5Y8sGAb/edit

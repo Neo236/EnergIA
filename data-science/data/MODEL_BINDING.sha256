@@ -1,0 +1,33 @@
+#!/usr/bin/env sha256sum
+# Modelo bakeado, metricas y dataset -- binding criptografico.
+#
+# Este archivo PINNEA los artefactos del modelo vigente a la rama `data`
+# tras el reentrenamiento con el dataset canonico (NUM_CLIENTES=2000,
+# RANDOM_SEED=42, codigo del HEAD actual de la rama data).
+#
+# El modelo fue entrenado sobre el dataset canónico versionado en este
+# mismo directorio (database_beta.{json,csv}, 2000 hogares, semilla=42).
+# El reentrenamiento se realizo en la rama data sin modificar backend,
+# frontend ni infra -- unicamente data-science/.
+#
+# Verificacion local (sklearn 1.9.x, donde se generaron estos hashes):
+#   sha256sum -c data-science/data/MODEL_BINDING.sha256
+#
+# Archivos:
+#   database_beta.json    tracked en git, dataset canónico (2000 hogares)
+#   database_beta.csv     tracked en git, dataset canónico (2000 hogares)
+#   modelo_eficiencia_v1.joblib  gitignored + dockerignored, se regenera con train
+#   metricas_v1.joblib    gitignored + dockerignored, se regenera con train
+#
+# En CI (donde .joblib no existen en el checkout) usar SKIP_LOCAL_FILES=1.
+# En CI el contenedor entrena un modelo backup in-situ con sklearn 1.6.1
+# del Dockerfile; su SHA sera distinto al de este binding, pero los 3
+# perfiles golden se validan correctamente.
+#
+# Estructura (formato estricto sha256sum, sin comentarios trailing):
+#   <sha256><dos-espacios><archivo-relativo-a-data-science-data>
+
+2c06370a7e379d8a1b01e507bdccce3a64831ef23809d142333dca8f4560eba2  modelo_eficiencia_v1.joblib
+2945e5048db2ca39253ce788731ef86bccbd078cb78bbbde2223c5f8bcec56d9  metricas_v1.joblib
+74939597360ad75823e01654e18f1172b549c283a2a3aed201c2ee182257400b  database_beta.json
+92578ad71e64b2d6e37fdb083cd673a9d933c3c5f4c46239eaab7fde65f5a5f3  database_beta.csv

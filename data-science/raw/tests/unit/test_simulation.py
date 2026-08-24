@@ -104,30 +104,20 @@ class TestGenerarDataset:
         "python scripts/sync_colab_notebook.py --apply"
     )
 )
-class TestParidadConColabEst:
-    """Paridad ESTADISTICA entre colab y simulation.py.
+class TestNotebookConsumeDataset:
+    """Valida que la notebook Colab consume correctamente el dataset
+    publicado por el pipeline Python.
 
-    Por que NO byte-a-byte: el algoritmo legacy de NumPy
-    (np.random.seed + np.random.choice/randint/uniform) cambio
-    entre NumPy 1.x (que uso el colab originalmente) y NumPy 2.0
-    (NEP 19), y el cambio es irreversible desde codigo de usuario.
-    Incluso fijando numpy<2 (1.19.5) los valores exactos difieren
-    del output del colab, lo que indica que se uso una version aun
-    mas antigua. Sin metadata del entorno del colab, no es posible
-    replicar bit-a-bit.
+    Contexto: la notebook es un CONSUMIDOR EDA, no un generador. La fuente
+    de verdad de generacion y scoring IEE vive en codigo Python:
+      - infrastructure/data/simulation.py  (generacion sintetica)
+      - domain/scoring.py                  (reglas IEE + categoria)
+      - infrastructure/config.py           (distribuciones y rangos)
 
-    Solucion adoptada: validar paridad FUNCIONAL con tolerancias:
-      - Mismo schema (columnas + tipos).
-      - Rangos numericos solapados >= 80%.
-      - Distribuciones de categoricas equivalentes (tol 3%).
-      - Distribucion de IEE equivalente (tol 5%).
-    Esto detecta drift real (cambio de probabilidades, formulas,
-    logica del IEE) que es lo que importa.
-
-    Si en el futuro se necesita paridad byte-a-byte, la opcion es
-    tomar el `energy_consumption.json` ya ejecutado del colab como
-    fixture y comparar contra ese snapshot, no contra una
-    regeneracion.
+    La notebook descarga `database_beta.json` desde la rama `develop`
+    (publicada por el pipeline) y hace EDA / visualizacion / tests
+    estadisticos (chi², ANOVA). Si el esquema del JSON cambia sin
+    actualizar la notebook, este test falla.
     """
 
     NOTEBOOK = (
@@ -135,9 +125,11 @@ class TestParidadConColabEst:
         / "notebooks" / "data_colab.ipynb"
     )
     RAIZ = NOTEBOOK.parents[1]
-    COLAB_OUTPUT = "energy_consumption.json"
 
-    def _ejecutar_colab(self, tmp):
+    def _ejecutar_notebook(self, tmp) -> __import__("pathlib").Path:
+        """Ejecuta la notebook via jupyter nbconvert y devuelve el path al
+        .ipynb ejecutado (con outputs del kernel)."""
+        import json as _json
         import os
         import shutil
         import subprocess
@@ -147,7 +139,8 @@ class TestParidadConColabEst:
             "Ejecuta: python scripts/sync_colab_notebook.py --apply"
         )
 
-        nb_copy = __import__("pathlib").Path(tmp) / "data_colab.ipynb"
+        tmp_p = __import__("pathlib").Path(tmp)
+        nb_copy = tmp_p / "data_colab.ipynb"
         shutil.copy(self.NOTEBOOK, nb_copy)
 
         env = os.environ.copy()
@@ -163,102 +156,192 @@ class TestParidadConColabEst:
             cwd=tmp, env=env,
             check=True, capture_output=True, text=True, timeout=300,
         )
-        return __import__("pathlib").Path(tmp) / self.COLAB_OUTPUT
+        executed = tmp_p / "executed.ipynb"
+        return _json.loads(executed.read_bytes()), executed
 
-    @staticmethod
-    def _distribucion(series):
-        return series.value_counts(normalize=True).sort_index().to_dict()
+    def test_notebook_ejecuta_sin_error(self, tmp_path):
+        """Todas las celdas de codigo ejecutan sin excepciones."""
+        nb, _ = self._ejecutar_notebook(str(tmp_path))
+        errors = []
+        for i, cell in enumerate(nb["cells"]):
+            if cell.get("cell_type") != "code":
+                continue
+            for out in cell.get("outputs", []):
+                if out.get("output_type") == "error":
+                    errors.append((i, out.get("ename"), out.get("evalue")))
+        assert not errors, (
+            "La notebook tuvo errores de ejecucion:\n"
+            + "\n".join(f"  cell[{i}] {n}: {e}" for i, n, e in errors)
+        )
 
-    def test_esquema_columnas_coincide(self, tmp_path):
+    def _stream_text(self, cell):
+        """Concatena los outputs stream de una celda en un string.
+        Jupyter entrega `text` como lista de lineas o como string; normalizamos."""
+        chunks = []
+        for o in cell.get("outputs", []):
+            if o.get("output_type") != "stream":
+                continue
+            text = o.get("text", "")
+            if isinstance(text, list):
+                chunks.extend(text)
+            else:
+                chunks.append(text)
+        return "".join(chunks)
+
+    def test_dataset_se_descargo_y_proceso(self, tmp_path):
+        """La celda df_energIA.info() reporta 2000 entradas (size del
+        dataset publicado). Esto confirma que requests.get + pd.json_normalize
+        funcionaron y que el dataset tiene el tamano esperado."""
+        nb, _ = self._ejecutar_notebook(str(tmp_path))
+        # cell [8] del notebook es `df_energIA.info()`.
+        text = self._stream_text(nb["cells"][8])
+        assert "2000" in text, (
+            "df_energIA.info() no reporta 2000 entries. "
+            "Posible causa: la URL del dataset no resuelve o el schema "
+            "cambio sin actualizar la notebook.\n"
+            f"Output capturado: {text[:400]}"
+        )
+
+    def test_df_general_consolida_chi_y_anova(self, tmp_path):
+        """La ultima celda (df_general) consolida chi² + ANOVA con p_valor
+        para todas las variables."""
+        nb, _ = self._ejecutar_notebook(str(tmp_path))
+        # cell [75] del notebook es `print(df_general)`.
+        text = self._stream_text(nb["cells"][75])
+        assert text.strip(), "df_general no produjo output."
+        assert "p_valor" in text, (
+            "df_general no contiene la columna p_valor. "
+            "La consolidacion chi²+ANOVA fallo."
+        )
+        # Esperamos al menos 11 variables (6 cat/bool + 5 num).
+        variables_presentes = sum(
+            1 for v in [
+                "tipo_inmueble", "calidad_aislamiento", "fuente_calefaccion",
+                "fuente_agua_caliente", "zona_fria", "uso_horario_pico",
+                "metros_cuadrados", "antiguedad_vivienda", "consumo_kwh",
+                "horas_alto_consumo", "cantidad_equipos",
+            ] if v in text
+        )
+        assert variables_presentes >= 10, (
+            f"Solo {variables_presentes}/11 variables aparecen en df_general. "
+            "Esperaba ver todas las features del schema."
+        )
+
+    def test_notebook_referencia_las_11_features(self, tmp_path=None):
+        """Estatico (no ejecuta la notebook): valida que las 11 features
+        producidas por simulation.py estan REFERENCIADAS en el codigo de
+        la notebook. Esto detecta drift entre el contrato Python y la
+        notebook sin pagar el costo de ejecutar jupyter."""
+        assert self.NOTEBOOK.exists(), (
+            f"Notebook no encontrado: {self.NOTEBOOK}"
+        )
+        nb_raw = __import__("json").loads(self.NOTEBOOK.read_bytes())
+        sys = __import__("sys")
+        sys.path.insert(0, str(self.RAIZ))
+        from scripts.sync_colab_notebook import _extract_code_cells
+        code = _extract_code_cells(self.NOTEBOOK.read_bytes())
+
+        expected_features = [
+            "tipo_inmueble", "metros_cuadrados", "antiguedad_vivienda",
+            "zona_fria", "calidad_aislamiento", "fuente_calefaccion",
+            "fuente_agua_caliente", "consumo_kwh", "uso_horario_pico",
+            "horas_alto_consumo", "cantidad_equipos",
+        ]
+        missing = [c for c in expected_features if c not in code]
+        assert not missing, (
+            f"La notebook NO referencia estas columnas de "
+            f"simulation.py: {missing}. Si renombraste columnas en el "
+            "contrato Python, actualiza la notebook (o viceversa)."
+        )
+
+
+class TestSchemaContractWithNotebook:
+    """Contrato ESTATICO: el dataset local que la notebook consume debe
+    coincidir con el schema que simulation.py produce.
+
+    Garantiza que si alguien cambia el contrato (renombra columna, cambia
+    dtype, agrega feature), se detecta sin necesidad de ejecutar la
+    notebook Colab.
+    """
+    DATASET_PATH = (
+        __import__("pathlib").Path(__file__).resolve().parents[3]
+        / "data" / "database_beta.json"
+    )
+
+    def test_dataset_local_tiene_columnas_esperadas(self):
+        import json
         import pandas as pd
 
-        colab_json = self._ejecutar_colab(str(tmp_path))
-        assert colab_json.exists()
-        df_colab = pd.read_json(colab_json)
+        if not self.DATASET_PATH.exists():
+            pytest.skip(
+                f"Dataset no encontrado: {self.DATASET_PATH}. "
+                "Ejecuta `make pipeline` para regenerarlo."
+            )
+        df = pd.read_json(self.DATASET_PATH)
+        expected = {
+            "hogar_id", "tipo_inmueble", "metros_cuadrados",
+            "antiguedad_vivienda", "zona_fria", "calidad_aislamiento",
+            "fuente_calefaccion", "fuente_agua_caliente", "consumo_kwh",
+            "uso_horario_pico", "horas_alto_consumo", "cantidad_equipos",
+            "categoria",
+        }
+        missing = expected - set(df.columns)
+        extra = set(df.columns) - expected
+        assert not missing, f"Columnas faltantes en dataset local: {missing}"
+        assert not extra, (
+            f"Columnas extra en dataset local (no esperadas por la "
+            f"notebook): {extra}"
+        )
 
-        df_py = generar_dataset(num_clientes=2000, seed=42)
-
-        assert list(df_colab.columns) == list(df_py.columns)
-
-    def test_rangos_numericos_coinciden(self, tmp_path):
+    def test_dataset_local_tipos_compatibles_con_notebook(self):
+        """El notebook hace `.map({"Si": True, "No": False})` sobre
+        zona_fria y uso_horario_pico, asi que el JSON debe tenerlas
+        como string 'Si'/'No' (no bool). Las demas categoricas deben
+        ser string, las numericas deben ser int/float."""
+        import json
         import pandas as pd
 
-        colab_json = self._ejecutar_colab(str(tmp_path))
-        df_colab = pd.read_json(colab_json)
-        df_py = generar_dataset(num_clientes=2000, seed=42)
+        if not self.DATASET_PATH.exists():
+            pytest.skip(
+                f"Dataset no encontrado: {self.DATASET_PATH}"
+            )
+        df = pd.read_json(self.DATASET_PATH)
 
-        for col in ["metros_cuadrados", "antiguedad_vivienda",
-                    "consumo_kwh", "horas_alto_consumo", "cantidad_equipos"]:
-            lo = max(df_colab[col].min(), df_py[col].min())
-            hi = min(df_colab[col].max(), df_py[col].max())
-            rango_colab = df_colab[col].max() - df_colab[col].min()
-            assert rango_colab > 0
-            overlap = (hi - lo) / rango_colab
-            assert overlap >= 0.80, (
-                f"Columna {col}: rangos no se superponen suficientemente "
-                f"(overlap={overlap:.2%})"
+        for col in ["zona_fria", "uso_horario_pico"]:
+            assert df[col].dtype.kind in ("O", "U", "S"), (
+                f"{col} deberia ser string 'Si'/'No' (la notebook hace "
+                f".map({{'Si': True, 'No': False}})). dtype={df[col].dtype}"
+            )
+            assert set(df[col].unique()).issubset({"Si", "No"}), (
+                f"{col} tiene valores fuera de {{'Si', 'No'}}: "
+                f"{set(df[col].unique())}"
             )
 
-    @pytest.mark.parametrize("col", [
-        "tipo_inmueble",
-        "calidad_aislamiento",
-        "fuente_calefaccion",
-        "fuente_agua_caliente",
-    ])
-    def test_distribucion_categoricas(self, tmp_path, col):
-        import pandas as pd
-
-        colab_json = self._ejecutar_colab(str(tmp_path))
-        df_colab = pd.read_json(colab_json)
-        df_py = generar_dataset(num_clientes=2000, seed=42)
-
-        dist_colab = self._distribucion(df_colab[col])
-        dist_py = self._distribucion(df_py[col])
-
-        assert set(dist_colab.keys()) == set(dist_py.keys())
-        for cat in dist_colab:
-            diff = abs(dist_colab[cat] - dist_py[cat])
-            assert diff <= 0.03, (
-                f"Distribucion {col} difiere para {cat!r}: "
-                f"colab={dist_colab[cat]:.3f} py={dist_py[cat]:.3f}"
-            )
-
-    def test_distribucion_categorias_finales(self, tmp_path):
-        import pandas as pd
-
-        colab_json = self._ejecutar_colab(str(tmp_path))
-        df_colab = pd.read_json(colab_json)
-        df_py = generar_dataset(num_clientes=2000, seed=42)
-
-        cats_colab = set(df_colab["categoria"].unique())
-        cats_py = set(df_py["categoria"].unique())
-        assert cats_colab == {"Eficiente", "Moderado", "Ineficiente"}
-        assert cats_py == {"Eficiente", "Moderado", "Ineficiente"}
-
-        dist_colab = self._distribucion(df_colab["categoria"])
-        dist_py = self._distribucion(df_py["categoria"])
-
-        for cat in dist_colab:
-            diff = abs(dist_colab[cat] - dist_py[cat])
-            assert diff <= 0.05, (
-                f"Categoria {cat!r}: colab={dist_colab[cat]:.3f} "
-                f"py={dist_py[cat]:.3f}"
-            )
-
-    def test_tipos_columnas_coinciden(self, tmp_path):
-        import pandas as pd
-
-        colab_json = self._ejecutar_colab(str(tmp_path))
-        df_colab = pd.read_json(colab_json)
-        df_py = generar_dataset(num_clientes=2000, seed=42)
-
-        assert df_colab["hogar_id"].dtype.kind in ("O", "U", "S")
-        for col in ["metros_cuadrados", "antiguedad_vivienda",
-                    "horas_alto_consumo", "cantidad_equipos"]:
-            assert df_colab[col].dtype.kind == "i"
-            assert df_py[col].dtype.kind == "i"
-        assert df_py["consumo_kwh"].dtype.kind == "f"
         for col in ["tipo_inmueble", "calidad_aislamiento",
                     "fuente_calefaccion", "fuente_agua_caliente",
-                    "zona_fria", "uso_horario_pico"]:
-            assert df_colab[col].dtype.kind in ("O", "U", "S")
+                    "categoria", "hogar_id"]:
+            assert df[col].dtype.kind in ("O", "U", "S"), (
+                f"{col} deberia ser string. dtype={df[col].dtype}"
+            )
+
+        for col in ["metros_cuadrados", "antiguedad_vivienda",
+                    "horas_alto_consumo", "cantidad_equipos"]:
+            assert df[col].dtype.kind == "i", (
+                f"{col} deberia ser int. dtype={df[col].dtype}"
+            )
+
+        assert df["consumo_kwh"].dtype.kind == "f", (
+            f"consumo_kwh deberia ser float. dtype={df['consumo_kwh'].dtype}"
+        )
+
+    def test_dataset_local_categoria_valida(self):
+        import json
+        import pandas as pd
+
+        if not self.DATASET_PATH.exists():
+            pytest.skip(f"Dataset no encontrado: {self.DATASET_PATH}")
+        df = pd.read_json(self.DATASET_PATH)
+        cats = set(df["categoria"].unique())
+        assert cats == {"Eficiente", "Moderado", "Ineficiente"}, (
+            f"categoria tiene valores fuera del contrato: {cats}"
+        )

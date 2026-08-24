@@ -1,0 +1,34 @@
+# ==========================================
+# Excluir archivos generados del contexto Docker.
+# .gitignore aplica a git; .dockerignore aplica al build de Docker.
+# Sin esto, los .joblib locales terminan en la imagen cuando el dev
+# los tiene en el working tree, y producen un bake inconsistente
+# entre dev local y CI (donde .joblib no existen en el checkout).
+#
+# Paths son RELATIVOS al contexto de build (data-science/ cuando se
+# corre `docker build -f data-science/Dockerfile data-science/`).
+# ==========================================
+
+# Modelo serializado + sidecars
+*.joblib
+*.sha256
+
+# raw/data/ es donde train.py guarda los artefactos (gitignored). Sin
+# excluirlo, COPY raw/ ./ los pone en /app/data/ del container y pisa
+# los .joblib limpios que se quieren entregar.
+raw/data/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Directorios locales de artefactos
+raw/latest/
+raw/archive/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# pytest cache
+.pytest_cache/

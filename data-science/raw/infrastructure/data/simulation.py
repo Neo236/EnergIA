@@ -1,20 +1,24 @@
 """Generador del dataset sintetico de hogares.
 
-Replica la logica del notebook `notebooks/data_colab.ipynb`
-(Fases 1-3: configuracion + tablas Hogar y Consumo).
+FUENTE DE VERDAD de la generacion del dataset. La notebook Colab es un
+consumidor EDA de este output (descarga `database_beta.json` desde la
+rama `develop`), no genera nada.
 
 Decisiones de diseno:
-- API legacy de NumPy (`np.random.seed`) para acercarse al algoritmo
-  legacy del colab. NOTA: NumPy 2.0+ cambio este algoritmo (NEP 19) y
-  la paridad byte-a-byte YA NO es posible con NumPy moderno. La
-  validacion es estadistica (ver TestParidadConColabEst).
+- API legacy de NumPy (`np.random.seed`) fijada por compatibilidad con
+  el notebook historico del equipo (no es relevante para la notebook
+  nueva, que solo consume el JSON publicado).
 - Parametros centralizados en `infrastructure.config.Config`.
-- `zona_fria` y `uso_horario_pico` se mantienen como string "Si"/"No" para
-  paridad bit-a-bit con el dataset final que exporta el colab
-  (`energy_consumption.json`). El pipeline de ML los trata como
-  categoricos (ver `application/training.py` CAT_COLS).
-- `categoria` se calcula desde `domain.scoring.calcular_iee_y_categoria` para
-  garantizar coherencia con las reglas IEE del colab.
+- `zona_fria` y `uso_horario_pico` se mantienen como string "Si"/"No".
+  La notebook hace `.map({"Si": True, "No": False})` al consumir, y el
+  pipeline de ML los trata como categoricos
+  (ver `application/training.py` CAT_COLS).
+- `categoria` se calcula desde `domain.scoring.calcular_iee_y_categoria`
+  para garantizar coherencia con las reglas IEE.
+- El contrato (columnas, tipos) que este generador produce esta
+  validado contra el consumidor (notebook Colab) en
+  `tests/unit/test_simulation.py::TestSchemaContractWithNotebook` y
+  mediante el target `make verify-notebook-contract`.
 """
 
 import numpy as np

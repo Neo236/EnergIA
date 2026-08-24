@@ -1,18 +1,19 @@
-.PHONY: help install run pipeline demo serve test clean freeze init-env docker-build docker-run
+.PHONY: help install run pipeline demo serve test verify-notebook-contract clean freeze init-env docker-build docker-run
 
 help:
 	@echo "Targets:"
-	@echo "  install       pip install -r requirements.txt"
-	@echo "  init-env      cp .env.example .env (si no existe)"
-	@echo "  run           alias de 'pipeline' (ejecuta interfaces.cli.train)"
-	@echo "  pipeline      genera dataset, entrena y guarda artefactos en data/"
-	@echo "  demo          smoke test de inferencia (python application/inference.py)"
-	@echo "  serve         levanta FastAPI en :8000 (uvicorn interfaces.api.app:app)"
-	@echo "  test          ejecuta interfaces.cli.validate sobre los artefactos"
-	@echo "  freeze        regenera requirements.txt con pip freeze"
-	@echo "  docker-build  build de la imagen para OCI (python:3.10-slim)"
-	@echo "  docker-run    ejecuta el contenedor exponiendo :8000"
-	@echo "  clean         borra __pycache__, .pyc y artefactos en data/ (preserva .gitkeep)"
+	@echo "  install                    pip install -r requirements.txt"
+	@echo "  init-env                   cp .env.example .env (si no existe)"
+	@echo "  run                        alias de 'pipeline' (ejecuta interfaces.cli.train)"
+	@echo "  pipeline                   genera dataset, entrena y guarda artefactos en data/"
+	@echo "  demo                       smoke test de inferencia (python application/inference.py)"
+	@echo "  serve                      levanta FastAPI en :8000 (uvicorn interfaces.api.app:app)"
+	@echo "  test                       ejecuta interfaces.cli.validate sobre los artefactos"
+	@echo "  verify-notebook-contract   valida que database_beta.json tiene el schema que la notebook Colab consume"
+	@echo "  freeze                     regenera requirements.txt con pip freeze"
+	@echo "  docker-build               build de la imagen para OCI (python:3.10-slim)"
+	@echo "  docker-run                 ejecuta el contenedor exponiendo :8000"
+	@echo "  clean                      borra __pycache__, .pyc y artefactos en data/ (preserva .gitkeep)"
 
 install:
 	python3 -m pip install -r requirements.txt
@@ -33,6 +34,9 @@ serve:
 
 test:
 	python3 -m interfaces.cli.validate
+
+verify-notebook-contract:
+	python3 -m interfaces.cli.verify_notebook_contract
 
 freeze:
 	python3 -m pip freeze > requirements.txt

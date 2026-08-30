@@ -6,9 +6,10 @@
   <title>EnergiAI — Analizador de eficiencia energética</title>
   <meta name="description" content="Descubre tu perfil energético, el costo estimado de tu consumo y recomendaciones para reducirlo." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Inter se sirve desde este mismo origen (ver @font-face en
+       src/styles/app.css). No hay preconnect a Google Fonts: la CSP del
+       proxy de borde bloquea orígenes de terceros para hojas y fuentes. -->
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
 </head>
 <body>
   <div id="root"></div>

@@ -8,8 +8,10 @@ services:
   # -------------------------------------------------------------
   db:
     image: postgres:16-alpine
-    ports:
-      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    # Sin `ports`: la base solo la consume el backend, por la red interna de
+    # Compose. Publicarla en el host no aportaba nada y chocaba con los otros
+    # Postgres que ya corren en el servidor. Para inspeccionarla:
+    #   docker compose exec db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
     environment:
       - POSTGRES_DB=${POSTGRES_DB:-energiai}
       - POSTGRES_USER=${POSTGRES_USER:-energiai}
@@ -33,8 +35,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     image: energiai-backend:${BACKEND_TAG:-latest}
-    ports:
-      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
+    # Sin `ports`: el unico servicio publicado en el host es `proxy`, que
+    # sirve el frontend y la API bajo el mismo origen. El backend se alcanza
+    # como http://backend:8080 dentro de la red de Compose.
     environment:
       - PORT=8080
       - SPRING_PROFILES_ACTIVE=prod
@@ -66,13 +69,17 @@ services:
       context: ./data-science
       dockerfile: Dockerfile
     image: energiai-ml-service:${ML_TAG:-latest}
-    ports:
-      - "127.0.0.1:${ML_PORT:-8000}:8000"
+    # Sin `ports`: solo lo consume el backend, por la red interna de Compose.
     environment:
       - PORT=8000
       - ENVIRONMENT=production
       - STORAGE_BACKEND=${STORAGE_BACKEND:-local}
-      - STORAGE_LOCAL_ROOT=/app
+      # El "bucket" de LocalStorage es /app/data, que en la imagen contiene
+      # latest/ con el modelo entrenado versionado en el repo. Asi el
+      # servicio encuentra latest/modelo_eficiencia_v1.joblib al arrancar y
+      # NO cae al reentrenamiento de respaldo, que tarda y produce un modelo
+      # equivalente pero no identico al que se sirvio en produccion.
+      - STORAGE_LOCAL_ROOT=/app/data
       # PAR (Pre-Authenticated Request): usado cuando STORAGE_BACKEND=par.
       # No requiere SDK ni credenciales OCI. La URL lleva el token embebido.
       - OCI_PAR_URL=${OCI_PAR_URL:-}
@@ -86,53 +93,50 @@ services:
       - energiai-network
 
   # -------------------------------------------------------------
-  # Front-End - P-01 / P-02 (nginx)
+  # Front-End (nginx)
   #
-  # ⚠️ Este servicio es la REFERENCIA de cómo deberían quedar los otros
-  #    dos. Tres diferencias deliberadas con backend y ml-service:
+  # Sin `container_name` a proposito: Docker exige nombres unicos por host
+  # y este servidor corre muchos proyectos. Compose ya nombra los
+  # contenedores como <proyecto>-<servicio>-N, que es unico por stack.
   #
-  #    1. Sin `container_name`. Docker exige nombres únicos por host, así
-  #       que un nombre fijo impide correr los dos ambientes (prod y
-  #       staging) en la misma VM, que es el diseño documentado en
-  #       docs/oci-cloud/README.md. Compose ya nombra los contenedores
-  #       como <proyecto>-<servicio>-N, que es único por ambiente.
-  #    2. El puerto se publica en 127.0.0.1, no en 0.0.0.0. La doc de OCI
-  #       dice que solo el proxy debe ser alcanzable desde afuera.
-  #    3. Puerto y tag parametrizados: staging usa 3001 y el tag por SHA
-  #       es lo que hace posible el rollback sin reconstruir.
+  # Sin `ports`: lo publica el proxy, que lo sirve bajo el mismo origen
+  # que la API.
   # -------------------------------------------------------------
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     image: energiai-frontend:${FRONTEND_TAG:-latest}
-    ports:
-      - "127.0.0.1:${FRONTEND_PORT:-3000}:8080"
     restart: unless-stopped
     networks:
       - energiai-network
 
   # -------------------------------------------------------------
-  # Proxy inverso - SOLO DESARROLLO LOCAL
+  # Proxy inverso - UNICA ENTRADA DEL STACK
   #
-  # Replica el ruteo same-origin que en la VM hace Caddy nativo. No se
-  # despliega: el perfil `local` lo mantiene apagado salvo que se pida
-  # explícitamente con `docker compose --profile local up`.
+  # Fusiona frontend y API bajo un mismo origen: la raiz sirve la app y
+  # /api/* (mas Swagger y Actuator) van al backend. Eso elimina el CORS
+  # — sin el, la app y la API serian origenes distintos para el navegador,
+  # porque el puerto forma parte del origen.
   #
-  # Hace falta porque localhost:3000 y localhost:8080 son orígenes
-  # DISTINTOS para el navegador — el puerto forma parte del origen — así
-  # que sin él el fetch a /api daría error de CORS.
+  # NO termina TLS ni se expone a internet: delante esta el proxy de borde,
+  # que hace HTTPS, WAF y rate limit. Por eso publica en 127.0.0.1 y llega
+  # por el tunel, nunca por la interfaz publica.
+  #
+  # Antes vivia bajo el perfil `local` (solo desarrollo) porque en la VM
+  # anterior habia un Caddy nativo haciendo este mismo ruteo. Al mover el
+  # despliegue detras del borde ese Caddy desaparecio, y este servicio pasa
+  # a cubrir su rol: es la misma pieza, ahora en produccion.
   # -------------------------------------------------------------
   proxy:
     image: caddy:2.11-alpine
-    profiles:
-      - local
     ports:
       - "127.0.0.1:${PROXY_PORT:-8088}:8088"
     volumes:
       - ./infra/Caddyfile.local:/etc/caddy/Caddyfile:ro
     depends_on:
       - frontend
+      - backend
     restart: unless-stopped
     networks:
       - energiai-network

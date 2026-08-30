@@ -42,7 +42,7 @@ function Pie() {
       <span className="pie__enlaces">
         <a
           className="pie__enlace"
-          href="https://github.com/No-Country-simulation/G9-LATAM-TEAM-09"
+          href="https://github.com/Neo236/EnergIA"
           target="_blank"
           rel="noreferrer"
         >Repositorio</a>

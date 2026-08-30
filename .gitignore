@@ -68,6 +68,14 @@ ipython_config.py
 *.pkl
 *.pickle
 *.joblib
+
+# Excepción deliberada: los artefactos de data/latest/ SÍ se versionan.
+# Antes vivían solo en el bucket de Object Storage, que era el único lugar
+# donde existía el modelo entrenado — si el bucket desaparecía, el modelo
+# se perdía. Ahora `latest/` es el "bucket" que lee LocalStorage
+# (STORAGE_LOCAL_ROOT=/app/data), así que el modelo viaja con el repo y el
+# despliegue no depende de ningún servicio externo. Son ~2 MB.
+!data-science/data/latest/*.joblib
 *.h5
 *.hdf5
 *.model

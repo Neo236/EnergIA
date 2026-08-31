@@ -1,0 +1,20 @@
+# Dependencias para correr los tests. NO se instalan en la imagen de produccion.
+#
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+# A diferencia de requirements.txt, este archivo no se genera con pip-compile ni
+# fija versiones exactas. La razon es que cumplen funciones distintas: el runtime
+# se pinea al parche para que la imagen sea reproducible byte a byte, mientras
+# que las herramientas de test solo necesitan no cambiar de comportamiento de
+# golpe — para eso alcanza con acotar la version mayor.
+#
+# Antes de existir este archivo, estos paquetes vivian unicamente escritos a mano
+# dentro del workflow de CI. El entorno de test solo era reproducible leyendo el
+# YAML, y las instrucciones de la documentacion fallaban en un clon nuevo.
+
+pytest>=8,<9
+
+# Cliente HTTP que usa TestClient de FastAPI/Starlette para los tests de la API.
+# Sin el, los tests de interfaces/api fallan al importar, no al ejecutarse — el
+# error apunta al import y despista.
+httpx>=0.27,<1

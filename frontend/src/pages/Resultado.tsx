@@ -50,7 +50,10 @@ export function Resultado() {
     if (analisis || !id) return
     let vigente = true
 
-    setCargando(true)
+    /* No hace falta `setCargando(true)` aquí: el estado se inicializa en
+       `!analisis`, y este efecto solo avanza cuando `analisis` es null — es
+       decir, justamente cuando `cargando` ya vale true. Llamarlo igual
+       disparaba un renderizado en cascada por un cambio que no cambiaba nada. */
     obtenerAnalisis(id)
       .then((datos) => { if (vigente) setAnalisis(datos) })
       .catch((error) => {

@@ -19,6 +19,17 @@ RUN npm ci
 COPY tsconfig*.json vite.config.ts index.html ./
 COPY src/ ./src/
 
+# public/ va tal cual a la raiz de dist/ sin pasar por el bundler: es la via
+# para los archivos que se piden por ruta fija desde index.html (favicon,
+# fuentes). Faltaba, y el sintoma es enganoso — Vite no falla, simplemente
+# construye sin ellos, y despues nginx responde esas rutas con el index.html
+# del SPA por su `try_files`. El navegador recibe un text/html donde esperaba
+# una fuente y, como el proxy manda `X-Content-Type-Options: nosniff`, la
+# descarta: la @font-face queda en estado "error" y el sitio cae a la fuente
+# de respaldo. El favicon venia roto por esto mismo en todos los despliegues
+# en contenedor.
+COPY public/ ./public/
+
 # VITE_API_MODO se resuelve en tiempo de compilación (Vite lo inserta en el
 # bundle), así que se elige acá y no en runtime. Por defecto, mock: permite
 # demostrar sin depender de que el back-end y el ML estén integrados.

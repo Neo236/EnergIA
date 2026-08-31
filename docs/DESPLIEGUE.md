@@ -74,15 +74,19 @@ no lo asume.
 
 ### Dónde vive
 
-El despliegue sigue la convención del servidor: todo lo que necesita para correr
-está bajo un mismo directorio.
+Estas rutas son las del servidor donde corre hoy, no un requisito del proyecto:
+el stack funciona desde cualquier directorio. Se documentan porque el flujo de
+despliegue las usa.
 
-```
-~/deployments/energIA/
-├── repo/       clon de main · acá viven el docker-compose.yml y el .env
-├── runner/     runner de GitHub Actions, exclusivo de este repositorio
-└── backups/    volcados de pg_dump
-```
+| Ruta | Qué hay |
+|------|---------|
+| `~/projects/EnergIA/` | El clon de `main`. Acá viven el `docker-compose.yml` y el `.env` |
+| `~/deployments/energIA/backups/` | Los volcados de `pg_dump` |
+| `~/gh-runner-energia/` | El runner de GitHub Actions |
+
+Los respaldos van deliberadamente **fuera** del clon: son datos de esa máquina,
+no del proyecto, y tienen que sobrevivir a un `git reset --hard` o a reclonar el
+repositorio — que es justamente lo que hace el flujo de despliegue.
 
 ### Actualizar
 
@@ -98,7 +102,7 @@ reinicia el servicio. Para forzarlo sin commitear (por ejemplo tras editar el
 A mano, si hiciera falta:
 
 ```bash
-cd ~/deployments/energIA/repo && git pull && docker compose up -d --build
+cd ~/projects/EnergIA && git pull && docker compose up -d --build
 docker compose ps && curl -sI https://energia.neo236.fun | head -1
 ```
 

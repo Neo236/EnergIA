@@ -37,13 +37,13 @@ jobs:
     steps:
       # El runner corre en el mismo servidor que el despliegue, pero en su
       # propio directorio de trabajo. Lo que se despliega es el clon de
-      # ~/deployments/energIA/repo, no la copia que el runner acaba de bajar:
+      # ~/projects/EnergIA, no la copia que el runner acaba de bajar:
       # ese clon es el que tiene el .env con los secretos, que no está —ni debe
       # estar— en el repositorio.
       - name: Traer los cambios
         run: |
           set -euo pipefail
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           git fetch --quiet origin main
           echo "Antes:   $(git rev-parse --short HEAD)"
           git reset --hard --quiet origin/main
@@ -55,19 +55,19 @@ jobs:
       - name: Respaldar la base
         run: |
           set -euo pipefail
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           ./infra/respaldo.sh
 
       - name: Construir y levantar
         run: |
           set -euo pipefail
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           docker compose up -d --build
 
       - name: Esperar a que responda
         run: |
           set -euo pipefail
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           puerto="$(grep -E '^PROXY_PORT=' .env | cut -d= -f2 || echo 8088)"
           bind="$(grep -E '^PROXY_BIND=' .env | cut -d= -f2 || echo 127.0.0.1)"
           for i in $(seq 1 30); do
@@ -87,7 +87,7 @@ jobs:
       - name: Verificar lo desplegado
         run: |
           set -euo pipefail
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           puerto="$(grep -E '^PROXY_PORT=' .env | cut -d= -f2 || echo 8088)"
           bind="$(grep -E '^PROXY_BIND=' .env | cut -d= -f2 || echo 127.0.0.1)"
           base="http://${bind}:${puerto}"
@@ -122,7 +122,7 @@ jobs:
         if: failure()
         run: |
           set -euo pipefail
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           echo "El despliegue falló. Volviendo al commit anterior."
           git reset --hard --quiet HEAD~1
           echo "Ahora en: $(git rev-parse --short HEAD)"
@@ -132,11 +132,11 @@ jobs:
       - name: Logs si algo falló
         if: failure()
         run: |
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           docker compose logs --tail=80
 
       - name: Estado final
         if: always()
         run: |
-          cd ~/deployments/energIA/repo
+          cd ~/projects/EnergIA
           docker compose ps

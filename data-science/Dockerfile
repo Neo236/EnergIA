@@ -2,7 +2,7 @@
 # Dockerfile Data Science / ML - Python FastAPI
 # EnergIA MVP - uvicorn app:app
 # ==========================================
-FROM python:3.10-slim
+FROM python:3.14-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

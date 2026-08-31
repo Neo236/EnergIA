@@ -1,57 +1,39 @@
-# Proxy inverso de EnergIA — VM energia-app-01 (OCI).
+# Espejo local del proxy de la VM (infra/Caddyfile).
 #
-# Este archivo es la fuente de verdad de /etc/caddy/Caddyfile en la VM.
-# Vive en el repo porque el runbook de OCI lo marca como uno de los pocos
-# archivos que "no se regeneran solos" y que hoy existen únicamente en la
-# instancia. Al actualizarlo hay que copiarlo a la VM y recargar:
+# Existe por una sola razón: en la VM, el front y la API comparten origen
+# porque Caddy los une bajo un mismo dominio. En una máquina de desarrollo
+# NO alcanza con que "todo corra en local": http://localhost:3000 y
+# http://localhost:8080 son ORÍGENES DISTINTOS para el navegador — el
+# puerto forma parte del origen. Sin este proxy, el fetch a /api/v1/...
+# desde el front daría 404, y apuntarlo a localhost:8080 daría error de
+# CORS.
 #
-#   sudo cp infra/Caddyfile /etc/caddy/Caddyfile
-#   sudo caddy validate --config /etc/caddy/Caddyfile
-#   sudo systemctl reload caddy
+# La alternativa sería habilitar CORS en Spring solo para desarrollo, pero
+# eso agrega configuración que existe únicamente en dev, que es fácil que
+# se filtre a producción, y que hace que "funciona en mi máquina" deje de
+# significar algo. Con este proxy, local se comporta igual que la VM.
 #
-# Caddy corre NATIVO (systemd), no en Docker: un deploy roto no puede
-# tirar el proxy. HTTPS automático vía Let's Encrypt.
-#
-# Puertos internos que levanta el CD con docker compose (solo 127.0.0.1):
-#   producción → API 8080 · front 3000
-#   staging    → API 8081 · front 3001
+# Se levanta con:  docker compose --profile local up -d
+# Y se entra por:  http://localhost:8088
 
-(rutas_api) {
-	# La API de la app.
+:8088 {
 	handle /api/* {
-		reverse_proxy localhost:{args[0]}
+		reverse_proxy backend:8080
 	}
 
-	# Swagger, la spec OpenAPI y el healthcheck NO cuelgan de /api: los
-	# sirve Spring en la raíz. Sin estos tres handle, el `handle` final
-	# los mandaría al frontend y responderían 404 — rompiendo las URLs de
-	# testeo que documenta docs/oci-cloud/README.md.
 	handle /swagger-ui/* {
-		reverse_proxy localhost:{args[0]}
+		reverse_proxy backend:8080
 	}
 
 	handle /v3/api-docs* {
-		reverse_proxy localhost:{args[0]}
+		reverse_proxy backend:8080
 	}
 
 	handle /actuator/* {
-		reverse_proxy localhost:{args[0]}
+		reverse_proxy backend:8080
 	}
-}
-
-energia.unixsoluciones.com {
-	import rutas_api 8080
-
-	# Todo lo demás es el frontend. Mismo origen que la API ⇒ sin CORS.
-	handle {
-		reverse_proxy localhost:3000
-	}
-}
-
-energia-staging.unixsoluciones.com {
-	import rutas_api 8081
 
 	handle {
-		reverse_proxy localhost:3001
+		reverse_proxy frontend:8080
 	}
 }

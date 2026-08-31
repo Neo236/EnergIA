@@ -12,7 +12,7 @@
 #   docker run --rm energia-tests
 # Run con sincronizacion previa del notebook (volumen para persistir cambios):
 #   docker run --rm -v "$(pwd)/data-science/raw:/app" energia-tests \
-#       bash -c "python scripts/sync_colab_notebook.py --apply && pytest"
+#       bash -c "pytest"
 #
 # Hay un wrapper en raw/scripts/run_tests_in_docker.sh que automatiza esto.
 # ==========================================

@@ -99,9 +99,7 @@ class TestGenerarDataset:
     reason=(
         "jupyter no instalado. Para correr este test:\n"
         "  1) Local: pip install jupyter nbconvert ipykernel\n"
-        "  2) Docker: ./scripts/run_tests_in_docker.sh\n"
-        "Antes, sincroniza el notebook con: "
-        "python scripts/sync_colab_notebook.py --apply"
+        "  2) Docker: ./scripts/run_tests_in_docker.sh"
     )
 )
 class TestNotebookConsumeDataset:
@@ -114,8 +112,8 @@ class TestNotebookConsumeDataset:
       - domain/scoring.py                  (reglas IEE + categoria)
       - infrastructure/config.py           (distribuciones y rangos)
 
-    La notebook descarga `database_beta.json` desde la rama `develop`
-    (publicada por el pipeline) y hace EDA / visualizacion / tests
+    La notebook lee `database_beta.json` del repositorio (o lo baja por HTTP
+    si corre en Colab) y hace EDA / visualizacion / tests
     estadisticos (chi², ANOVA). Si el esquema del JSON cambia sin
     actualizar la notebook, este test falla.
     """
@@ -134,10 +132,7 @@ class TestNotebookConsumeDataset:
         import shutil
         import subprocess
 
-        assert self.NOTEBOOK.exists(), (
-            f"Notebook no encontrado: {self.NOTEBOOK}. "
-            "Ejecuta: python scripts/sync_colab_notebook.py --apply"
-        )
+        assert self.NOTEBOOK.exists(), f"Notebook no encontrado: {self.NOTEBOOK}"
 
         tmp_p = __import__("pathlib").Path(tmp)
         nb_copy = tmp_p / "data_colab.ipynb"
@@ -236,10 +231,15 @@ class TestNotebookConsumeDataset:
             f"Notebook no encontrado: {self.NOTEBOOK}"
         )
         nb_raw = __import__("json").loads(self.NOTEBOOK.read_bytes())
-        sys = __import__("sys")
-        sys.path.insert(0, str(self.RAIZ))
-        from scripts.sync_colab_notebook import _extract_code_cells
-        code = _extract_code_cells(self.NOTEBOOK.read_bytes())
+        # Concatena el codigo de la notebook. Antes esto lo hacia un helper
+        # de scripts/sync_colab_notebook.py, que se retiro junto con la
+        # sincronizacion contra Google Drive: el notebook del repositorio
+        # paso a ser el original, no una copia de un archivo ajeno.
+        code = "\n".join(
+            "".join(celda.get("source", []))
+            for celda in nb_raw.get("cells", [])
+            if celda.get("cell_type") == "code"
+        )
 
         expected_features = [
             "tipo_inmueble", "metros_cuadrados", "antiguedad_vivienda",

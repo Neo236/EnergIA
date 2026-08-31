@@ -60,7 +60,7 @@ echo "[INFO] Building $IMAGE_TAG (context=$BUILD_CONTEXT, docker=$DOCKER)"
 RAW_DIR="$SCRIPT_DIR/.."
 CMD_ARGS=(pytest -v)
 if [[ " $* " == *" --sync "* ]]; then
-    CMD_ARGS=(bash -c "python scripts/sync_colab_notebook.py --apply && pytest -v")
+    CMD_ARGS=(bash -c "pytest -v")
 fi
 
 echo "[INFO] Running tests..."

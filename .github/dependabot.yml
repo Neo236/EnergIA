@@ -1,0 +1,81 @@
+version: 2
+
+# Dependabot abre un PR cuando una dependencia queda vieja o le sale un aviso
+# de seguridad. Importa mas en un proyecto como este que en uno de trabajo
+# diario: el repositorio puede quedar meses sin que nadie lo toque, pero las
+# dependencias envejecen igual. Sin esto, la unica forma de enterarse es que
+# alguien se acuerde de mirar.
+#
+# Los cinco ecosistemas del proyecto estan cubiertos. Las actualizaciones
+# entran por Pull Request y el CI las valida antes de que nadie las mire:
+# el test extremo a extremo levanta el stack completo, asi que una version
+# que rompa la integracion se ve sin tener que revisar el diff.
+#
+# Todo agrupado en un PR por ecosistema y por semana. Con cinco ecosistemas,
+# actualizaciones sueltas producirian una cantidad de ruido que termina en que
+# se ignoren todas — que es el modo habitual en que Dependabot deja de servir.
+
+updates:
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      frontend:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directory: /data-science/raw
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      ml:
+        patterns: ["*"]
+
+  - package-ecosystem: maven
+    directory: /backend/analisis-energetico-api
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      backend:
+        patterns: ["*"]
+
+  # Las acciones se pinean por version mayor (@v4). Sin esto, una accion
+  # abandonada se queda ahi para siempre sin que nada lo señale.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      acciones:
+        patterns: ["*"]
+
+  # Las imagenes base son la superficie de ataque que menos se mira: postgres,
+  # caddy, node, python y nginx se actualizan solas dentro de su tag menor,
+  # pero un salto de version mayor solo aparece si algo lo avisa.
+  - package-ecosystem: docker
+    directories:
+      - /backend
+      - /frontend
+      - /data-science
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      imagenes:
+        patterns: ["*"]

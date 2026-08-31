@@ -25,7 +25,9 @@ function Navegacion() {
     <header className="navegacion">
       <Link className="navegacion__marca" to="/">
         <span className="navegacion__logo" aria-hidden="true"><IconoRayo tamano={16} /></span>
-        <span>Energi<span className="navegacion__marca-ai">AI</span></span>
+        {/* El nombre lleva "IA" resaltada: es un juego entre "energía" y las
+            siglas de inteligencia artificial, y el color lo hace visible. */}
+        <span>Energ<span className="navegacion__marca-ia">IA</span></span>
       </Link>
       <nav className="navegacion__links">
         <Link className="navegacion__enlace" to="/">Analizar</Link>

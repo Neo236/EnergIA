@@ -127,7 +127,7 @@ button { font: inherit; color: inherit; }
   color: var(--blanco);
 }
 
-.navegacion__marca-ai { color: var(--verde-medio); }
+.navegacion__marca-ia { color: var(--verde-medio); }
 
 .navegacion__enlace {
   display: inline-flex;

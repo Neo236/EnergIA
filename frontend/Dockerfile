@@ -30,22 +30,6 @@ COPY src/ ./src/
 # en contenedor.
 COPY public/ ./public/
 
-# VITE_API_MODO se resuelve en tiempo de compilación (Vite lo inserta en el
-# bundle), así que se elige acá y no en runtime.
-#
-# El valor por defecto es `real`, y el motivo importa: durante un tiempo fue
-# `mock`, y una imagen construida sin pasar el argumento producía una
-# aplicación que fabricaba sus resultados en el navegador. Eso no se parece a
-# un error — el formulario responde, muestra un análisis, la interfaz se ve
-# perfecta. Lo único que delata el problema es que los números son inventados
-# y que los enlaces compartidos dan "no encontramos ese análisis".
-#
-# Un valor por defecto que convierte un despliegue roto en uno aparentemente
-# sano es peor que no tener valor por defecto. Para desarrollar sin backend
-# está `npm run dev`, que lee el .env del frontend.
-ARG VITE_API_MODO=real
-ENV VITE_API_MODO=${VITE_API_MODO}
-
 RUN npm run build
 
 # ---------- etapa de servicio ----------

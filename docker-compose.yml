@@ -142,21 +142,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        # OBLIGATORIO. Vite resuelve esto al compilar y lo incrusta en el
-        # bundle, asi que no se puede cambiar despues sin reconstruir.
-        #
-        # En `mock` la aplicacion no llama a la API: fabrica los resultados en
-        # el navegador. El sintoma es cruel porque no parece un error — el
-        # formulario responde, muestra un analisis y se ve perfecta; lo unico
-        # que falla es que los numeros son inventados y que los enlaces
-        # compartidos dan "no encontramos ese analisis", porque el id que
-        # devolvio el mock no existe en ninguna base.
-        #
-        # Este stack SIEMPRE trae el backend, asi que aca la respuesta correcta
-        # es siempre `real`. El modo simulado sirve para `npm run dev` sin
-        # levantar nada, y ahi se elige por el .env del frontend, no por aca.
-        VITE_API_MODO: ${VITE_API_MODO:-real}
     image: energia-frontend:${FRONTEND_TAG:-latest}
     logging: *logs
     # Techo con holgura sobre el consumo real (4 MB medidos). No es una

@@ -5,45 +5,36 @@
 ```mermaid
 flowchart TB
     U(["Navegador"])
-    DNS["energia.neo236.fun<br/>Cloudflare · DNS-only"]
 
-    subgraph EDGE["Proxy de borde · VM pública"]
-        CADDY["Caddy<br/>HTTPS · WAF · rate limit · CSP"]
+    subgraph STACK["Proyecto Docker Compose"]
+        PROXY["proxy · Caddy<br/>fusiona front y API en un origen"]
+        F["frontend<br/>React compilado, servido por nginx"]
+        B["backend<br/>API Spring Boot"]
+        ML["ml-service<br/>FastAPI · scikit-learn"]
+        DB[("db · PostgreSQL")]
     end
 
-    subgraph SRV["Servidor propio · red doméstica"]
-        subgraph STACK["Proyecto Docker Compose"]
-            PROXY["proxy · Caddy<br/>fusiona front y API en un origen"]
-            F["frontend<br/>React compilado, servido por nginx"]
-            B["backend<br/>API Spring Boot"]
-            ML["ml-service<br/>FastAPI · scikit-learn"]
-            DB[("db · PostgreSQL")]
-        end
-    end
-
-    U -->|HTTPS| DNS --> CADDY
-    CADDY -->|"túnel WireGuard<br/>único puerto publicado"| PROXY
+    U -->|"único puerto publicado"| PROXY
     PROXY -->|"/"| F
     PROXY -->|"/api/* · /swagger-ui/* · /actuator/*"| B
-    B -->|HTTP interno| ML
+    B -->|"HTTP interno"| ML
     B --> DB
 ```
 
 ## Cómo leerlo
 
-**El borde y la aplicación están en máquinas distintas.** La VM pública solo
-corre el proxy: termina TLS, filtra con WAF y aplica límites de tasa. La
-aplicación vive en un servidor propio que **no está expuesto a internet** — el
-borde la alcanza por un túnel WireGuard, y ese túnel es el único camino de
-entrada.
-
-**El stack publica un solo puerto.** Dentro del Compose, `proxy` sirve la
-aplicación en la raíz y enruta `/api/*` al backend. Como la interfaz y la API
-comparten origen, **no hace falta CORS**. Backend, ml-service y base de datos no
-publican puertos: solo se alcanzan por la red interna de Compose.
+**El stack publica un solo puerto.** El servicio `proxy` sirve la aplicación en
+la raíz y enruta `/api/*` al back-end. Como la interfaz y la API comparten
+origen, **no hace falta CORS**. Backend, ml-service y base de datos no publican
+puertos: solo se alcanzan por la red interna de Compose.
 
 **La llamada al modelo nunca sale del servidor.** Viaja contenedor a contenedor,
 sin pasar por el proxy ni por internet.
+
+**Nada asume lo que hay delante.** El stack funciona igual expuesto
+directamente, detrás de un proxy inverso o en un orquestador. Esa
+independencia es deliberada: la aplicación cambió de alojamiento una vez, y el
+código no tuvo que enterarse.
 
 ---
 
@@ -70,22 +61,28 @@ externo, y el modelo que corre es exactamente el que está commiteado. Son ~2 MB
 
 ### El bind del proxy no es `0.0.0.0`
 
-La variable `PROXY_BIND` fija la interfaz donde escucha el único puerto
-publicado. En el servidor apunta a la IP del túnel, no a `0.0.0.0`.
+La variable `PROXY_BIND` fija en qué interfaz escucha el único puerto publicado.
+Por defecto `127.0.0.1`; en un despliegue se apunta a la interfaz concreta por
+la que debe entrar el tráfico, y nunca a `0.0.0.0`.
 
 El motivo es una trampa conocida: **Docker publica sus puertos con reglas
 propias de iptables en la cadena FORWARD**, que las reglas de un firewall de
 host sobre INPUT no cubren. Un bind a `0.0.0.0` queda alcanzable desde toda la
-red local aunque el firewall afirme lo contrario. Atarlo a la IP del túnel hace
-que el puerto exista solo en esa interfaz, sin depender de si el firewall filtra
-o no el tráfico de Docker.
+red del servidor aunque el firewall afirme lo contrario. Atarlo a una interfaz
+concreta hace que el puerto exista solo ahí, sin depender de si el firewall
+filtra o no el tráfico de Docker.
+
+Importa cuando la máquina aloja algo más que este proyecto, que es lo habitual.
 
 ### La tipografía se sirve desde el propio origen
 
-El proxy de borde impone una CSP con `style-src 'self'` y `font-src 'self'
-data:`. Una hoja de estilos de Google Fonts y sus archivos de fuente quedan
-bloqueados, y la aplicación cae a la tipografía de respaldo — perdiendo la
-fuente sobre la que está construido todo el sistema de diseño.
+Una Content-Security-Policy razonable —`style-src 'self'`, `font-src 'self'
+data:`— bloquea la hoja de estilos de Google Fonts y sus archivos de fuente. La
+aplicación cae entonces a la tipografía de respaldo, perdiendo la fuente sobre
+la que está construido todo el sistema de diseño.
+
+No es hipotético: pasó. Y depender de que quien despliegue afloje su CSP para
+que la tipografía funcione es una dependencia que no conviene tener.
 
 Por eso Inter se sirve desde `frontend/public/fonts/`. Es una fuente variable:
 dos archivos (latin y latin-ext) cubren los cuatro pesos del diseño, 133 KB en
@@ -100,9 +97,9 @@ archivos. Después nginx responde `/favicon.svg` y `/fonts/*.woff2` con el
 `index.html` del SPA por su `try_files`, devolviendo `200` con
 `content-type: text/html`.
 
-Con `X-Content-Type-Options: nosniff` en el borde, el navegador se niega a
-interpretar ese HTML como fuente y la `@font-face` queda en estado `error`. Un
-`200` en la respuesta hace que el síntoma despiste mucho.
+Si además hay un `X-Content-Type-Options: nosniff` delante —lo habitual—, el
+navegador se niega a interpretar ese HTML como fuente y la `@font-face` queda en
+estado `error`. El `200` de la respuesta hace que el síntoma despiste mucho.
 
 ### No existe un endpoint de borrado
 

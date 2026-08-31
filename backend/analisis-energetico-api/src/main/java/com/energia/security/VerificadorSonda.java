@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 // Distingue las peticiones de verificacion manual (curl documentado en
-// docs/certificacion/README.md) de un analisis real, para que las primeras no
+// docs/backend/README.md) de un analisis real, para que las primeras no
 // se persistan. El token viaja en la cabecera X-EnergIA-Sonda y NUNCA debe
 // habilitar nada mas que eso: ni autorizacion ni limites de uso. Si en algun
 // momento existiera un limite de peticiones, tiene que aplicarse por igual a

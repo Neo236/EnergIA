@@ -1,6 +1,19 @@
 # ==========================================
 # Dockerfile Backend - Java 17 Spring Boot
 # ==========================================
+
+# La etiqueta fija Maven 3.9 y JDK 17, y las dos mitades son deliberadas.
+#
+# `maven:3` a secas seria movil: el mismo Dockerfile podria compilar con un
+# Maven distinto en dos dias, que es justo lo que hace poco confiable un
+# rollback.
+#
+# Y el JDK de compilacion se mantiene en la misma version que el objetivo del
+# pom (<java.version>17</java.version>). Compilar con un JDK mas nuevo apuntando
+# a 17 funciona, pero es una decision con consecuencias —cambian los mensajes de
+# error, a veces el bytecode emitido— y no algo que deba entrar por un
+# actualizador automatico. La imagen de ejecucion es otra cosa y si va mas
+# adelantada: ver la etapa de servicio.
 FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /app

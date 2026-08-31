@@ -92,6 +92,25 @@ updates:
       interval: monthly
     commit-message:
       prefix: "chore(deps)"
+    # La imagen de Python queda fijada a parches. El motivo es un desajuste de
+    # vocabulario: para Docker —y por lo tanto para Dependabot— la etiqueta
+    # `3.10` -> `3.14` es un salto MENOR, pero para Python es un cambio de
+    # version del lenguaje.
+    #
+    # requirements.txt se genera con `pip-compile --python-version 3.10` y esos
+    # pines no tienen wheels precompilados en versiones mas nuevas: pip pasa a
+    # compilar numpy, pandas y scikit-learn desde codigo fuente y la build se
+    # va de diez minutos a mas de quince, hasta agotar el tiempo del job.
+    #
+    # Subir Python es deseable, pero exige regenerar requirements.txt para la
+    # version nueva y comprobar que el modelo entrenado siga cargando con el
+    # scikit-learn correspondiente. Es un trabajo con alcance propio, no un
+    # bump de dependencias.
+    ignore:
+      - dependency-name: python
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
     groups:
       imagenes:
         patterns: ["*"]

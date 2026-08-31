@@ -21,7 +21,7 @@ import { registrarEnHistorial } from './historial'
 const LATENCIA_MS = 900
 
 /** Los análisis simulados viven en la pestaña, así /analisis/:id sobrevive a una recarga. */
-const ALMACEN = 'energiai:analisis-simulados'
+const ALMACEN = 'energia:analisis-simulados'
 
 const PESO_AISLAMIENTO: Record<string, number> = {
   'Muy Alta': 10, Alta: 6, Media: 0, Baja: -5, 'Muy Baja': -10,

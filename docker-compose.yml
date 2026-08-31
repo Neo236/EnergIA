@@ -13,19 +13,19 @@ services:
     # Postgres que ya corren en el servidor. Para inspeccionarla:
     #   docker compose exec db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-energiai}
-      - POSTGRES_USER=${POSTGRES_USER:-energiai}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-energiai}
+      - POSTGRES_DB=${POSTGRES_DB:-energia}
+      - POSTGRES_USER=${POSTGRES_USER:-energia}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-energia}
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-energiai} -d ${POSTGRES_DB:-energiai}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-energia} -d ${POSTGRES_DB:-energia}"]
       interval: 5s
       timeout: 5s
       retries: 5
     restart: unless-stopped
     networks:
-      - energiai-network
+      - energia-network
 
   # -------------------------------------------------------------
   # Backend Principal - Spring Boot (Java 17)
@@ -34,7 +34,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    image: energiai-backend:${BACKEND_TAG:-latest}
+    image: energia-backend:${BACKEND_TAG:-latest}
     # Sin `ports`: el unico servicio publicado en el host es `proxy`, que
     # sirve el frontend y la API bajo el mismo origen. El backend se alcanza
     # como http://backend:8080 dentro de la red de Compose.
@@ -42,14 +42,14 @@ services:
       - PORT=8080
       - SPRING_PROFILES_ACTIVE=prod
       - ML_SERVICE_URL=http://ml-service:8000
-      - DB_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-energiai}
-      - DB_USER=${POSTGRES_USER:-energiai}
-      - DB_PASSWORD=${POSTGRES_PASSWORD:-energiai}
+      - DB_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-energia}
+      - DB_USER=${POSTGRES_USER:-energia}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-energia}
       - OCI_NAMESPACE=${OCI_NAMESPACE:-}
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-sa-santiago-1}
-      # Token de la sonda de verificacion de CI/CD (ver docs/cicd/README.md y
-      # com.energiai.security.VerificadorSonda). Vacio por defecto: en local
+      # Token de la sonda de verificacion de salud (ver
+      # com.energia.security.VerificadorSonda). Vacio por defecto: en local
       # no hay nada que lo mande, asi que la deteccion de sonda queda inerte.
       - TOKEN_SONDA_SALUD=${TOKEN_SONDA_SALUD:-}
     depends_on:
@@ -59,7 +59,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     networks:
-      - energiai-network
+      - energia-network
 
   # -------------------------------------------------------------
   # Microservicio Data Science / ML - FastAPI (Python 3.10)
@@ -68,7 +68,7 @@ services:
     build:
       context: ./data-science
       dockerfile: Dockerfile
-    image: energiai-ml-service:${ML_TAG:-latest}
+    image: energia-ml-service:${ML_TAG:-latest}
     # Sin `ports`: solo lo consume el backend, por la red interna de Compose.
     environment:
       - PORT=8000
@@ -90,7 +90,7 @@ services:
       - OCI_INSTANCE_PRINCIPAL=${OCI_INSTANCE_PRINCIPAL:-false}
     restart: unless-stopped
     networks:
-      - energiai-network
+      - energia-network
 
   # -------------------------------------------------------------
   # Front-End (nginx)
@@ -106,10 +106,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: energiai-frontend:${FRONTEND_TAG:-latest}
+    image: energia-frontend:${FRONTEND_TAG:-latest}
     restart: unless-stopped
     networks:
-      - energiai-network
+      - energia-network
 
   # -------------------------------------------------------------
   # Proxy inverso - UNICA ENTRADA DEL STACK
@@ -151,10 +151,10 @@ services:
       - backend
     restart: unless-stopped
     networks:
-      - energiai-network
+      - energia-network
 
 networks:
-  energiai-network:
+  energia-network:
     driver: bridge
 
 volumes:

@@ -8,7 +8,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Ambiente** | Local — Docker Compose (`docker compose up -d --build backend`), imágenes `energiai-backend:latest` y `energiai-ml-service:latest` |
+| **Ambiente** | Local — Docker Compose (`docker compose up -d --build backend`), imágenes `energia-backend:latest` y `energia-ml-service:latest` |
 | **Fecha** | 2026-08-21 (04:49 UTC-3 aprox., según `fecha` de las respuestas) |
 | **SHA probado** | `86c93ddc720d478b296389d28a80b4a1528219db` (`86c93dd` — "Colección Insomnia y Postman") |
 | **URL base** | `http://localhost:8080` |
@@ -17,7 +17,7 @@
 ## Fuentes cruzadas
 
 1. **OpenAPI real**: `GET /v3/api-docs` (springdoc-openapi-starter-webmvc-ui) → guardado en `assets/`.
-2. **Código**: `backend/analisis-energetico-api/src/main/java/com/energiai/dto/DatosRegistroConsumo.java` (request) y `DatosRegistroAnalisis.java` (response).
+2. **Código**: `backend/analisis-energetico-api/src/main/java/com/energia/dto/DatosRegistroConsumo.java` (request) y `DatosRegistroAnalisis.java` (response).
 3. **Contrato documentado**: tabla V1.2 en `docs/frontend/semanas/semana-3/anexos/adenda-sprint-3.md` y `API-Contract-JSON-V1.2.pdf`.
 4. **Fuente única del front**: `frontend/src/lib/contrato.ts` (V2).
 
@@ -65,7 +65,7 @@ El body de error coincide con `DatosErrorRespuesta`: `timestamp`, `status`, `err
 
 ## Cruce con la colección Postman
 
-Las aserciones automáticas de `docs/backend/postman/EnergiAI.postman_collection.json` cubren los códigos **200, 400, 404, 422, 502, 503** y validan exactamente las propiedades de estos esquemas (`id`, `fecha`, `categoria`, `probabilidad`, `costo_estimado_mensual`, `recomendaciones`, y en errores `timestamp/status/error/mensaje/detalles`). **Sin desviaciones.**
+Las aserciones automáticas de `docs/backend/postman/EnergIA.postman_collection.json` cubren los códigos **200, 400, 404, 422, 502, 503** y validan exactamente las propiedades de estos esquemas (`id`, `fecha`, `categoria`, `probabilidad`, `costo_estimado_mensual`, `recomendaciones`, y en errores `timestamp/status/error/mensaje/detalles`). **Sin desviaciones.**
 
 ## Hallazgos de esta verificación
 

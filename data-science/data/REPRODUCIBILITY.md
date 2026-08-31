@@ -46,7 +46,7 @@ sha256sum -c data-science/data/MODEL_BINDING.sha256
 
 # (3) Construir la imagen Docker (ahora incluye los .joblib del paso 0)
 docker build \
-  -t energiai-ml-service:$(git rev-parse --short HEAD) \
+  -t energia-ml-service:$(git rev-parse --short HEAD) \
   -f data-science/Dockerfile \
   data-science/
 
@@ -55,7 +55,7 @@ IMAGE_TAG=$(git rev-parse --short HEAD)
 docker run -d --rm --name ml-cert-$IMAGE_TAG \
   -p 127.0.0.1:8765:8000 \
   -e STORAGE_BACKEND=local \
-  energiai-ml-service:$IMAGE_TAG
+  energia-ml-service:$IMAGE_TAG
 sleep 4
 ML_SERVICE_URL=http://127.0.0.1:8765 \
   bash data-science/data/verify_certification.sh
@@ -90,7 +90,7 @@ locales, 5 checks en CI (SKIP los locales):
   cualquier build (local o CI) arranque con los mismos datos: solo los
   archivos commiteados (`database_beta.{json,csv}`, `CHECKSUMS.sha256`,
   `MODEL_BINDING.sha256`, `METRICS.md`, etc.).
-- **Tag por SHA**: `energiai-ml-service:$(git rev-parse --short HEAD)`
+- **Tag por SHA**: `energia-ml-service:$(git rev-parse --short HEAD)`
   hace la imagen inmutable. La misma imagen puede reconstruirse
   re-corriendo el comando con el mismo SHA de codigo.
 - **Sin registry publico**: el repo no publica a Docker Hub / OCI /
@@ -202,7 +202,7 @@ Manualmente:
 docker run -d --rm --name ml-cert-test \
   -p 127.0.0.1:8765:8000 \
   -e STORAGE_BACKEND=local \
-  energiai-ml-service:$(git rev-parse --short HEAD)
+  energia-ml-service:$(git rev-parse --short HEAD)
 sleep 4
 
 # Perfil 1: esperado Eficiente

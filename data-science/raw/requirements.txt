@@ -1,4 +1,4 @@
-# EnergiAI MVP - Pinned for Python 3.10 (CI target)
+# EnergIA MVP - Pinned for Python 3.10 (CI target)
 # Regenerate with: pip-compile --python-version 3.10 requirements.in
 annotated-doc==0.0.4
 annotated-types==0.7.0

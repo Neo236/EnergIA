@@ -34,7 +34,7 @@ else
     exit 1
 fi
 
-IMAGE_TAG="energiai-tests:latest"
+IMAGE_TAG="energia-tests:latest"
 BUILD_FLAGS=()
 
 # Detectar flags en cualquier posicion usando match de substring sobre "$*".

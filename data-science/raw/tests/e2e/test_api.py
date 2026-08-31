@@ -39,7 +39,7 @@ class TestApiEndponts:
         r = fastapi_client.get("/")
         assert r.status_code == 200
         body = r.json()
-        assert body["service"] == "EnergiAI"
+        assert body["service"] == "EnergIA"
         assert body["status"] == "ok"
 
     def test_health(self, fastapi_client):

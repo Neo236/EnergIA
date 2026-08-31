@@ -1,13 +1,13 @@
 /* ============================================================
-   EnergiAI · schema — FUENTE ÚNICA del contrato V1.2
+   EnergIA · schema — FUENTE ÚNICA del contrato V1.2
    Si el contrato cambia, se toca solo este archivo.
    requerido:false + defecto  →  el campo es opcional y el
    back-end aplica ese valor si no se envía.
    ============================================================ */
 
-window.EnergiAI = window.EnergiAI || {};
+window.EnergIA = window.EnergIA || {};
 
-EnergiAI.schema = {
+EnergIA.schema = {
   endpoint: '/api/v1/analisis-energetico',
   tarifaKwh: 0.75,
 
@@ -74,15 +74,15 @@ EnergiAI.schema = {
   ]
 };
 
-EnergiAI.schema.porNombre = EnergiAI.schema.campos.reduce(function (acc, c) {
+EnergIA.schema.porNombre = EnergIA.schema.campos.reduce(function (acc, c) {
   acc[c.nombre] = c;
   return acc;
 }, {});
 
 /** Completa un payload parcial con los valores por defecto del contrato. */
-EnergiAI.schema.conDefectos = function (payload) {
+EnergIA.schema.conDefectos = function (payload) {
   var completo = {};
-  EnergiAI.schema.campos.forEach(function (c) {
+  EnergIA.schema.campos.forEach(function (c) {
     completo[c.nombre] = Object.prototype.hasOwnProperty.call(payload, c.nombre)
       ? payload[c.nombre]
       : c.defecto;

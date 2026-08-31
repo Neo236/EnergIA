@@ -1,5 +1,5 @@
 # ==========================================
-# Front-End EnergiAI — Vite + React + TypeScript
+# Front-End EnergIA — Vite + React + TypeScript
 #
 # Multi-etapa: se compila con Node y se sirve con nginx. La imagen final
 # no lleva Node ni node_modules — solo los estáticos y el servidor.

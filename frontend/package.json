@@ -1,9 +1,9 @@
 {
-  "name": "energiai-frontend",
+  "name": "energia-frontend",
   "private": true,
   "version": "2.0.0",
   "type": "module",
-  "description": "Front-End de EnergiAI — P-01 ingreso de datos y P-02 resultado del análisis",
+  "description": "Front-End de EnergIA — P-01 ingreso de datos y P-02 resultado del análisis",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

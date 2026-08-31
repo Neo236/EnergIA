@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import type { Analisis } from './contrato'
 import { registrarEnHistorial, useHistorial } from './historial'
 
-const CLAVE = 'energiai:historial'
+const CLAVE = 'energia:historial'
 
 function analisis(id: string, fecha = '2026-08-13T12:00:00Z'): Analisis {
   return {

@@ -1,4 +1,4 @@
-# Para Constanza — Cómo leer una predicción del modelo EnergiAI
+# Para Constanza — Cómo leer una predicción del modelo EnergIA
 
 > Explicación en lenguaje simple, sin jerga técnica, para quien no
 > trabaja con machine learning. Si después de leer esto algo no queda

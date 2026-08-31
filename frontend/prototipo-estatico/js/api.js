@@ -1,5 +1,5 @@
 /* ============================================================
-   EnergiAI · capa de API
+   EnergIA · capa de API
 
    HOY:      analizar() resuelve contra un mock local.
    MAÑANA:   poner MODO = 'real'. No hay que tocar nada más:
@@ -8,16 +8,16 @@
              (400 con detalles[], 500 y 503).
    ============================================================ */
 
-window.EnergiAI = window.EnergiAI || {};
+window.EnergIA = window.EnergIA || {};
 
-EnergiAI.api = (function () {
+EnergIA.api = (function () {
   'use strict';
 
   var MODO = 'mock';          // 'mock' | 'real'
   var LATENCIA_MS = 900;
   var forzar = 'ok';          // lo maneja la barra de demo
 
-  var schema = EnergiAI.schema;
+  var schema = EnergIA.schema;
 
   /* ---------- errores con la forma de DatosErrorRespuesta ---------- */
 

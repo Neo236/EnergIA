@@ -1,4 +1,4 @@
-# EnergiAI · Front-End
+# EnergIA · Front-End
 
 Aplicación de las dos pantallas comprometidas: **P-01** (ingreso de datos) y
 **P-02** (resultado del análisis), más una pantalla de no encontrado.
@@ -27,7 +27,7 @@ Caddy en la VM.
 VITE_API_MODO=real npm run dev
 
 # contra el back-end de la VM, con un túnel abierto en otra terminal:
-#   ssh -N -L 8082:127.0.0.1:8082 energiai
+#   ssh -N -L 8082:127.0.0.1:8082 energia
 VITE_API_MODO=real VITE_API_DESTINO=http://127.0.0.1:8082 npm run dev
 ```
 

@@ -14,7 +14,7 @@ log_level = os.getenv("LOG_LEVEL", "INFO")
 logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger(__name__)
 
-app = FastAPI(title="EnergiAI - Analisis Energetico", version="1.2.0")
+app = FastAPI(title="EnergIA - Analisis Energetico", version="1.2.0")
 MODEL_PATH = os.getenv("MODEL_PATH", Config.OUTPUT_MODEL_PATH)
 
 
@@ -91,7 +91,7 @@ def _startup():
 
 @app.get("/")
 def root():
-    return {"service": "EnergiAI", "status": "ok", "endpoint": "POST /analisis-energetico"}
+    return {"service": "EnergIA", "status": "ok", "endpoint": "POST /analisis-energetico"}
 
 
 @app.get("/health")

@@ -13,7 +13,7 @@ import react from '@vitejs/plugin-react'
 // VITE_API_DESTINO permite apuntar el proxy a donde haga falta:
 //   - sin definir            → backend local en :8080
 //   - http://127.0.0.1:8082  → túnel SSH contra el backend de la VM
-//     ssh -N -L 8082:127.0.0.1:8082 energiai
+//     ssh -N -L 8082:127.0.0.1:8082 energia
 //
 // Se lee con loadEnv y no con process.env: este archivo corre en Node antes
 // de que Vite cargue los .env, así que process.env NO contiene las

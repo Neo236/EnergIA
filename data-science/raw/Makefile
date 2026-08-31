@@ -42,10 +42,10 @@ freeze:
 	python3 -m pip freeze > requirements.txt
 
 docker-build:
-	docker build -t energiai:1.0 -f ../Dockerfile ..
+	docker build -t energia:1.0 -f ../Dockerfile ..
 
 docker-run:
-	docker run --rm -p 8000:8000 energiai:1.0
+	docker run --rm -p 8000:8000 energia:1.0
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

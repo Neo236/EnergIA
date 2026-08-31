@@ -94,7 +94,7 @@ def _fetch_notebook(url: str) -> bytes:
     session = requests.Session()
     session.headers.update({
         "User-Agent": (
-            "energiai-sync/1.0 "
+            "energia-sync/1.0 "
             "(+https://github.com/No-Country-simulation/G9-LATAM-TEAM-09)"
         ),
         "Accept": "*/*",

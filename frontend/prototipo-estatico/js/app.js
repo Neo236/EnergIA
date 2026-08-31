@@ -1,5 +1,5 @@
 /* ============================================================
-   EnergiAI · aplicación (P-01 / P-02)
+   EnergIA · aplicación (P-01 / P-02)
    Estados cubiertos, igual que el wireframe v2.2:
    inicial · opcionales desplegados · enviando · validación 400
    · error 500 · servicio no disponible 503 · resultado
@@ -9,8 +9,8 @@
 (function () {
   'use strict';
 
-  var schema = EnergiAI.schema;
-  var api = EnergiAI.api;
+  var schema = EnergIA.schema;
+  var api = EnergIA.api;
 
   var $ = function (id) { return document.getElementById(id); };
   var moneda = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

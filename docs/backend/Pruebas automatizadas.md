@@ -1,6 +1,6 @@
-# EnergiAI — Documentación de Pruebas Automatizadas
+# EnergIA — Documentación de Pruebas Automatizadas
 
-Este documento detalla el proceso de ejecución de la batería de pruebas automatizadas para la API REST de EnergiAI. Se ha utilizado una colección personalizada de Postman para validar el comportamiento del sistema en un entorno de *staging*/clonado, garantizando que no se afecte la base de datos ni los servicios de producción.
+Este documento detalla el proceso de ejecución de la batería de pruebas automatizadas para la API REST de EnergIA. Se ha utilizado una colección personalizada de Postman para validar el comportamiento del sistema en un entorno de *staging*/clonado, garantizando que no se afecte la base de datos ni los servicios de producción.
 
 ---
 
@@ -23,14 +23,14 @@ A continuación, se especifican los archivos y configuraciones utilizados para c
 
 | Archivo | Tipo | Descripción |
 |---|---|---|
-| `EnergiAI.postman_collection.json` | Colección de pruebas | Colección definitiva que incluye aserciones automáticas de estructura, rangos de datos y validación directa contra el servicio ML. |
-| `EnergiAI.postman_staging_environment.json` | Entorno de ejecución | Configuración de variables de entorno para el entorno de *staging* (URLs base, credenciales de prueba, etc.). |
+| `EnergIA.postman_collection.json` | Colección de pruebas | Colección definitiva que incluye aserciones automáticas de estructura, rangos de datos y validación directa contra el servicio ML. |
+| `EnergIA.postman_staging_environment.json` | Entorno de ejecución | Configuración de variables de entorno para el entorno de *staging* (URLs base, credenciales de prueba, etc.). |
 
 ---
 
 ## 3. Resultados de las Pruebas
 
-A continuación se listan los **18 requests** de la colección, organizados según las **8 carpetas** de `EnergiAI.postman_collection.json`. Se adjuntarán capturas de pantalla detalladas de cada caso de éxito.
+A continuación se listan los **18 requests** de la colección, organizados según las **8 carpetas** de `EnergIA.postman_collection.json`. Se adjuntarán capturas de pantalla detalladas de cada caso de éxito.
 
 ### 3.1. Health Checks
 
@@ -214,10 +214,10 @@ cd G9-LATAM-TEAM-09
 ### 4.4. Configuración y Ejecución en Postman
 
 1. Abra Postman.
-2. Importe la colección: vaya a **File > Import** y arrastre el archivo `EnergiAI.postman_collection.json`.
-3. Importe el entorno: vaya a **File > Import** y arrastre el archivo `EnergiAI.postman_staging_environment.json`.
+2. Importe la colección: vaya a **File > Import** y arrastre el archivo `EnergIA.postman_collection.json`.
+3. Importe el entorno: vaya a **File > Import** y arrastre el archivo `EnergIA.postman_staging_environment.json`.
 4. Active el entorno importado desde el selector de entornos en la esquina superior derecha.
-5. Abra la colección **EnergiAI — Analisis Energetico**. Notará que contiene **18 requests** organizados en **8 carpetas** por funcionalidad.
+5. Abra la colección **EnergIA — Analisis Energetico**. Notará que contiene **18 requests** organizados en **8 carpetas** por funcionalidad.
 
 ### 4.5. Ejecución de Tests Estándar (Happy Path & Validaciones)
 

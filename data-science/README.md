@@ -1,4 +1,4 @@
-# EnergiAI — Data Science / ML Service
+# EnergIA — Data Science / ML Service
 
 Servicio FastAPI que expone el modelo predictivo de eficiencia energetica
 (Indice IEE: Eficiente / Moderado / Ineficiente). El codigo es la
@@ -286,7 +286,7 @@ Para actualizar el modelo bakeado en la imagen:
 ```bash
 python -m interfaces.cli.train           # regenera artifacts
 cp data-science/raw/data/*.joblib data-science/data/    # copia el fresco
-docker build -t energiai-ml-service:latest data-science/
+docker build -t energia-ml-service:latest data-science/
 ```
 
 Alternativamente en produccion, usar `STORAGE_BACKEND=oci` o `par` para

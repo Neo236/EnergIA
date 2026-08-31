@@ -17,7 +17,7 @@ README del propio directorio).
 flowchart TB
     NAV(["Navegador"])
 
-    subgraph VM["energiai-app-01 · VM OCI"]
+    subgraph VM["energia-app-01 · VM OCI"]
         CADDY["Caddy (nativo, systemd)<br/>único punto de entrada · HTTPS"]
 
         subgraph FRONT["contenedor frontend"]
@@ -63,7 +63,7 @@ opción correcta.
 **A favor del diseño actual (contenedor propio + nginx):**
 
 - **La VM no acumula carpetas de la app, a propósito.** Así lo documenta
-  [`docs/oci-cloud/README.md`](../oci-cloud/README.md#-despliegue): *"la app
+  la documentación de infraestructura de aquella etapa: *"la app
   no tiene carpeta propia en la VM… la VM no acumula copias de código que
   puedan divergir"*. Si Caddy sirviera los archivos directo desde disco,
   alguien tendría que extraer el `dist/` de la imagen al filesystem del
@@ -158,7 +158,7 @@ hueco del contrato en vez de esconderlo.
   volvería poco confiable el rollback.
 - **El front no maneja secretos.** No lee ninguna variable en runtime; el
   modo (mock o API real) se resuelve al compilar. Es, de los tres
-  componentes, el que menos depende de que `~/energiai-envs/` exista.
+  componentes, el que menos depende de que `~/energia-envs/` exista.
 - El prototipo original en HTML/CSS/JS puro (anterior a esta migración)
   queda archivado en [`frontend/prototipo-estatico/`](../../frontend/prototipo-estatico/README.md),
   excluido del build.

@@ -1,4 +1,4 @@
-# Proxy inverso de EnergiAI — VM energiai-app-01 (OCI).
+# Proxy inverso de EnergIA — VM energia-app-01 (OCI).
 #
 # Este archivo es la fuente de verdad de /etc/caddy/Caddyfile en la VM.
 # Vive en el repo porque el runbook de OCI lo marca como uno de los pocos
@@ -39,7 +39,7 @@
 	}
 }
 
-energiai.unixsoluciones.com {
+energia.unixsoluciones.com {
 	import rutas_api 8080
 
 	# Todo lo demás es el frontend. Mismo origen que la API ⇒ sin CORS.
@@ -48,7 +48,7 @@ energiai.unixsoluciones.com {
 	}
 }
 
-energiai-staging.unixsoluciones.com {
+energia-staging.unixsoluciones.com {
 	import rutas_api 8081
 
 	handle {

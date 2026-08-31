@@ -4,12 +4,12 @@ workspace:
 
 localResources:
   collections:
-    - ../EnergiAI.postman_collection.json
+    - ../EnergIA.postman_collection.json
   environments:
-    - ../EnergiAI.postman_environment.json
+    - ../EnergIA.postman_environment.json
 
 # Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
 
 cloudResources:
   collections:
-    ../postman/collections/EnergiAI — Analisis Energetico: 557a44ea-ec4f-4292-8ade-88e8e6cf9ffc
+    ../postman/collections/EnergIA — Analisis Energetico: 557a44ea-ec4f-4292-8ade-88e8e6cf9ffc

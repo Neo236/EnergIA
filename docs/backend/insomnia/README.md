@@ -1,6 +1,6 @@
-# Coleccion Insomnia — EnergiAI
+# Coleccion Insomnia — EnergIA
 
-Coleccion de testing para la API REST de EnergiAI usando [Insomnia](https://insomnia.rest/). Incluye 13 requests con scripts de validacion automatica (aserciones) que cubren happy paths, validaciones de error y escenarios de fallo del servicio ML.
+Coleccion de testing para la API REST de EnergIA usando [Insomnia](https://insomnia.rest/). Incluye 13 requests con scripts de validacion automatica (aserciones) que cubren happy paths, validaciones de error y escenarios de fallo del servicio ML.
 
 ## Archivos
 

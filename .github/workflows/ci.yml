@@ -2,9 +2,9 @@ name: Continuous Integration (CI)
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -86,7 +86,7 @@ jobs:
         run: python -m pytest tests/ -v --tb=short
 
       - name: Build Docker image
-        run: docker build -t energiai-ml:test -f data-science/Dockerfile data-science
+        run: docker build -t energia-ml:test -f data-science/Dockerfile data-science
 
       - name: Smoke test container /health
         # Si el /health no responde despues de 5 intentos, abortamos con
@@ -94,7 +94,7 @@ jobs:
         # muerto, y el siguiente step (verify_certification.sh) fallaba
         # con un mensaje menos util.
         run: |
-          docker run -d --name ml-test -p 8765:8000 energiai-ml:test
+          docker run -d --name ml-test -p 8765:8000 energia-ml:test
           sleep 8
           HEALTH_OK=0
           for i in 1 2 3 4 5; do
@@ -166,7 +166,7 @@ jobs:
         run: npm run test
 
       - name: Build Docker image
-        run: docker build -t energiai-frontend:test ./frontend
+        run: docker build -t energia-frontend:test ./frontend
 
       # El build de la imagen solo comprueba que COMPILA. Este paso comprueba
       # que además FUNCIONA servida: un typo en nginx.conf o un fallback de
@@ -174,7 +174,7 @@ jobs:
       - name: Smoke test container
         run: |
           set -euo pipefail
-          docker run -d --name front-test -p 8099:8080 energiai-frontend:test
+          docker run -d --name front-test -p 8099:8080 energia-frontend:test
           trap 'docker rm -f front-test >/dev/null 2>&1 || true' EXIT
 
           LISTO=0

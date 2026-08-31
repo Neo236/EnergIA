@@ -8,7 +8,7 @@
 		<version>4.0.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.energiai</groupId>
+	<groupId>com.energia</groupId>
 	<artifactId>analisis-energetico-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>

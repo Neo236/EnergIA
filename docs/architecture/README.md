@@ -1,70 +1,143 @@
-# 🏛️ Documentación de Arquitectura de la Solución
+# 🏛️ Arquitectura
 
-## 📌 Resumen
-Cómo está armada la solución y cómo fluye una request de punta a punta: del navegador al proxy, del proxy al frontend o a la API según el path, y de la API al modelo de ML.
-
----
-
-## 📐 Diagrama de Arquitectura (MVP)
+## El sistema en una imagen
 
 ```mermaid
-flowchart LR
-    U["Navegador / Postman"] -->|"HTTPS 443"| P
+flowchart TB
+    U(["Navegador"])
+    DNS["energia.neo236.fun<br/>Cloudflare · DNS-only"]
 
-    subgraph VM["VM en OCI (energiai-app-01)"]
-        P["Caddy<br/>proxy inverso + TLS"]
-        subgraph ENV["Ambiente de producción — energiai.unixsoluciones.com<br/>(staging es una copia idéntica bajo su dominio)"]
-            F["Frontend<br/>React compilado, servido por nginx"]
-            B["Backend<br/>Spring Boot"]
-            ML["ml-service<br/>FastAPI"]
+    subgraph EDGE["Proxy de borde · VM pública"]
+        CADDY["Caddy<br/>HTTPS · WAF · rate limit · CSP"]
+    end
+
+    subgraph SRV["Servidor propio · red doméstica"]
+        subgraph STACK["Proyecto Docker Compose"]
+            PROXY["proxy · Caddy<br/>fusiona front y API en un origen"]
+            F["frontend<br/>React compilado, servido por nginx"]
+            B["backend<br/>API Spring Boot"]
+            ML["ml-service<br/>FastAPI · scikit-learn"]
+            DB[("db · PostgreSQL")]
         end
     end
 
-    P -->|"raíz /"| F
-    P -->|"/api/* · /swagger-ui/* · /v3/api-docs* · /actuator/*"| B
-    B -->|"red interna de Docker"| ML
-    ML -.-> OS[("OCI Object Storage<br/>modelo entrenado")]
+    U -->|HTTPS| DNS --> CADDY
+    CADDY -->|"túnel WireGuard<br/>único puerto publicado"| PROXY
+    PROXY -->|"/"| F
+    PROXY -->|"/api/* · /swagger-ui/* · /actuator/*"| B
+    B -->|HTTP interno| ML
+    B --> DB
 ```
 
-**Cómo leerlo:**
+## Cómo leerlo
 
-- **Caddy es el único punto de entrada** (HTTPS con certificados automáticos). Rutea con el patrón *same-origin*: la raíz del dominio sirve el frontend y `/api/*` va al backend — mismo origen, **sin CORS para la app**. Swagger, la spec OpenAPI y Actuator necesitan sus propias reglas: sin ellas caerían en la regla de la raíz y las serviría el frontend.
-- La flecha **"red interna de Docker"** es la llamada del backend al ml-service **dentro de la VM**, contenedor a contenedor (`ml.service.url` ← `ML_SERVICE_URL`, definido en [`docker-compose.yml`](../../docker-compose.yml)): nunca sale a internet ni pasa por el proxy. La invocación existe en el código desde el 05/08 — [`MlClient`](../../backend/analisis-energetico-api/src/main/java/com/energiai/client/MlClient.java) —, así que ya no es una integración proyectada.
-- **Staging es una copia idéntica** de todo el stack bajo `energiai-staging.unixsoluciones.com`, aislada en su propio proyecto de compose.
+**El borde y la aplicación están en máquinas distintas.** La VM pública solo
+corre el proxy: termina TLS, filtra con WAF y aplica límites de tasa. La
+aplicación vive en un servidor propio que **no está expuesto a internet** — el
+borde la alcanza por un túnel WireGuard, y ese túnel es el único camino de
+entrada.
 
----
+**El stack publica un solo puerto.** Dentro del Compose, `proxy` sirve la
+aplicación en la raíz y enruta `/api/*` al backend. Como la interfaz y la API
+comparten origen, **no hace falta CORS**. Backend, ml-service y base de datos no
+publican puertos: solo se alcanzan por la red interna de Compose.
 
-## 🧩 Componentes
-
-| Componente | Tecnología | Estado |
-|------------|------------|--------|
-| Frontend | Vite · React 19 · TypeScript (compilado y servido por nginx) | ✅ Desplegado en los dos ambientes |
-| API Backend | Java 17 · Spring Boot | ✅ En `develop` — `POST /api/v1/analisis-energetico` |
-| ml-service | Python 3.10 · FastAPI | ✅ En `develop` ([`data-science/`](../../data-science)) y desplegado |
-| Modelo ML | scikit-learn → `.pkl` | ✅ Entrenado y cargado desde Object Storage al arrancar el servicio |
-| Proxy inverso | Caddy (nativo en la VM) | ✅ Activo con HTTPS |
-
-Los tres componentes están desplegados y responden. El flujo completo punta a punta —formulario → API → modelo → resultado— sigue **en integración**: el detalle de lo que falta está en el [informe de la Semana 3](../frontend/semanas/semana-3/informe.md).
+**La llamada al modelo nunca sale del servidor.** Viaja contenedor a contenedor,
+sin pasar por el proxy ni por internet.
 
 ---
 
-## 🔗 Integración Java ↔ Python
+## Decisiones que no son obvias
 
-- ✅ **Alternativa A (Microservicios) — la implementada.** El modelo Python corre como API interna con FastAPI y el backend Java la llama por HTTP dentro de la red de Docker, vía [`MlClient`](../../backend/analisis-energetico-api/src/main/java/com/energiai/client/MlClient.java). Es lo que reflejan el [`docker-compose.yml`](../../docker-compose.yml) y el diagrama de arriba.
-- **Alternativa B (Embebido)** — exportar el modelo a **ONNX** y ejecutarlo dentro de la aplicación Spring Boot. Queda registrada como opción descartada; si algún día se retomara, la caja `ml-service` desaparecería del diagrama.
+### El modelo entrenado se versiona en el repositorio
+
+`data-science/data/latest/` contiene el `.joblib` del modelo, con una excepción
+explícita al `*.joblib` del `.gitignore`.
+
+Antes el modelo vivía únicamente en un bucket de Object Storage, y el servicio
+lo descargaba al arrancar. Eso significaba que el artefacto más importante del
+proyecto existía en un solo lugar, fuera del control de versiones: si el bucket
+desaparecía, el modelo se perdía.
+
+Hoy el modelo viaja con el código y `LocalStorage` lo lee desde ahí
+(`STORAGE_LOCAL_ROOT=/app/data`). El despliegue no depende de ningún servicio
+externo, y el modelo que corre es exactamente el que está commiteado. Son ~2 MB.
+
+> El servicio conserva un camino de respaldo: si no encuentra el modelo, lo
+> reentrena al arrancar con la misma semilla fija. Funciona, pero tarda y produce
+> un modelo equivalente, no idéntico. Que el `.joblib` esté versionado es lo que
+> evita ese camino.
+
+### El bind del proxy no es `0.0.0.0`
+
+La variable `PROXY_BIND` fija la interfaz donde escucha el único puerto
+publicado. En el servidor apunta a la IP del túnel, no a `0.0.0.0`.
+
+El motivo es una trampa conocida: **Docker publica sus puertos con reglas
+propias de iptables en la cadena FORWARD**, que las reglas de un firewall de
+host sobre INPUT no cubren. Un bind a `0.0.0.0` queda alcanzable desde toda la
+red local aunque el firewall afirme lo contrario. Atarlo a la IP del túnel hace
+que el puerto exista solo en esa interfaz, sin depender de si el firewall filtra
+o no el tráfico de Docker.
+
+### La tipografía se sirve desde el propio origen
+
+El proxy de borde impone una CSP con `style-src 'self'` y `font-src 'self'
+data:`. Una hoja de estilos de Google Fonts y sus archivos de fuente quedan
+bloqueados, y la aplicación cae a la tipografía de respaldo — perdiendo la
+fuente sobre la que está construido todo el sistema de diseño.
+
+Por eso Inter se sirve desde `frontend/public/fonts/`. Es una fuente variable:
+dos archivos (latin y latin-ext) cubren los cuatro pesos del diseño, 133 KB en
+total. Como efecto secundario, no hay conexión a terceros antes de pintar texto
+ni datos del visitante viajando fuera.
+
+### El `Dockerfile` del front debe copiar `public/`
+
+Suena trivial y no lo es: el `Dockerfile` copia el código archivo por archivo, y
+si `public/` falta, **el build no falla** — simplemente construye sin esos
+archivos. Después nginx responde `/favicon.svg` y `/fonts/*.woff2` con el
+`index.html` del SPA por su `try_files`, devolviendo `200` con
+`content-type: text/html`.
+
+Con `X-Content-Type-Options: nosniff` en el borde, el navegador se niega a
+interpretar ese HTML como fuente y la `@font-face` queda en estado `error`. Un
+`200` en la respuesta hace que el síntoma despiste mucho.
+
+### No existe un endpoint de borrado
+
+`AnalisisEnergeticoController` expone `POST` y `GET /{id}`, y nada más. La
+ausencia de `DELETE` es deliberada: sin un concepto de identidad, no hay forma
+de saber que un análisis "es tuyo", y exponer un endpoint mutante e irreversible
+en una API pública sin autorización sería un problema de seguridad.
+
+El historial del navegador (`lib/historial.ts`, en `localStorage`) puede quitar
+una fila de la lista local, pero el análisis sigue existiendo en la base. Es una
+limitación conocida, no un descuido.
 
 ---
 
-## 🌍 Ambientes
+## Integración Python ↔ Java
 
-| Ambiente | URL | Rama asociada |
-|----------|-----|---------------|
-| Producción | `https://energiai.unixsoluciones.com` | `main` |
-| Staging | `https://energiai-staging.unixsoluciones.com` | `develop` |
+Se evaluaron dos alternativas:
 
-Ambos dominios sirven la aplicación con HTTPS válido desde el **09/08** — hasta esa fecha respondían 502, con el proxy vivo pero sin app detrás. Cada push a `develop` o `main` redespliega el componente que cambió (ver [CI/CD](../../README.md#-ci--cd)). El detalle de la infraestructura que sostiene todo esto (VM, red, firewall, dominios, runbook) está en [`docs/oci-cloud/`](../oci-cloud/README.md).
+- **A — Microservicio:** el modelo expuesto como API independiente con FastAPI,
+  invocada por el backend vía HTTP dentro de la red interna de Docker.
+- **B — Embebido:** exportar el modelo a ONNX y ejecutarlo dentro de Spring Boot.
+
+> ✅ **Se implementó la A.** El backend llama al `ml-service` a través de
+> [`MlClient`](../../backend/analisis-energetico-api/src/main/java/com/energia/client/MlClient.java),
+> con URL y timeouts en `application.properties`. La alternativa B queda
+> registrada como opción descartada, no como decisión pendiente.
 
 ---
 
-## 🖼️ Archivos y Capturas (`assets/`)
-Los diagramas van embebidos en mermaid (GitHub los renderiza nativo). Guarde diagramas C4 o imágenes explicativas adicionales en `docs/architecture/assets/`.
+## Cómo era durante el hackathon
+
+La primera versión corría sobre Oracle Cloud: una VM ARM con dos ambientes
+completos (producción y staging), Object Storage para el modelo y los datasets,
+un proxy Caddy nativo en la misma máquina y un runner de despliegue continuo
+propio.
+
+Toda esa infraestructura fue dada de baja. La documentación de aquella etapa
+está en el tag [`v1.0-hackathon`](https://github.com/Neo236/EnergIA/releases/tag/v1.0-hackathon).

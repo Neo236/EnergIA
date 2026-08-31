@@ -24,7 +24,7 @@ export interface EntradaHistorial {
   costo_estimado_mensual: number
 }
 
-const CLAVE_HISTORIAL = 'energiai:historial'
+const CLAVE_HISTORIAL = 'energia:historial'
 const MAX_ENTRADAS = 20
 
 function leer(): EntradaHistorial[] {

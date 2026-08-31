@@ -1,4 +1,4 @@
-# ⚙️ Gobernanza de Git, Protección de Ramas y CI/CD – EnergiAI
+# ⚙️ Gobernanza de Git, Protección de Ramas y CI/CD – EnergIA
 
 Este documento registra la arquitectura de ramas, las **reglas de protección de ramas activas en GitHub** y la configuración del pipeline de **Integración Continua (CI)** del repositorio **G9-LATAM-TEAM-09**.
 

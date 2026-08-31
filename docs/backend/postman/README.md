@@ -1,13 +1,13 @@
-# Coleccion Postman — EnergiAI
+# Coleccion Postman — EnergIA
 
-Coleccion definitiva de testing para la API REST de EnergiAI.
+Coleccion definitiva de testing para la API REST de EnergIA.
 
 ## Archivos
 
 | Archivo | Descripcion |
 |---------|-------------|
-| `EnergiAI.postman_collection.json` | Coleccion con 18 requests y aserciones automaticas |
-| `EnergiAI.postman_environment.json` | Environment para desarrollo local (sin secretos) |
+| `EnergIA.postman_collection.json` | Coleccion con 18 requests y aserciones automaticas |
+| `EnergIA.postman_environment.json` | Environment para desarrollo local (sin secretos) |
 
 ## Prerequisitos
 
@@ -18,17 +18,17 @@ Coleccion definitiva de testing para la API REST de EnergiAI.
 ## Importar
 
 1. Abrir Postman.
-2. **Collection:** `File > Import` > seleccionar `EnergiAI.postman_collection.json`.
-3. **Environment:** `File > Import` > seleccionar `EnergiAI.postman_environment.json`.
-4. Seleccionar el environment `EnergiAI — Local Development` en el dropdown superior derecho.
+2. **Collection:** `File > Import` > seleccionar `EnergIA.postman_collection.json`.
+3. **Environment:** `File > Import` > seleccionar `EnergIA.postman_environment.json`.
+4. Seleccionar el environment `EnergIA — Local Development` en el dropdown superior derecho.
 
 ## Ejecutar
 
 ### Todas las carpetas (Collection Runner)
 
 1. `Runner` (Ctrl+Shift+R) > seleccionar la coleccion.
-2. Seleccionar el environment `EnergiAI — Local Development`.
-3. `Run EnergiAI — Analisis Energetico`.
+2. Seleccionar el environment `EnergIA — Local Development`.
+3. `Run EnergIA — Analisis Energetico`.
 
 ### Solo requests automaticos (sin setup manual)
 
@@ -57,7 +57,7 @@ Total automaticos: **15 requests** que pasan sin intervencion manual.
 |---|---------|--------|------------------|
 | 1 | Backend Health | `200` | `status: "UP"` |
 | 2 | ML Health | `200` | `status: "healthy"` |
-| 3 | ML Root Info | `200` | `service: "EnergiAI"`, `status: "ok"` |
+| 3 | ML Root Info | `200` | `service: "EnergIA"`, `status: "ok"` |
 
 ### Happy Path — 3 Perfiles Energeticos
 

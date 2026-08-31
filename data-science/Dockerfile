@@ -1,6 +1,6 @@
 # ==========================================
 # Dockerfile Data Science / ML - Python FastAPI
-# EnergiAI MVP - uvicorn app:app
+# EnergIA MVP - uvicorn app:app
 # ==========================================
 FROM python:3.10-slim
 

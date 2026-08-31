@@ -1,31 +1,29 @@
-# 📚 Centro de Documentación – EnergiAI
+# 📚 Documentación de EnergIA
 
-Bienvenido al centro de documentación oficial del proyecto **EnergiAI (G9 LATAM TEAM 09)**.
+Esta carpeta contiene la documentación técnica del proyecto. El punto de entrada
+general es el [README raíz](../README.md).
 
-Esta carpeta organiza toda la documentación técnica, diagramas, resultados y avances semanales del proyecto.
-
----
-
-## 🗂️ Estructura de Documentación
-
-| Área | Descripción | Enlace |
-|------|-------------|--------|
-| **📅 Avances Semanales** | Seguimiento de progreso por semanas (S1, S2, S3) | [Ver Avances](./avances/README.md) |
-| **🏛️ Arquitectura** | Diagramas del sistema y flujo de datos | [Ver Documentación](./architecture/README.md) |
-| **☕ Back-End** | API Spring Boot (Java 17), Swagger y endpoints | [Ver Documentación](./backend/README.md) |
-| **🖥️ Front-End** | Arquitectura de la aplicación, decisiones de despliegue e informes por sprint | [Ver Documentación](./frontend/README.md) |
-| **🐍 Data Science** | Análisis EDA, modelos ML y métricas | [Ver Documentación](./data-science/README.md) |
-| **☁️ OCI Cloud** | Configuración de Oracle Cloud (Storage & Compute) | [Ver Documentación](./oci-cloud/README.md) |
-| **⚙️ Gobernanza & GitHub** | Protección de ramas, GitFlow y flujo de CI/CD | [Ver Documentación](./github-config.md) |
-| **🏅 Certificación & Rollback** | Certificación de staging, runbook de rollback y guía de demo | [Ver Certificación](./certificacion/README.md) |
+| Área | Qué encontrarás |
+|------|-----------------|
+| [🏛️ Arquitectura](./architecture/README.md) | Cómo se conectan las piezas, por qué, y las decisiones que no son obvias |
+| [🚀 Despliegue](./DESPLIEGUE.md) | Cómo levantar el proyecto en local y cómo se actualiza en producción |
+| [☕ Back-End](./backend/README.md) | Contrato de la API, validaciones, Swagger y colección de Postman |
+| [🐍 Data Science](./data-science/README.md) | Análisis exploratorio, modelo y métricas |
+| [🖥️ Front-End](./frontend/README.md) | Sistema de diseño, decisiones de accesibilidad y estructura |
 
 ---
 
-## 📂 Convención para subir imágenes y activos (`assets/`)
+## Sobre la documentación que ya no está
 
-Cada carpeta de área contiene su propio subdirectorio `assets/`. Guarde allí todas las imágenes, diagramas o capturas relativas a su trabajo siguiendo esta nomenclatura:
+Este proyecto nació en el Hackathon ONE (Alura + Oracle, G9 LATAM). Durante esa
+etapa la documentación incluía informes semanales por sprint, un runbook de
+certificación de ambientes y una descripción detallada de la infraestructura en
+Oracle Cloud.
 
-- `docs/backend/assets/swagger-screenshot.png`
-- `docs/data-science/assets/matriz-confusion.png`
-- `docs/oci-cloud/assets/oci-compute-instance.png`
-- `docs/architecture/assets/diagrama-arquitectura.png`
+Nada de eso describe el sistema actual: la infraestructura de Oracle Cloud fue
+dada de baja y ya no existen los ambientes de staging y producción que aquellos
+documentos certificaban. Mantenerlos habría significado documentar un sistema
+inexistente, que es peor que no documentarlo.
+
+**Siguen disponibles**, sin cambios, en el tag [`v1.0-hackathon`](https://github.com/Neo236/EnergIA/releases/tag/v1.0-hackathon)
+y en el [repositorio original del hackathon](https://github.com/No-Country-simulation/G9-LATAM-TEAM-09).

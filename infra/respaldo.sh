@@ -16,7 +16,10 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DESTINO="${1:-$HOME/backups/energia}"
+
+# Por defecto, junto al despliegue y no dentro del repositorio: los volcados son
+# datos de esta maquina, no del proyecto.
+DESTINO="${1:-$(cd "$REPO/.." && pwd)/backups}"
 CONSERVAR=14
 
 cd "$REPO"

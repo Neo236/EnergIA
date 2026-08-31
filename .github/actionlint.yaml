@@ -1,0 +1,11 @@
+# Configuración de actionlint (https://github.com/rhysd/actionlint).
+#
+# Sin este archivo, actionlint marca `runs-on: [self-hosted, energia]` como
+# etiqueta desconocida: no tiene forma de saber qué runners propios existen.
+#
+# Declararla acá deja el linter en verde y, de paso, documenta en el repositorio
+# cuál es la etiqueta del runner propio — que es una sola, exclusiva de este
+# proyecto, y la que impide que el despliegue caiga en un runner ajeno.
+self-hosted-runner:
+  labels:
+    - energia

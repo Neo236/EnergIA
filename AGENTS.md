@@ -82,12 +82,19 @@ parecía a un fallo: el formulario respondía y la interfaz se veía perfecta, p
 los números eran inventados y los enlaces compartidos daban «no encontramos ese
 análisis». Levantar el stack entero es un comando; ese es el camino.
 
-### El despliegue es manual
+### El CD verifica, no solo construye
 
-No hay CD, y es deliberado. Los tres flujos que existían apuntaban a
-infraestructura que ya no existe y fueron retirados. No los recrees sin que te
-lo pidan explícitamente. La integración continua sí está activa y debe seguir
-pasando.
+`.github/workflows/cd.yml` corre en un runner propio al mergear a `main`. No
+termina cuando `docker compose up` devuelve cero: después comprueba contra el
+stack ya desplegado que el modelo se haya cargado del repositorio, que los
+estáticos salgan con su tipo real y que un análisis de referencia devuelva lo
+esperado. Si algo falla, vuelve solo al commit anterior.
+
+Esos pasos no son ceremonia: cada uno corresponde a un fallo que ocurrió y que
+un `up` exitoso no habría detectado. No los quites al tocar el flujo.
+
+El análisis de verificación viaja con la cabecera `X-EnergIA-Sonda` para que no
+se persista. Sin eso, cada despliegue dejaría una fila de basura.
 
 ### No existe un endpoint `DELETE`, y es a propósito
 

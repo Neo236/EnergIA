@@ -64,56 +64,66 @@ jobs:
           cd ~/projects/EnergIA
           docker compose up -d --build
 
+      # La verificacion corre DENTRO de la red de Compose, no desde el host.
+      #
+      # El puerto se publica en una interfaz concreta —la que indique
+      # PROXY_BIND— y el firewall del servidor solo admite el origen que
+      # corresponda. Una peticion nacida en este mismo servidor no es ese
+      # origen: el `curl` se descarta y parece que el servicio esta caido
+      # cuando esta perfecto. La primera corrida de este flujo fallo asi.
+      #
+      # Desde adentro de la red esa pregunta no existe: se le habla al servicio
+      # `proxy` por su nombre, que es como se hablan entre si los contenedores.
+      # El nombre de la red es estable porque el proyecto lo fija en el compose.
       - name: Esperar a que responda
         run: |
           set -euo pipefail
           cd ~/projects/EnergIA
-          puerto="$(grep -E '^PROXY_PORT=' .env | cut -d= -f2 || echo 8088)"
-          bind="$(grep -E '^PROXY_BIND=' .env | cut -d= -f2 || echo 127.0.0.1)"
           for i in $(seq 1 30); do
-            if curl -fsS --max-time 5 "http://${bind}:${puerto}/actuator/health" > /dev/null 2>&1; then
+            if docker run --rm --network energia_energia-network curlimages/curl:latest \
+                 -fsS --max-time 5 http://proxy:8088/actuator/health > /dev/null 2>&1; then
               echo "Responde tras ~$((i * 10))s."
               exit 0
             fi
             sleep 10
           done
-          echo "El stack no respondió en 5 minutos."
+          echo "El stack no respondio en 5 minutos."
           exit 1
 
-      # Mismas comprobaciones que el CI hace sobre el stack efímero, ahora
-      # contra el que quedó sirviendo. Que las imágenes funcionaran en un
-      # runner limpio no garantiza que este servidor esté sirviéndolas: puede
+      # Mismas comprobaciones que el CI hace sobre el stack efimero, ahora
+      # contra el que quedo sirviendo. Que las imagenes funcionaran en un
+      # runner limpio no garantiza que este servidor este sirviendolas: puede
       # haber quedado un contenedor viejo en pie, o un .env desactualizado.
       - name: Verificar lo desplegado
         run: |
           set -euo pipefail
           cd ~/projects/EnergIA
-          puerto="$(grep -E '^PROXY_PORT=' .env | cut -d= -f2 || echo 8088)"
-          bind="$(grep -E '^PROXY_BIND=' .env | cut -d= -f2 || echo 127.0.0.1)"
-          base="http://${bind}:${puerto}"
+          en_red() { docker run --rm --network energia_energia-network curlimages/curl:latest "$@"; }
 
           docker compose logs ml-service | grep -q "Modelo pre-cargado en memoria" \
-            || { echo "El servicio de ML no cargó el modelo del repositorio."; exit 1; }
+            || { echo "El servicio de ML no cargo el modelo del repositorio."; exit 1; }
           echo "  modelo: cargado de data/latest/"
 
-          tipo=$(curl -fsS -o /dev/null -w '%{content_type}' "$base/fonts/inter-latin.woff2")
-          [[ "$tipo" == font/woff2* ]] \
-            || { echo "  fuente servida como '$tipo': public/ no llegó a la imagen."; exit 1; }
-          echo "  estáticos: $tipo"
+          tipo=$(en_red -fsS -o /dev/null -w '%{content_type}' http://proxy:8088/fonts/inter-latin.woff2)
+          case "$tipo" in
+            font/woff2*) echo "  estaticos: $tipo" ;;
+            *) echo "  fuente servida como '$tipo': public/ no llego a la imagen."; exit 1 ;;
+          esac
 
-          # El análisis de verificación NO se persiste: la cabecera lo marca
-          # como sonda. Sin eso, cada despliegue dejaría una fila de basura.
+          # El analisis de verificacion NO se persiste: la cabecera lo marca
+          # como sonda. Sin eso, cada despliegue dejaria una fila de basura.
           token="$(grep -E '^TOKEN_SONDA_SALUD=' .env | cut -d= -f2- || true)"
-          respuesta=$(curl -fsS --max-time 30 -X POST "$base/api/v1/analisis-energetico" \
+          respuesta=$(en_red -fsS --max-time 30 -X POST http://proxy:8088/api/v1/analisis-energetico \
             -H 'Content-Type: application/json' \
             ${token:+-H "X-EnergIA-Sonda: $token"} \
             -d '{"consumo_kwh":420,"cantidad_equipos":10,"tipo_inmueble":"Casa",
                  "uso_horario_pico":false,"horas_alto_consumo":12,"zona_fria":false,
                  "calidad_aislamiento":"Media","fuente_calefaccion":"Electricidad",
                  "fuente_agua_caliente":"Electricidad"}')
-          grep -q '"categoria":"Moderado"' <<< "$respuesta" \
-            || { echo "  análisis inesperado: $respuesta"; exit 1; }
-          echo "  análisis de referencia: correcto"
+          case "$respuesta" in
+            *'"categoria":"Moderado"'*) echo "  analisis de referencia: correcto" ;;
+            *) echo "  analisis inesperado: $respuesta"; exit 1 ;;
+          esac
 
       # Vuelve al commit anterior y relevanta. Cubre el caso en que el stack
       # construye pero no sirve — que es justo el que un `docker compose up`

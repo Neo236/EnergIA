@@ -7,7 +7,7 @@
 **[energia.neo236.fun](https://energia.neo236.fun)** · uso libre, sin registro
 
 ![Java](https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.7-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.1-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
@@ -47,10 +47,9 @@ La versión entregada y evaluada en el hackathon está marcada con el tag
 y el repositorio original sigue disponible en
 [No-Country-simulation/G9-LATAM-TEAM-09](https://github.com/No-Country-simulation/G9-LATAM-TEAM-09).
 
-A partir de ese punto el proyecto continúa como EnergIA: la infraestructura de
-Oracle Cloud fue dada de baja y la aplicación se mudó a un servidor propio detrás
-de un proxy de borde. Los detalles están en
-[`docs/architecture/`](./docs/architecture/README.md).
+A partir de ese punto el proyecto continúa como EnergIA, y el despliegue dejó
+de depender de Oracle Cloud: el stack corre entero en Docker Compose y no asume
+nada sobre dónde está alojado.
 
 ---
 
@@ -59,10 +58,10 @@ de un proxy de borde. Los detalles están en
 | Capa | Tecnología | Rol |
 |------|-----------|-----|
 | **Front-End** | Vite · React 19 · TypeScript | Interfaz de carga de datos y presentación del resultado. Compila a estáticos, servidos por nginx. |
-| **Back-End** | Java 17 · Spring Boot 4.0.7 | API REST, validaciones, orquestación y persistencia. |
+| **Back-End** | Java 17 · Spring Boot 4.1.1 | API REST, validaciones, orquestación y persistencia. |
 | **Data Science** | Python 3.10 · pandas · scikit-learn | Análisis exploratorio, entrenamiento del modelo y servicio de inferencia (FastAPI). |
 | **Datos** | PostgreSQL 16 | Persistencia de los análisis. |
-| **Infraestructura** | Docker Compose · Caddy | Un solo puerto publicado, detrás de un proxy de borde con HTTPS y WAF. |
+| **Infraestructura** | Docker Compose · Caddy | Cuatro servicios y un proxy que los unifica bajo un solo puerto. |
 
 ---
 
@@ -70,23 +69,30 @@ de un proxy de borde. Los detalles están en
 
 ```mermaid
 flowchart LR
-    U(["Navegador"]) -->|HTTPS| CADDY["Proxy de borde<br/>TLS · WAF · rate limit"]
-    CADDY -->|"túnel WireGuard"| PROXY["proxy<br/>mismo origen"]
+    U(["Navegador"])
 
-    subgraph STACK["Docker Compose · servidor propio"]
-        PROXY -->|"/"| F["frontend<br/>nginx"]
+    subgraph STACK["Docker Compose"]
+        PROXY["proxy · Caddy<br/>única entrada"]
+        PROXY -->|"/"| F["frontend<br/>React servido por nginx"]
         PROXY -->|"/api/*"| B["backend<br/>Spring Boot"]
-        B --> ML["ml-service<br/>FastAPI"]
+        B --> ML["ml-service<br/>FastAPI · scikit-learn"]
         B --> DB[("PostgreSQL")]
     end
+
+    U --> PROXY
 ```
 
-La interfaz y la API comparten origen, así que **la aplicación no necesita
-CORS**. Solo el proxy publica un puerto; el resto de los servicios se alcanzan
-por la red interna de Compose.
+**El stack publica un solo puerto.** El servicio `proxy` sirve la aplicación en
+la raíz y enruta `/api/*` al back-end, así que la interfaz y la API comparten
+origen y **la aplicación no necesita CORS**. El resto de los servicios no
+publican puertos: solo se alcanzan por la red interna de Compose.
 
-> Las decisiones que no son obvias —por qué el modelo se versiona en el repo, por
-> qué el bind no es `0.0.0.0`, por qué no hay endpoint de borrado— están
+Eso también lo vuelve portable: el stack funciona igual solo, detrás de un
+proxy inverso o en un orquestador, porque no asume nada sobre lo que tiene
+delante.
+
+> Las decisiones que no son obvias —por qué el modelo se versiona en el repo,
+> por qué no hay endpoint de borrado, qué pasa con la tipografía— están
 > explicadas en [`docs/architecture/`](./docs/architecture/README.md).
 
 ---

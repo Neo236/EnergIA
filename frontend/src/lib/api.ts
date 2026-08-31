@@ -5,17 +5,14 @@
      POST /api/v1/analisis-energetico       → crea y persiste un análisis
      GET  /api/v1/analisis-energetico/{id}  → lo recupera por su UUID
 
-   El modo se resuelve al compilar con VITE_API_MODO. En `mock` no se
-   toca la red: sirve para desarrollar sin levantar el back. No hay
-   interruptor en pantalla — esto es la aplicación, no una demostración.
+   La aplicación habla siempre con la API. Hubo un modo simulado que
+   resolvía las dos operaciones en el navegador para poder trabajar sin
+   levantar el back-end; se retiró porque reimplementaba la clasificación
+   del modelo en TypeScript, y esa segunda versión podía separarse de la
+   real sin que nada lo señalara.
    ============================================================ */
 
 import { ENDPOINT, ErrorApi, type Analisis, type RespuestaError, type Solicitud } from './contrato'
-import { analizarSimulado, obtenerSimulado } from './mock'
-
-export type ModoApi = 'mock' | 'real'
-
-export const MODO_API: ModoApi = import.meta.env.VITE_API_MODO === 'real' ? 'real' : 'mock'
 
 /** Falla de red: ni siquiera llegamos al servidor. status 0 lo distingue de un error HTTP. */
 function errorDeRed(): ErrorApi {
@@ -42,7 +39,8 @@ async function leerCuerpo(respuesta: Response): Promise<unknown> {
   return respuesta.json().catch(() => null)
 }
 
-async function analizarReal(solicitud: Solicitud): Promise<Analisis> {
+/** Crea un análisis. Devuelve el registro persistido, ya con id y fecha. */
+export async function analizar(solicitud: Solicitud): Promise<Analisis> {
   let respuesta: Response
   try {
     respuesta = await fetch(ENDPOINT, {
@@ -59,7 +57,8 @@ async function analizarReal(solicitud: Solicitud): Promise<Analisis> {
   return cuerpo as Analisis
 }
 
-async function obtenerReal(id: string): Promise<Analisis> {
+/** Recupera un análisis por su id. Un 404 significa que no existe o expiró. */
+export async function obtenerAnalisis(id: string): Promise<Analisis> {
   let respuesta: Response
   try {
     respuesta = await fetch(`${ENDPOINT}/${encodeURIComponent(id)}`)
@@ -70,14 +69,4 @@ async function obtenerReal(id: string): Promise<Analisis> {
   const cuerpo = await leerCuerpo(respuesta)
   if (!respuesta.ok) throw errorDeRespuesta(respuesta, cuerpo)
   return cuerpo as Analisis
-}
-
-/** Crea un análisis. Devuelve el registro persistido, ya con id y fecha. */
-export function analizar(solicitud: Solicitud): Promise<Analisis> {
-  return MODO_API === 'real' ? analizarReal(solicitud) : analizarSimulado(solicitud)
-}
-
-/** Recupera un análisis por su id. Un 404 significa que no existe o expiró. */
-export function obtenerAnalisis(id: string): Promise<Analisis> {
-  return MODO_API === 'real' ? obtenerReal(id) : obtenerSimulado(id)
 }

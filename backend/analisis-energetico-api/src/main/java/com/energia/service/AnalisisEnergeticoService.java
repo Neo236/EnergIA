@@ -31,7 +31,7 @@ public class AnalisisEnergeticoService {
 
     // esSonda: true cuando la peticion trae la cabecera secreta X-EnergIA-Sonda
     // valida (verificada en el controller). Identifica una verificacion
-    // manual (curl documentado en docs/certificacion/README.md), no un
+    // manual (curl documentado en docs/backend/README.md), no un
     // analisis real: se sigue llamando al ML de verdad -es la unica forma de
     // validar el circuito completo- pero el resultado no se persiste ni
     // queda con id/fecha, para no ensuciar la base con datos sinteticos.

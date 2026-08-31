@@ -13,23 +13,24 @@ npm install
 npm run dev
 ```
 
-Queda en `http://localhost:5173`. Por defecto responde el **mock**, así que
-funciona sin back-end.
+Queda en `http://localhost:5173`, y **necesita el back-end corriendo**: la
+aplicación habla siempre con la API.
 
-### Contra la API real
-
-El front habla con la API en el **mismo origen** (`/api/v1/…`), así que no hay
-URL base ni CORS. En desarrollo, el proxy del dev server hace lo mismo que
-Caddy en la VM.
+El front la consume en el **mismo origen** (`/api/v1/…`), así que no hay URL
+base ni CORS. En desarrollo el proxy del servidor de Vite cumple el papel que en
+el despliegue cumple el servicio `proxy` del Compose; `VITE_API_DESTINO` le dice
+a dónde reenviar.
 
 ```bash
-# contra un back-end local en :8080
-VITE_API_MODO=real npm run dev
+# contra un back-end local en :8080 (el valor por defecto)
+npm run dev
 
-# contra el back-end de la VM, con un túnel abierto en otra terminal:
-#   ssh -N -L 8082:127.0.0.1:8082 energia
-VITE_API_MODO=real VITE_API_DESTINO=http://127.0.0.1:8082 npm run dev
+# contra un back-end en otro puerto
+VITE_API_DESTINO=http://127.0.0.1:9090 npm run dev
 ```
+
+> Lo más simple para tener todo arriba es `docker compose up -d` en la raíz del
+> repositorio, y usar `npm run dev` solo para iterar sobre el front.
 
 Ver [`.env.example`](.env.example).
 
@@ -43,8 +44,7 @@ src/
 ├── components/               controles del formulario, desplegable, aviso
 ├── lib/
 │   ├── contrato.ts           ← FUENTE ÚNICA del contrato V1.2
-│   ├── api.ts                transporte: real o mock
-│   ├── mock.ts               respuesta simulada
+│   ├── api.ts                transporte HTTP contra la API
 │   └── formato.ts            moneda, porcentaje, fecha
 └── styles/                   tokens.css (paleta) · app.css
 ```
@@ -88,10 +88,6 @@ el propio control.
 Inicial · opcionales desplegados · enviando · validación 400 con
 `detalles[campo, mensaje]` · error del servidor · servicio no disponible ·
 resultado · resultado sin recomendaciones · no encontrado.
-
-La **barra de demostración** fuerza la próxima respuesta cuando el modo es
-`mock`; con la API real se oculta, porque las respuestas las decide el
-servidor.
 
 ## Estado de la integración
 

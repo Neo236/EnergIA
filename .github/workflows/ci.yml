@@ -336,37 +336,27 @@ jobs:
           verificar / text/html
           exit $fallo
 
-      # El modo de la aplicacion se decide al compilar: Vite incrusta
-      # VITE_API_MODO en el bundle. Si sale en `mock`, la aplicacion no llama a
-      # la API — fabrica los resultados en el navegador.
+      # El bundle es lo unico que el navegador ejecuta, y se genera al compilar:
+      # si el build sale mal, todos los chequeos contra la API siguen pasando
+      # —porque la API esta bien— y el fallo aparece recien cuando alguien abre
+      # la pagina.
       #
-      # Ese fallo no se parece a un fallo: el formulario responde, muestra un
-      # analisis y la interfaz se ve perfecta. Los unicos sintomas son que los
-      # numeros son inventados y que los enlaces compartidos dan "no
-      # encontramos ese analisis". Todos los demas chequeos de este job pasan
-      # igual, porque prueban la API y la API esta bien: lo que esta mal es que
-      # nadie la llama.
-      #
-      # La ruta de la API solo sobrevive al tree-shaking cuando el modo es
-      # `real`; el marcador del simulado solo cuando es `mock`.
-      - name: La aplicacion servida habla con la API, no con el simulado
+      # Este assert existe por un incidente concreto: la aplicacion estuvo
+      # desplegada compilada contra un simulado que fabricaba los resultados en
+      # el navegador. Ese modo se retiro, pero la leccion vale igual — que el
+      # HTML responda 200 no dice nada sobre el codigo que sirve.
+      - name: El bundle servido es la aplicacion, y llama a la API
         run: |
           set -euo pipefail
-          bundle=$(curl -fsS http://127.0.0.1:8088/ \
-            | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1)
+          bundle=$(curl -fsS http://127.0.0.1:8088/             | grep -oE 'assets/index-[A-Za-z0-9_-]+[.]js' | head -1)
           [ -n "$bundle" ] || { echo "No se encontro el bundle en el HTML."; exit 1; }
           echo "  bundle: $bundle"
-          js=$(curl -fsS "http://127.0.0.1:8088/$bundle")
+          if ! curl -fsS "http://127.0.0.1:8088/$bundle" | grep -q '/api/v1/analisis-energetico'; then
+            echo "El bundle no contiene la ruta de la API."
+            exit 1
+          fi
+          echo "  OK: la aplicacion llama a la API real."
 
-          if ! grep -q '/api/v1/analisis-energetico' <<< "$js"; then
-            echo "El bundle no contiene la ruta de la API: se compilo en modo simulado."
-            exit 1
-          fi
-          if grep -q 'simulad' <<< "$js"; then
-            echo "El bundle contiene el codigo del simulado: no se compilo en modo real."
-            exit 1
-          fi
-          echo "  OK: compilada contra la API real."
 
       # El caso de referencia: el mismo payload devuelve el mismo resultado que
       # servia el despliegue anterior. Cubre la cadena entera —proxy, backend,

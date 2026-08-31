@@ -36,21 +36,21 @@ Estas cosas parecen errores y no lo son. Cambiarlas rompe el sistema.
 Docker publica sus puertos con reglas propias de iptables en la cadena FORWARD,
 que las reglas de un firewall de host sobre INPUT no cubren. Un bind a `0.0.0.0`
 queda alcanzable desde toda la red local aunque el firewall afirme lo contrario.
-En el servidor se ata a la IP del túnel. En local, `127.0.0.1`.
+Se ata a la interfaz concreta por la que debe entrar el tráfico. En local, `127.0.0.1`.
 
 ### La tipografía Inter se sirve desde el propio origen
 
-No la muevas a Google Fonts. El proxy de borde impone `style-src 'self'` y
-`font-src 'self' data:`: una hoja de terceros queda bloqueada y la aplicación
-cae a la fuente de respaldo, perdiendo la tipografía del sistema de diseño. Los
-archivos viven en `frontend/public/fonts/` y son de fuente variable — dos
-archivos cubren los cuatro pesos.
+No la muevas a Google Fonts. Una CSP razonable (`style-src 'self'`,
+`font-src 'self' data:`) bloquea la hoja de terceros y la aplicación cae a la
+fuente de respaldo, perdiendo la tipografía del sistema de diseño. Los archivos
+viven en `frontend/public/fonts/` y son de fuente variable — dos archivos
+cubren los cuatro pesos.
 
 ### El `Dockerfile` del front debe copiar `public/`
 
 Si falta, **el build no falla**: construye sin esos archivos, y después nginx
 responde `/favicon.svg` y `/fonts/*.woff2` con el `index.html` del SPA por su
-`try_files` — un `200` con `content-type: text/html`. Con `nosniff` en el borde,
+`try_files` — un `200` con `content-type: text/html`. Con `nosniff` delante,
 el navegador rechaza la fuente y la `@font-face` queda en estado `error`. El
 `200` hace que el síntoma despiste.
 
@@ -67,6 +67,20 @@ binarios": es la única copia, y el servicio lo lee desde ahí
 El front y la API comparten origen: el servicio `proxy` del Compose sirve la
 aplicación en la raíz y enruta `/api/*` al backend. Si aparece un error de CORS,
 el problema es el ruteo del proxy, no la falta de cabeceras.
+
+### No reintroduzcas un modo simulado en el frontend
+
+Existió uno: resolvía las dos operaciones de la API en el navegador para poder
+trabajar sin levantar el back-end. Se retiró por dos motivos.
+
+Reimplementaba la clasificación del modelo en TypeScript —sus propios umbrales,
+su propio cálculo de confianza— y esa segunda versión podía separarse del
+scikit-learn sin que nada lo señalara.
+
+Y la aplicación llegó a estar desplegada compilada contra él. El síntoma no se
+parecía a un fallo: el formulario respondía y la interfaz se veía perfecta, pero
+los números eran inventados y los enlaces compartidos daban «no encontramos ese
+análisis». Levantar el stack entero es un comando; ese es el camino.
 
 ### El despliegue es manual
 

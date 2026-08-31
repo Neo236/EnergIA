@@ -40,13 +40,13 @@ RUN npm run build
 # que hace confiable el rollback.
 #
 # Es el digest del índice multi-arquitectura (verificado: idéntico en amd64
-# y arm64), así que sirve tanto en el CI x86 como en la VM ARM.
+# y arm64), así que sirve igual en un runner x86 que en un servidor ARM.
 #
 # Para actualizar y recibir parches de seguridad:
-#   docker pull nginxinc/nginx-unprivileged:1.27-alpine
-#   docker image inspect nginxinc/nginx-unprivileged:1.27-alpine \
+#   docker pull nginxinc/nginx-unprivileged:1.31-alpine
+#   docker image inspect nginxinc/nginx-unprivileged:1.31-alpine \
 #     --format '{{index .RepoDigests 0}}'
-FROM nginxinc/nginx-unprivileged:1.27-alpine@sha256:65e3e85dbaed8ba248841d9d58a899b6197106c23cb0ff1a132b7bfe0547e4c0
+FROM nginxinc/nginx-unprivileged:1.31-alpine@sha256:d9083fe47768377ef55dedafd67d4da7c2f2bc2bece7554954f29359deb0dce9
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html

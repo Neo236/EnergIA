@@ -57,7 +57,7 @@ section_preflight() {
         fi
     done
     # Si una dependencia falta, abortar: los checks daran resultados raros.
-    if [ $FAIL -gt 0 ]; then
+    if [ "$FAIL" -gt 0 ]; then
         echo ""
         echo "Faltan dependencias. Abortando."
         exit 2
@@ -107,7 +107,7 @@ section "1. Dataset canonico (CHECKSUMS.sha256)"
 if [ "$SKIP_LOCAL" = "1" ]; then
     check_skip "CHECKSUMS.sha256 (SKIP_LOCAL_FILES=1)"
 else
-    cd "$DATA_DIR"
+    cd "$DATA_DIR" || exit 1
     CHECKSUM_OUT=$(sha256sum -c CHECKSUMS.sha256 2>&1)
     CHECKSUM_EXIT=$?
     if [ $CHECKSUM_EXIT -eq 0 ]; then
@@ -122,7 +122,7 @@ else
     else
         check_fail "sha256sum -c CHECKSUMS.sha256 fallo (exit=$CHECKSUM_EXIT): $(truncate_response "$CHECKSUM_OUT")"
     fi
-    cd - > /dev/null
+    cd - > /dev/null || exit 1
 fi
 
 # --- Check 2: binding modelo+dataset+metricas -------------------------------
@@ -132,7 +132,7 @@ BIND_MODEL_SHA=""
 if [ "$SKIP_LOCAL" = "1" ]; then
     check_skip "MODEL_BINDING.sha256 (SKIP_LOCAL_FILES=1)"
 else
-    cd "$DATA_DIR"
+    cd "$DATA_DIR" || exit 1
     BIND_OUT=$(sha256sum -c MODEL_BINDING.sha256 2>&1)
     BIND_EXIT=$?
     if [ $BIND_EXIT -eq 0 ]; then
@@ -151,7 +151,7 @@ else
     else
         check_fail "sha256sum -c MODEL_BINDING.sha256 fallo (exit=$BIND_EXIT): $(truncate_response "$BIND_OUT")"
     fi
-    cd - > /dev/null
+    cd - > /dev/null || exit 1
 fi
 
 # --- Check 3: servicio vivo (/health) ---------------------------------------
@@ -285,7 +285,7 @@ echo "=== RESUMEN ==="
 echo "Checks OK:   $PASS"
 echo "Checks SKIP: $SKIP"
 echo "Checks FAIL: $FAIL"
-if [ $FAIL -gt 0 ]; then
+if [ "$FAIL" -gt 0 ]; then
     echo ""
     echo "FAILURES:"
     for f in "${FAILURES[@]}"; do

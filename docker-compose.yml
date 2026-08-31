@@ -130,8 +130,20 @@ services:
   # -------------------------------------------------------------
   proxy:
     image: caddy:2.11-alpine
+    # La direccion de bind es una variable, no una constante, porque el
+    # valor correcto depende de donde corre:
+    #
+    #   local  -> 127.0.0.1 (default): nada sale de la maquina.
+    #   server -> la IP del tunel hacia el proxy de borde.
+    #
+    # En el servidor NO se usa 0.0.0.0. Docker publica sus puertos con
+    # reglas propias de iptables en la cadena FORWARD, que las reglas de
+    # UFW sobre INPUT no cubren: un bind a 0.0.0.0 quedaria alcanzable
+    # desde toda la LAN aunque `ufw status` afirme lo contrario. Atarlo a
+    # la IP del tunel hace que solo exista en esa interfaz, sin depender
+    # de si el firewall del host filtra o no el trafico de Docker.
     ports:
-      - "127.0.0.1:${PROXY_PORT:-8088}:8088"
+      - "${PROXY_BIND:-127.0.0.1}:${PROXY_PORT:-8088}:8088"
     volumes:
       - ./infra/Caddyfile.local:/etc/caddy/Caddyfile:ro
     depends_on:

@@ -243,10 +243,17 @@ jobs:
             echo "  OK $RUTA"
           done
 
+  # Unico job que prueba el sistema ARMADO. Los demas validan cada servicio por
+  # separado, y eso deja pasar una clase entera de fallos: los que aparecen en
+  # como se conectan las piezas, no dentro de ninguna.
+  #
+  # Los dos errores reales de la migracion a este servidor son de esa clase, y
+  # ambos pasaron el resto del CI sin despeinarse — se descubrieron a mano, en
+  # el navegador. Cada assert de aqui abajo esta atado a uno de ellos.
   docker-ci:
     name: Build Docker Images
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Repository
@@ -266,3 +273,106 @@ jobs:
 
       - name: Build Docker Images
         run: docker compose build
+
+      - name: Levantar el stack completo
+        run: docker compose up -d
+
+      - name: Esperar a que responda
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 5 http://127.0.0.1:8088/actuator/health > /dev/null 2>&1; then
+              echo "Listo tras ${i}0s aprox."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "El stack no respondio en 10 minutos."
+          exit 1
+
+      # El modelo entrenado se versiona en data/latest/ justamente para que el
+      # servicio lo cargue en vez de reentrenarlo al arrancar. El reentrenamiento
+      # es un camino de respaldo valido, asi que no falla ni avisa: produce un
+      # modelo equivalente pero no identico, y el despliegue queda sirviendo algo
+      # distinto de lo que dice servir. Solo se detecta leyendo los logs.
+      - name: El modelo se cargo del repositorio, no se reentreno
+        run: |
+          set -euo pipefail
+          logs=$(docker compose logs ml-service)
+          if ! grep -q "Modelo pre-cargado en memoria" <<< "$logs"; then
+            echo "No se encontro la carga del modelo en los logs."
+            echo "$logs" | tail -40
+            exit 1
+          fi
+          echo "OK: el modelo salio de data/latest/."
+
+      # Los archivos de public/ se piden por ruta fija. Si no llegan a la imagen,
+      # nginx responde el index.html del SPA por su try_files: HTTP 200 con
+      # content-type text/html donde deberia haber una fuente. El navegador lo
+      # rechaza por nosniff y la tipografia cae al respaldo — pero el codigo 200
+      # hace que ningun chequeo de disponibilidad note nada.
+      - name: Los estaticos se sirven con su tipo real
+        run: |
+          set -euo pipefail
+          fallo=0
+          verificar() {
+            tipo=$(curl -fsS -o /dev/null -w '%{content_type}' "http://127.0.0.1:8088$1")
+            if [[ "$tipo" != "$2"* ]]; then
+              echo "  $1 -> '$tipo' (se esperaba '$2')"
+              fallo=1
+            else
+              echo "  $1 -> $tipo"
+            fi
+          }
+          verificar /fonts/inter-latin.woff2 font/woff2
+          verificar /favicon.svg image/svg+xml
+          verificar / text/html
+          exit $fallo
+
+      # El caso de referencia: el mismo payload devuelve el mismo resultado que
+      # servia el despliegue anterior. Cubre la cadena entera —proxy, backend,
+      # servicio de ML, modelo— y ademas fija el comportamiento del modelo: si
+      # alguien lo reemplaza por otro, esto lo dice.
+      - name: Un analisis extremo a extremo devuelve el resultado conocido
+        run: |
+          set -euo pipefail
+          respuesta=$(curl -fsS --max-time 30 -X POST \
+            http://127.0.0.1:8088/api/v1/analisis-energetico \
+            -H 'Content-Type: application/json' \
+            -d '{"consumo_kwh":420,"cantidad_equipos":10,"tipo_inmueble":"Casa",
+                 "uso_horario_pico":false,"horas_alto_consumo":12,"zona_fria":false,
+                 "calidad_aislamiento":"Media","fuente_calefaccion":"Electricidad",
+                 "fuente_agua_caliente":"Electricidad"}')
+          echo "$respuesta"
+
+          for esperado in '"categoria":"Moderado"' '"probabilidad":0.675' '"costo_estimado_mensual":315.0'; do
+            grep -q "$esperado" <<< "$respuesta" || { echo "Falta en la respuesta: $esperado"; exit 1; }
+          done
+
+          # El analisis tiene que persistir: es lo que hace que su URL sea
+          # compartible y sobreviva a una recarga.
+          id=$(sed -n 's/.*"id":"\([^"]*\)".*/\1/p' <<< "$respuesta")
+          [ -n "$id" ] || { echo "La respuesta no trae id."; exit 1; }
+          curl -fsS --max-time 15 "http://127.0.0.1:8088/api/v1/analisis-energetico/$id" \
+            | grep -q '"categoria":"Moderado"' \
+            || { echo "El analisis $id no se recupera igual."; exit 1; }
+          echo "OK: persistido y recuperado ($id)."
+
+      # Swagger y Actuator no cuelgan de /api: los sirve Spring en la raiz. Sin
+      # su regla propia en el proxy, el `handle` final los mandaria al frontend
+      # y responderian el SPA con codigo 200.
+      - name: El proxy rutea la API, Swagger y Actuator
+        run: |
+          set -euo pipefail
+          for ruta in /actuator/health /swagger-ui/index.html /v3/api-docs; do
+            codigo=$(curl -fsS -o /dev/null -w '%{http_code}' "http://127.0.0.1:8088$ruta")
+            echo "  $ruta -> $codigo"
+          done
+
+      - name: Logs del stack si algo fallo
+        if: failure()
+        run: docker compose logs --tail=120
+
+      - name: Bajar el stack
+        if: always()
+        run: docker compose down -v

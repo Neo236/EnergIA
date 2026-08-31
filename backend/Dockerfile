@@ -1,7 +1,7 @@
 # ==========================================
 # Dockerfile Backend - Java 17 Spring Boot
 # ==========================================
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM maven:3-eclipse-temurin-26 AS builder
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN ./mvnw clean package -DskipTests
 # ==========================================
 # Runtime Stage
 # ==========================================
-FROM eclipse-temurin:17-jre AS runner
+FROM eclipse-temurin:25-jre AS runner
 
 WORKDIR /app
 

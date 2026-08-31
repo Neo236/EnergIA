@@ -1,0 +1,53 @@
+# Normalizacion de fin de linea.
+#
+# El equipo trabaja en Windows y en Linux, y la VM de despliegue es Linux. Sin
+# este archivo, cada quien commitea con el fin de linea de su sistema y aparecen
+# dos problemas:
+#
+#   1. Diffs enteros por un cambio de una linea, y comparaciones que dan
+#      distinto entre el repo y la VM aunque el contenido sea el mismo.
+#   2. Scripts .sh con CRLF: bash interpreta el \r como parte del comando y
+#      falla con errores incomprensibles ("bad interpreter: /bin/bash^M").
+#      Los scripts de .github/scripts/ corren en el runner Linux, asi que esto
+#      no es teorico.
+#
+# `text=auto` deja que git normalice a LF en el repositorio y entregue el final
+# de linea nativo en cada maquina al hacer checkout.
+* text=auto
+
+# Estos SIEMPRE con LF, incluso en el working copy de Windows: los consume
+# Linux, no el editor local.
+*.sh            text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+Dockerfile      text eol=lf
+*.Dockerfile    text eol=lf
+Caddyfile       text eol=lf
+.env.example    text eol=lf
+mvnw            text eol=lf
+
+# Windows nativo.
+*.cmd           text eol=crlf
+*.bat           text eol=crlf
+
+# Binarios: que git no intente normalizarlos nunca.
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.ico           binary
+*.pdf           binary
+*.pkl           binary
+*.onnx          binary
+*.jar           binary
+
+# Artefactos binarios propios del proyecto. Marcarlos explicitamente evita que
+# la deteccion automatica se equivoque: el .joblib del modelo son ~2 MB que git
+# NO debe intentar normalizar, y las fuentes web tampoco.
+*.woff2         binary
+*.woff          binary
+*.joblib        binary
+
+# Los notebooks son JSON: sin esto, en Windows se checkoutean con CRLF y cada
+# guardado produce un diff del archivo entero aunque no cambie ninguna celda.
+*.ipynb         text eol=lf

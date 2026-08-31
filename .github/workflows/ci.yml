@@ -14,6 +14,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Valida la propia infraestructura de CI. Es barato (segundos) y atrapa una
+  # clase de error que ningun otro job ve: un workflow con sintaxis invalida o
+  # una accion mal referenciada no falla, simplemente NO se ejecuta — y un
+  # workflow que no corre se parece mucho a uno que pasa.
+  lint-ci:
+    name: Validar workflows y scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: actionlint
+        uses: docker://rhysd/actionlint:latest
+        with:
+          args: -color
+
+      # Los .sh del repositorio se ejecutan en Linux. shellcheck atrapa las
+      # variables sin comillas y los errores de expansion que solo se
+      # manifiestan cuando una ruta trae espacios.
+      - name: shellcheck
+        run: |
+          set -euo pipefail
+          mapfile -t scripts < <(git ls-files '*.sh')
+          if [ ${#scripts[@]} -eq 0 ]; then
+            echo "No hay scripts .sh que revisar."
+            exit 0
+          fi
+          printf '  %s\n' "${scripts[@]}"
+          shellcheck "${scripts[@]}"
+
   backend-ci:
     name: Build & Test Backend (Spring Boot)
     runs-on: ubuntu-latest

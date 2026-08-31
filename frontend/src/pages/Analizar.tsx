@@ -27,8 +27,8 @@ import {
   type CalidadAislamiento, type FuenteEnergia, type Solicitud, type TipoInmueble,
 } from '../lib/contrato'
 import { mensajeDeCampo, textoDeAviso, type TextoAviso } from '../lib/mensajes'
+import { validarEntrada, type Errores } from '../lib/validacion'
 
-type Errores = Partial<Record<keyof Solicitud, string>>
 
 /** Los campos opcionales, para saber si hay que abrir el acordeón al fallar. */
 const NOMBRES_OPCIONALES = CAMPOS_OPCIONALES.map((c) => c.nombre)
@@ -62,48 +62,13 @@ export function Analizar() {
 
   const cantidadErrores = Object.keys(errores).length
 
-  /** Valida contra los rangos del contrato antes de gastar una llamada. */
-  function validar(): { errores: Errores; solicitud: Solicitud | null } {
-    const e: Errores = {}
-
-    const nConsumo = Number(consumo.replace(',', '.'))
-    if (consumo.trim() === '' || Number.isNaN(nConsumo) || nConsumo < 1 || nConsumo > 1000) {
-      e.consumo_kwh = mensajeDeCampo('consumo_kwh', 'Valor fuera de rango')
-    }
-    if (equipos < 1 || equipos > 100) {
-      e.cantidad_equipos = mensajeDeCampo('cantidad_equipos', 'Valor fuera de rango')
-    }
-    if (horas < 0 || horas > 24) {
-      e.horas_alto_consumo = mensajeDeCampo('horas_alto_consumo', 'Valor fuera de rango')
-    }
-
-    const nMetros = metros.trim() === '' ? undefined : Number(metros)
-    if (nMetros !== undefined && (Number.isNaN(nMetros) || nMetros < 26 || nMetros > 2000)) {
-      e.metros_cuadrados = mensajeDeCampo('metros_cuadrados', 'Valor fuera de rango')
-    }
-    const nAntiguedad = antiguedad.trim() === '' ? undefined : Number(antiguedad)
-    if (nAntiguedad !== undefined && (Number.isNaN(nAntiguedad) || nAntiguedad < 0 || nAntiguedad > 150)) {
-      e.antiguedad_vivienda = mensajeDeCampo('antiguedad_vivienda', 'Valor fuera de rango')
-    }
-
-    if (Object.keys(e).length > 0) return { errores: e, solicitud: null }
-
-    /* Los opcionales solo viajan si se completaron: omitirlos es lo que
-       hace que el back aplique su propio valor por defecto. */
-    const solicitud: Solicitud = {
-      consumo_kwh: nConsumo,
-      tipo_inmueble: tipo,
-      cantidad_equipos: equipos,
-      horas_alto_consumo: horas,
-      ...(nMetros !== undefined ? { metros_cuadrados: nMetros } : {}),
-      ...(nAntiguedad !== undefined ? { antiguedad_vivienda: nAntiguedad } : {}),
-      zona_fria: zonaFria,
-      calidad_aislamiento: aislamiento,
-      fuente_calefaccion: calefaccion,
-      fuente_agua_caliente: agua,
-      uso_horario_pico: horarioPico,
-    }
-    return { errores: {}, solicitud }
+  /* Las reglas viven en lib/validacion.ts: son puras y estan cubiertas por
+     tests. Aca solo se junta lo que hay en pantalla. */
+  function validar() {
+    return validarEntrada({
+      consumo, equipos, horas, metros, antiguedad,
+      tipo, zonaFria, aislamiento, calefaccion, agua, horarioPico,
+    })
   }
 
   /* El evento es opcional: el mismo envío lo dispara el formulario y el

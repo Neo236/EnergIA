@@ -11,9 +11,21 @@ version: 2
 # el test extremo a extremo levanta el stack completo, asi que una version
 # que rompa la integracion se ve sin tener que revisar el diff.
 #
-# Todo agrupado en un PR por ecosistema y por semana. Con cinco ecosistemas,
-# actualizaciones sueltas producirian una cantidad de ruido que termina en que
-# se ignoren todas — que es el modo habitual en que Dependabot deja de servir.
+# Cada ecosistema agrupa sus actualizaciones MENORES Y DE PARCHE en un solo PR
+# semanal. Con cinco ecosistemas, abrir un PR por dependencia produce una
+# cantidad de ruido que termina en que se ignoren todos — el modo habitual en
+# que Dependabot deja de servir.
+#
+# Los saltos de version MAYOR quedan deliberadamente fuera de los grupos, y
+# Dependabot los abre de a uno. La primera tanda mostro por que: la que
+# agrupaba todo junto traia cinco mayores del frontend en un mismo PR
+# (TypeScript 5→7, Vite 7→8, Vitest 3→4, jsdom 26→30, plugin-react 5→6) y
+# quedaba inmergeable entera porque UNO de esos cinco —TypeScript 7— entra en
+# conflicto con la peer dependency de typescript-eslint. Los otros cuatro no
+# tenian nada de malo, pero venian atados al que si.
+#
+# Un mayor casi nunca es "actualizar y ver": hay que leer sus notas de version.
+# Agruparlo con parches convierte cada tanda en todo-o-nada.
 
 updates:
   - package-ecosystem: npm
@@ -27,6 +39,7 @@ updates:
     groups:
       frontend:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: pip
     directory: /data-science/raw
@@ -39,6 +52,7 @@ updates:
     groups:
       ml:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: maven
     directory: /backend/analisis-energetico-api
@@ -51,6 +65,7 @@ updates:
     groups:
       backend:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
 
   # Las acciones se pinean por version mayor (@v4). Sin esto, una accion
   # abandonada se queda ahi para siempre sin que nada lo señale.
@@ -63,6 +78,7 @@ updates:
     groups:
       acciones:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
 
   # Las imagenes base son la superficie de ataque que menos se mira: postgres,
   # caddy, node, python y nginx se actualizan solas dentro de su tag menor,
@@ -79,3 +95,4 @@ updates:
     groups:
       imagenes:
         patterns: ["*"]
+        update-types: ["minor", "patch"]

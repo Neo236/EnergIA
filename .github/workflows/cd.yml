@@ -1,0 +1,142 @@
+name: Despliegue
+
+# Se dispara solo al mergear a main, y solo si cambió algo que se despliega.
+# Un cambio de documentación no reinicia el servicio.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - 'data-science/**'
+      - 'infra/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/cd.yml'
+  # Permite redesplegar sin commitear — por ejemplo tras editar el .env del
+  # servidor, que no está en el repositorio y por lo tanto nunca dispara nada.
+  workflow_dispatch:
+
+# Solo se necesita para clonar. El runner no toca la API de GitHub.
+permissions:
+  contents: read
+
+# Un despliegue a la vez, y sin cancelar el que esté en curso: interrumpir a
+# mitad de `docker compose up` deja el stack en un estado que nadie eligió.
+concurrency:
+  group: despliegue-produccion
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    name: Desplegar en producción
+    # La etiqueta `energia` es exclusiva de este proyecto: el runner está
+    # registrado solo en este repositorio y no atiende a ningún otro.
+    runs-on: [self-hosted, energia]
+    timeout-minutes: 20
+
+    steps:
+      # El runner corre en el mismo servidor que el despliegue, pero en su
+      # propio directorio de trabajo. Lo que se despliega es el clon de
+      # ~/projects/EnergIA, no la copia que el runner acaba de bajar:
+      # ese clon es el que tiene el .env con los secretos, que no está —ni debe
+      # estar— en el repositorio.
+      - name: Traer los cambios
+        run: |
+          set -euo pipefail
+          cd ~/projects/EnergIA
+          git fetch --quiet origin main
+          echo "Antes:   $(git rev-parse --short HEAD)"
+          git reset --hard --quiet origin/main
+          echo "Después: $(git rev-parse --short HEAD) $(git log -1 --format=%s | cut -c1-60)"
+
+      # Antes de tocar nada. Si el despliegue sale mal, esto es lo que permite
+      # volver: el rollback del código es un `git reset`, pero el de los datos
+      # solo existe si alguien lo hizo antes.
+      - name: Respaldar la base
+        run: |
+          set -euo pipefail
+          cd ~/projects/EnergIA
+          ./infra/respaldo.sh
+
+      - name: Construir y levantar
+        run: |
+          set -euo pipefail
+          cd ~/projects/EnergIA
+          docker compose up -d --build
+
+      - name: Esperar a que responda
+        run: |
+          set -euo pipefail
+          cd ~/projects/EnergIA
+          puerto="$(grep -E '^PROXY_PORT=' .env | cut -d= -f2 || echo 8088)"
+          bind="$(grep -E '^PROXY_BIND=' .env | cut -d= -f2 || echo 127.0.0.1)"
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 5 "http://${bind}:${puerto}/actuator/health" > /dev/null 2>&1; then
+              echo "Responde tras ~$((i * 10))s."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "El stack no respondió en 5 minutos."
+          exit 1
+
+      # Mismas comprobaciones que el CI hace sobre el stack efímero, ahora
+      # contra el que quedó sirviendo. Que las imágenes funcionaran en un
+      # runner limpio no garantiza que este servidor esté sirviéndolas: puede
+      # haber quedado un contenedor viejo en pie, o un .env desactualizado.
+      - name: Verificar lo desplegado
+        run: |
+          set -euo pipefail
+          cd ~/projects/EnergIA
+          puerto="$(grep -E '^PROXY_PORT=' .env | cut -d= -f2 || echo 8088)"
+          bind="$(grep -E '^PROXY_BIND=' .env | cut -d= -f2 || echo 127.0.0.1)"
+          base="http://${bind}:${puerto}"
+
+          docker compose logs ml-service | grep -q "Modelo pre-cargado en memoria" \
+            || { echo "El servicio de ML no cargó el modelo del repositorio."; exit 1; }
+          echo "  modelo: cargado de data/latest/"
+
+          tipo=$(curl -fsS -o /dev/null -w '%{content_type}' "$base/fonts/inter-latin.woff2")
+          [[ "$tipo" == font/woff2* ]] \
+            || { echo "  fuente servida como '$tipo': public/ no llegó a la imagen."; exit 1; }
+          echo "  estáticos: $tipo"
+
+          # El análisis de verificación NO se persiste: la cabecera lo marca
+          # como sonda. Sin eso, cada despliegue dejaría una fila de basura.
+          token="$(grep -E '^TOKEN_SONDA_SALUD=' .env | cut -d= -f2- || true)"
+          respuesta=$(curl -fsS --max-time 30 -X POST "$base/api/v1/analisis-energetico" \
+            -H 'Content-Type: application/json' \
+            ${token:+-H "X-EnergIA-Sonda: $token"} \
+            -d '{"consumo_kwh":420,"cantidad_equipos":10,"tipo_inmueble":"Casa",
+                 "uso_horario_pico":false,"horas_alto_consumo":12,"zona_fria":false,
+                 "calidad_aislamiento":"Media","fuente_calefaccion":"Electricidad",
+                 "fuente_agua_caliente":"Electricidad"}')
+          grep -q '"categoria":"Moderado"' <<< "$respuesta" \
+            || { echo "  análisis inesperado: $respuesta"; exit 1; }
+          echo "  análisis de referencia: correcto"
+
+      # Vuelve al commit anterior y relevanta. Cubre el caso en que el stack
+      # construye pero no sirve — que es justo el que un `docker compose up`
+      # exitoso no distingue.
+      - name: Revertir si falló
+        if: failure()
+        run: |
+          set -euo pipefail
+          cd ~/projects/EnergIA
+          echo "El despliegue falló. Volviendo al commit anterior."
+          git reset --hard --quiet HEAD~1
+          echo "Ahora en: $(git rev-parse --short HEAD)"
+          docker compose up -d --build
+          echo "Revertido. Revisar los logs antes de volver a intentar."
+
+      - name: Logs si algo falló
+        if: failure()
+        run: |
+          cd ~/projects/EnergIA
+          docker compose logs --tail=80
+
+      - name: Estado final
+        if: always()
+        run: |
+          cd ~/projects/EnergIA
+          docker compose ps

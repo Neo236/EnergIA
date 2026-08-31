@@ -72,26 +72,49 @@ interfaz que indique `PROXY_BIND`. Qué hay delante —un proxy inverso que
 termine TLS, un balanceador, nada— es decisión del alojamiento: la aplicación
 no lo asume.
 
+### Dónde vive
+
+Estas rutas son las del servidor donde corre hoy, no un requisito del proyecto:
+el stack funciona desde cualquier directorio. Se documentan porque el flujo de
+despliegue las usa.
+
+| Ruta | Qué hay |
+|------|---------|
+| `~/projects/EnergIA/` | El clon de `main`. Acá viven el `docker-compose.yml` y el `.env` |
+| `~/deployments/energIA/backups/` | Los volcados de `pg_dump` |
+| `~/gh-runner-energia/` | El runner de GitHub Actions |
+
+Los respaldos van deliberadamente **fuera** del clon: son datos de esa máquina,
+no del proyecto, y tienen que sobrevivir a un `git reset --hard` o a reclonar el
+repositorio — que es justamente lo que hace el flujo de despliegue.
+
 ### Actualizar
 
-El despliegue es **manual y deliberado**. Son tres comandos en el servidor:
+**Automático.** Al mergear a `main`, el flujo `.github/workflows/cd.yml` se
+ejecuta en el runner de este servidor: trae los cambios, respalda la base,
+reconstruye, espera a que el stack responda y **verifica lo desplegado**. Si
+algo falla, vuelve solo al commit anterior y lo relevanta.
+
+Solo se dispara si cambió algo desplegable — un cambio de documentación no
+reinicia el servicio. Para forzarlo sin commitear (por ejemplo tras editar el
+`.env`, que no está en el repositorio): **Actions → Despliegue → Run workflow**.
+
+A mano, si hiciera falta:
 
 ```bash
 cd ~/projects/EnergIA && git pull && docker compose up -d --build
-```
-
-Y la verificación:
-
-```bash
 docker compose ps && curl -sI https://energia.neo236.fun | head -1
 ```
 
-> **No hay despliegue continuo.** El proyecto tuvo tres flujos de CD durante el
-> hackathon que desplegaban a una VM con un runner propio; esa infraestructura ya
-> no existe y los flujos fueron retirados. Para un proyecto que cambia poco, un
-> `git pull` explícito es más simple de razonar que un pipeline que hay que
-> mantener. La integración continua (build y tests en cada PR) **sí** sigue
-> activa.
+> **Por qué el CD verifica y no solo construye.** Que `docker compose up`
+> termine sin error no dice que el sistema sirva: puede quedar un contenedor
+> viejo en pie, o un `.env` desactualizado. El flujo repite contra el stack ya
+> desplegado las mismas comprobaciones que el CI hace sobre uno efímero — que el
+> modelo se cargó del repositorio, que los estáticos salen con su tipo real y
+> que un análisis de referencia devuelve lo esperado.
+>
+> Ese análisis viaja con la cabecera `X-EnergIA-Sonda`, así que **no se
+> persiste**: sin eso, cada despliegue dejaría una fila de basura en la base.
 
 ### Variables de entorno
 

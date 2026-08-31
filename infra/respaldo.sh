@@ -16,7 +16,11 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DESTINO="${1:-$HOME/backups/energia}"
+
+# Los volcados no van dentro del repositorio: son datos de esta maquina, no del
+# proyecto, y tienen que sobrevivir a un `git reset --hard` o a reclonar. Van a
+# deployments/, que es donde vive lo que debe quedar fuera de los contenedores.
+DESTINO="${1:-$HOME/deployments/energIA/backups}"
 CONSERVAR=14
 
 cd "$REPO"

@@ -52,7 +52,15 @@ python -m uvicorn interfaces.api.app:app --reload --port 8000
 ```bash
 cd backend/analisis-energetico-api && ./mvnw test   # backend
 npm --prefix frontend test                          # frontend
-cd data-science/raw && python -m pytest             # ml-service
+```
+
+El servicio de ML necesita además las dependencias de test, que no van en la
+imagen de producción:
+
+```bash
+cd data-science/raw
+python -m pip install -r requirements.txt -r requirements-dev.txt
+python -m pytest
 ```
 
 ---

@@ -30,6 +30,13 @@ target/
 logs/
 log/
 
+# Base H2 embebida. El perfil de desarrollo la usa en vez de PostgreSQL, y
+# arrancar el backend en local deja estos archivos en el directorio del modulo.
+# Son estado de una maquina concreta, no del proyecto.
+*.mv.db
+*.trace.db
+*.lock.db
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # PYTHON / DATA SCIENCE / MACHINE LEARNING

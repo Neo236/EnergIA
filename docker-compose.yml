@@ -1,3 +1,12 @@
+# Nombre del proyecto, fijado a proposito.
+#
+# Sin esta linea Compose lo deduce del nombre del directorio, y de ese nombre
+# derivan los del volumen y la red: `energia_db-data`. Mover o renombrar la
+# carpeta cambiaria el proyecto, y el stack nuevo arrancaria con un volumen
+# vacio — la base anterior sigue existiendo, pero huerfana, y el sintoma es que
+# "se perdieron los datos" sin que nada haya fallado.
+name: energia
+
 # -------------------------------------------------------------
 # Rotacion de logs, compartida por todos los servicios.
 #

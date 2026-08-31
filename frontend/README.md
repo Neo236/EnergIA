@@ -49,8 +49,8 @@ src/
 └── styles/                   tokens.css (paleta) · app.css
 ```
 
-`prototipo-estatico/` guarda la versión anterior en HTML puro. No se construye
-ni se despliega.
+El prototipo estático en HTML puro que precedió a esta aplicación se retiró del
+repositorio: quedó superado por completo. Sigue disponible en el tag `v1.0-hackathon`.
 
 ## Rutas
 

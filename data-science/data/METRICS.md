@@ -11,7 +11,7 @@
 > test set del dataset sintético. **No son directamente extrapolables a
 > performance en datos reales.** El dataset sintético replica patrones típicos
 > del consumo energético argentino, pero no captura variabilidad real
-> (estacional, regional, hábitos puntuales). Ver `PARA_CONSTANZA.md` §3.
+> (estacional, regional, hábitos puntuales). Ver `COMO_LEER_UNA_PREDICCION.md` §3.
 
 ---
 

@@ -24,7 +24,6 @@ A continuación, se especifican los archivos y configuraciones utilizados para c
 | Archivo | Tipo | Descripción |
 |---|---|---|
 | `EnergIA.postman_collection.json` | Colección de pruebas | Colección definitiva que incluye aserciones automáticas de estructura, rangos de datos y validación directa contra el servicio ML. |
-| `EnergIA.postman_staging_environment.json` | Entorno de ejecución | Configuración de variables de entorno para el entorno de *staging* (URLs base, credenciales de prueba, etc.). |
 
 ---
 
@@ -215,7 +214,6 @@ cd G9-LATAM-TEAM-09
 
 1. Abra Postman.
 2. Importe la colección: vaya a **File > Import** y arrastre el archivo `EnergIA.postman_collection.json`.
-3. Importe el entorno: vaya a **File > Import** y arrastre el archivo `EnergIA.postman_staging_environment.json`.
 4. Active el entorno importado desde el selector de entornos en la esquina superior derecha.
 5. Abra la colección **EnergIA — Analisis Energetico**. Notará que contiene **18 requests** organizados en **8 carpetas** por funcionalidad.
 

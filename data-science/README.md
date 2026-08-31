@@ -45,7 +45,6 @@ data-science/
         train.py                     # CLI: dataset + train + upload
         validate.py                  # CLI: valida artefactos locales
     scripts/                         # utilidades operativas
-      sync_colab_notebook.py         # descarga colab y compara contra local
       validate_backend_contract.py   # valida el contrato HTTP backend→ML
     tests/                           # 219 tests (215 unit + 4 integration + e2e)
     notebooks/
@@ -190,9 +189,6 @@ estadisticos (`chi2`, `f_oneway`). El repo mantiene una copia local
 en `raw/notebooks/data_colab.ipynb`.
 
 ```bash
-python scripts/sync_colab_notebook.py             # check, exit 1 si difiere
-python scripts/sync_colab_notebook.py --json      # output parseable
-python scripts/sync_colab_notebook.py --apply     # descarga y sobrescribe
 ```
 
 El script calcula SHA256 sobre las **celdas de codigo** del notebook

@@ -8,7 +8,6 @@ dist/
 
 # El prototipo estático queda archivado en el repo como referencia, pero no
 # forma parte de la aplicación ni de la imagen.
-prototipo-estatico/
 
 # Documentación y archivos de construcción: el Dockerfile copia
 # explícitamente lo que necesita.

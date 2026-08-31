@@ -160,7 +160,7 @@ hueco del contrato en vez de esconderlo.
   modo (mock o API real) se resuelve al compilar. Es, de los tres
   componentes, el que menos depende de que `~/energia-envs/` exista.
 - El prototipo original en HTML/CSS/JS puro (anterior a esta migración)
-  queda archivado en [`frontend/prototipo-estatico/`](../../frontend/prototipo-estatico/README.md),
+  quedó archivado en el tag `v1.0-hackathon`,
   excluido del build.
 
 Detalle completo del código, cómo correr en local y conectar contra la API
@@ -170,11 +170,8 @@ real: [`frontend/README.md`](../../frontend/README.md).
 
 ## 📅 Informes por sprint
 
-Participación, decisiones y evidencias de cada período. Cada informe es
-autocontenido y lleva sus documentos como anexos.
+Los informes por sprint del hackathon —participación, decisiones y evidencias
+de cada período— se retiraron del repositorio junto con el resto de la
+documentación de proceso. Siguen disponibles en el tag
+[`v1.0-hackathon`](https://github.com/Neo236/EnergIA/releases/tag/v1.0-hackathon).
 
-| Sprint | Informe | Contenido principal |
-|---|---|---|
-| Semana 1 | [`semanas/semana-1/`](./semanas/semana-1/informe.md) | Etapas del diseño, wireframe v1 |
-| Semana 2 | [`semanas/semana-2/`](./semanas/semana-2/informe.md) | Wireframe v2 acotado a P-01/P-02, contrato V1.1, infraestructura de OCI |
-| Semana 3 | [`semanas/semana-3/`](./semanas/semana-3/informe.md) | Contrato V1.2, front desplegado, despliegue continuo, migración a Vite |

@@ -1,0 +1,14 @@
+[Unit]
+Description=EnergIA - respaldo diario de la base de datos
+
+[Timer]
+OnCalendar=daily
+# Dispersa el arranque hasta una hora: si el servidor arranca varios timers a
+# la misma medianoche, todos compiten por el disco al mismo tiempo.
+RandomizedDelaySec=1h
+# Si el servidor estuvo apagado a la hora prevista, corre al encender en vez
+# de saltear el dia.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

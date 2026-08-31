@@ -127,6 +127,57 @@ está entrenando, el archivo de `data-science/data/latest/` no llegó a la image
 
 ---
 
+## Respaldos
+
+Cada análisis recibe una URL propia y compartible, y la aplicación lo dice en
+pantalla. Esa promesa vale lo que valga el volumen de PostgreSQL: si se pierde,
+**todos los enlaces compartidos devuelven «no encontramos ese análisis»**.
+
+`infra/respaldo.sh` hace un `pg_dump` comprimido y conserva los últimos 14. Se
+instala una vez como timer de systemd de usuario:
+
+```bash
+mkdir -p ~/.config/systemd/user
+cp infra/systemd/energia-respaldo.{service,timer} ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now energia-respaldo.timer
+```
+
+> Requiere `loginctl enable-linger <usuario>` para que corra sin sesión abierta.
+> Comprobalo con `loginctl show-user <usuario> --property=Linger`.
+
+Verificar y operar:
+
+```bash
+systemctl --user list-timers energia-respaldo.timer   # cuándo corre
+systemctl --user start energia-respaldo.service       # corre ahora
+journalctl --user -u energia-respaldo.service -n 20   # qué pasó
+```
+
+### Restaurar
+
+Un respaldo que nunca se restauró no es un respaldo. La prueba, sobre una base
+descartable para no tocar la real:
+
+```bash
+docker compose exec -T db psql -U energia -d postgres -c "CREATE DATABASE prueba_restore;"
+zcat ~/backups/energia/energia-AAAAMMDD-HHMMSS.sql.gz \
+  | docker compose exec -T db psql -U energia -d prueba_restore
+docker compose exec -T db psql -U energia -d prueba_restore -c "SELECT count(*) FROM analisis_energetico;"
+docker compose exec -T db psql -U energia -d postgres -c "DROP DATABASE prueba_restore;"
+```
+
+Para restaurar **de verdad**, el mismo volcado va contra la base real con el
+stack detenido salvo la base:
+
+```bash
+docker compose stop backend
+zcat <respaldo> | docker compose exec -T db psql -U energia -d energia
+docker compose start backend
+```
+
+---
+
 ## Diagnóstico
 
 | Síntoma | Dónde mirar |

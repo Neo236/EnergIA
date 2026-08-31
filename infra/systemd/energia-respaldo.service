@@ -1,0 +1,23 @@
+[Unit]
+Description=EnergIA - volcado de la base de datos
+Documentation=https://github.com/Neo236/EnergIA/blob/main/docs/DESPLIEGUE.md
+
+# Sin dependencia de docker.service a proposito: esta es una unidad de USUARIO
+# y docker.service pertenece al sistema. Declararla hace que systemd se niegue
+# a arrancar con "Unit docker.service not found" — y como el timer si queda
+# programado, el fallo aparece recien la primera noche, en un log que nadie
+# esta mirando.
+#
+# No hace falta: si el stack no esta levantado, pg_dump falla y el script sale
+# con codigo distinto de cero, que es exactamente lo que systemd necesita saber.
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/projects/EnergIA
+ExecStart=%h/projects/EnergIA/infra/respaldo.sh
+
+# El volcado compite con el trafico de la aplicacion por el mismo disco y la
+# misma base. Corre despacio a proposito: no hay ninguna prisa en un respaldo
+# nocturno, y si la hubiera el problema seria otro.
+Nice=10
+IOSchedulingClass=idle

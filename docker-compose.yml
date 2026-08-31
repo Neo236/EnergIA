@@ -1,3 +1,21 @@
+# -------------------------------------------------------------
+# Rotacion de logs, compartida por todos los servicios.
+#
+# El driver json-file de Docker no rota por defecto: los logs crecen mientras
+# el contenedor viva. En un servidor que aloja varios proyectos, esa es la via
+# habitual por la que un disco se llena sin que nadie lo note hasta que algo
+# deja de poder escribir.
+#
+# 10 MB x 3 archivos = 30 MB de techo por contenedor, 150 MB para el stack
+# entero. Suficiente para diagnosticar un incidente reciente, que es para lo
+# que se leen estos logs.
+# -------------------------------------------------------------
+x-logs: &logs
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   # -------------------------------------------------------------
   # Base de datos - PostgreSQL (persistencia de analisis)
@@ -23,6 +41,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    logging: *logs
+    # Techo con holgura sobre el consumo real (42 MB medidos). No es una
+    # reserva: el contenedor usa lo que necesita hasta ese limite.
+    mem_limit: 256m
     restart: unless-stopped
     networks:
       - energia-network
@@ -57,6 +79,16 @@ services:
         condition: service_started
       db:
         condition: service_healthy
+    logging: *logs
+    # Techo con holgura sobre el consumo real (414 MB medidos). No es una
+    # reserva: el contenedor usa lo que necesita hasta ese limite.
+    #
+    # En este servicio el limite ademas AYUDA. Sin el, la JVM ve los 15 GB del
+    # host y dimensiona su heap contra esa cifra; con el, lee el limite del
+    # cgroup (Java 17 lo hace solo) y calcula el heap contra 768 MB, que es lo
+    # que realmente tiene. Un contenedor sin limite es la forma habitual de que
+    # una JVM se coma la memoria de sus vecinos creyendo que le sobra.
+    mem_limit: 768m
     restart: unless-stopped
     networks:
       - energia-network
@@ -88,6 +120,10 @@ services:
       - OCI_BUCKET=${OCI_BUCKET:-g9-energy-test-bucket}
       - OCI_REGION=${OCI_REGION:-sa-santiago-1}
       - OCI_INSTANCE_PRINCIPAL=${OCI_INSTANCE_PRINCIPAL:-false}
+    logging: *logs
+    # Techo con holgura sobre el consumo real (137 MB medidos). No es una
+    # reserva: el contenedor usa lo que necesita hasta ese limite.
+    mem_limit: 512m
     restart: unless-stopped
     networks:
       - energia-network
@@ -107,6 +143,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     image: energia-frontend:${FRONTEND_TAG:-latest}
+    logging: *logs
+    # Techo con holgura sobre el consumo real (4 MB medidos). No es una
+    # reserva: el contenedor usa lo que necesita hasta ese limite.
+    mem_limit: 64m
     restart: unless-stopped
     networks:
       - energia-network
@@ -149,6 +189,10 @@ services:
     depends_on:
       - frontend
       - backend
+    logging: *logs
+    # Techo con holgura sobre el consumo real (17 MB medidos). No es una
+    # reserva: el contenedor usa lo que necesita hasta ese limite.
+    mem_limit: 96m
     restart: unless-stopped
     networks:
       - energia-network

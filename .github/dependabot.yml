@@ -111,6 +111,19 @@ updates:
         update-types:
           - version-update:semver-major
           - version-update:semver-minor
+      # Maven, por el mismo desajuste de vocabulario y una razon mas. La
+      # propuesta automatica es siempre `maven:3`, una etiqueta movil: el mismo
+      # Dockerfile podria compilar con un Maven distinto en dos dias, que es lo
+      # que vuelve poco confiable un rollback. Y arrastra el JDK de compilacion
+      # a la ultima version disponible, cuando el proyecto compila para Java 17
+      # y esa eleccion es deliberada. Se propuso dos veces (#20, #30).
+      #
+      # La imagen de EJECUCION no esta en esta lista y si se actualiza sola:
+      # correr sobre un JRE mas nuevo aporta parches sin cambiar que se compila.
+      - dependency-name: maven
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
     groups:
       imagenes:
         patterns: ["*"]

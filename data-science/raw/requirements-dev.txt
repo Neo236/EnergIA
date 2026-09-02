@@ -2,19 +2,42 @@
 #
 #   pip install -r requirements.txt -r requirements-dev.txt
 #
-# A diferencia de requirements.txt, este archivo no se genera con pip-compile ni
-# fija versiones exactas. La razon es que cumplen funciones distintas: el runtime
-# se pinea al parche para que la imagen sea reproducible byte a byte, mientras
-# que las herramientas de test solo necesitan no cambiar de comportamiento de
-# golpe — para eso alcanza con acotar la version mayor.
+# Este archivo es el UNICO lugar donde viven. Antes estaban repartidas: pytest y
+# httpx escritos a mano dentro del workflow de CI, y jupyter, nbconvert e
+# ipykernel en una lista propia dentro de Dockerfile.test. Cada copia envejecia
+# por su cuenta — y de hecho una quedo incompleta, ver plotly mas abajo.
 #
-# Antes de existir este archivo, estos paquetes vivian unicamente escritos a mano
-# dentro del workflow de CI. El entorno de test solo era reproducible leyendo el
-# YAML, y las instrucciones de la documentacion fallaban en un clon nuevo.
+# A diferencia de requirements.txt, no se genera con pip-compile ni fija
+# versiones exactas. Runtime y herramientas cumplen funciones distintas: el
+# primero se pinea al parche para que la imagen sea reproducible byte a byte,
+# mientras que las segundas solo necesitan no cambiar de comportamiento de
+# golpe, y para eso alcanza con acotar la version mayor.
 
+# --- Suite de tests ---
 pytest>=8,<9
 
 # Cliente HTTP que usa TestClient de FastAPI/Starlette para los tests de la API.
 # Sin el, los tests de interfaces/api fallan al importar, no al ejecutarse — el
 # error apunta al import y despista.
 httpx>=0.27,<1
+
+# --- Ejecucion del notebook ---
+#
+# Un test ejecuta el notebook de analisis exploratorio de punta a punta para
+# detectar que se haya desincronizado del contrato de datos. Se saltea si
+# jupyter no esta instalado, asi que estas dependencias son las que deciden si
+# ese test corre o no.
+jupyter>=1,<2
+nbconvert>=7,<8
+ipykernel>=6,<7
+
+# El notebook grafica con plotly y corre sus pruebas estadisticas (ANOVA) con
+# statsmodels. Ninguno de los dos estaba declarado en archivo alguno de
+# dependencias del proyecto, asi que el test de ejecucion fallaba con
+# ModuleNotFoundError cada vez que efectivamente corria — cosa que solo pasaba
+# por el camino de Docker, donde nadie lo estaba mirando.
+#
+# La lista se verifico extrayendo todos los imports del notebook y comparandola
+# contra los dos requirements, no descubriendolos de a uno al fallar.
+plotly>=5,<7
+statsmodels>=0.14,<1

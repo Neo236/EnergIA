@@ -30,15 +30,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
     && rm -rf /var/lib/apt/lists/*
 
-# requirements del proyecto + jupyter (solo para tests)
-COPY raw/requirements.txt ./requirements.txt
+# Las dependencias de test viven en requirements-dev.txt y no en una lista
+# propia aca. Tener dos copias fue el problema: esta se quedo sin plotly, que el
+# notebook necesita, y el test que lo ejecuta fallaba solo por este camino.
+COPY raw/requirements.txt raw/requirements-dev.txt ./
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir \
-        "jupyter>=1.0.0" \
-        "nbconvert>=7.0.0" \
-        "ipykernel>=6.0.0" \
-        "pytest>=8.0.0"
+    pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
 
 # Codigo del proyecto
 COPY raw/ ./

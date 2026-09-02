@@ -14,7 +14,7 @@
 # error, a veces el bytecode emitido— y no algo que deba entrar por un
 # actualizador automatico. La imagen de ejecucion es otra cosa y si va mas
 # adelantada: ver la etapa de servicio.
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM maven:3.9-eclipse-temurin-26 AS builder
 
 WORKDIR /app
 

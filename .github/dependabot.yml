@@ -111,19 +111,23 @@ updates:
         update-types:
           - version-update:semver-major
           - version-update:semver-minor
-      # Maven, por el mismo desajuste de vocabulario y una razon mas. La
-      # propuesta automatica es siempre `maven:3`, una etiqueta movil: el mismo
-      # Dockerfile podria compilar con un Maven distinto en dos dias, que es lo
-      # que vuelve poco confiable un rollback. Y arrastra el JDK de compilacion
-      # a la ultima version disponible, cuando el proyecto compila para Java 17
-      # y esa eleccion es deliberada. Se propuso dos veces (#20, #30).
+      # La imagen de compilacion queda anclada por completo, sin filtro por
+      # tipo de version. Filtrarla no alcanza: `3.9-eclipse-temurin-17` ->
+      # `3.9-eclipse-temurin-26` es, para Dependabot, un cambio de sufijo y no
+      # un salto mayor ni menor, asi que se escapa de cualquier regla semantica
+      # — verificado en #32, que llego igual con la regla anterior puesta.
       #
-      # La imagen de EJECUCION no esta en esta lista y si se actualiza sola:
-      # correr sobre un JRE mas nuevo aporta parches sin cambiar que se compila.
+      # El argumento de fondo es que esta imagen NO SE ENVIA: es una etapa
+      # intermedia que el build multi-stage descarta, asi que el motivo habitual
+      # para actualizarla —recibir parches en lo que corre en produccion— no
+      # aplica. Lo que si aporta es reproducibilidad, y eso se consigue no
+      # moviendola. Subir el JDK de compilacion sigue siendo posible; es una
+      # decision deliberada, no algo que deba llegar por correo automatico.
+      #
+      # La imagen de EJECUCION (eclipse-temurin:*-jre) no esta anclada y si se
+      # actualiza sola: ahi el argumento de los parches si vale, porque es la
+      # que efectivamente corre.
       - dependency-name: maven
-        update-types:
-          - version-update:semver-major
-          - version-update:semver-minor
     groups:
       imagenes:
         patterns: ["*"]

@@ -120,9 +120,15 @@ cd EnergIA
 docker compose up --build -d
 ```
 
-La aplicación queda en **http://localhost:8088**. Detalle de los modos de
-ejecución, incluido el desarrollo servicio por servicio, en
-[`docs/DESPLIEGUE.md`](./docs/DESPLIEGUE.md).
+La aplicación queda en **http://localhost:8088**, con la interfaz y la API bajo
+el mismo origen. No hace falta configurar nada: el `docker-compose.yml` trae
+valores por defecto para todo, y el modelo entrenado viaja en el repositorio.
+
+La primera vez tarda unos minutos —hay que descargar las imágenes base y
+compilar los tres servicios—; las siguientes son casi inmediatas.
+
+Para bajarla, `docker compose down`. Cómo correr los tests y cómo trabajar
+servicio por servicio, en [`docs/DESPLIEGUE.md`](./docs/DESPLIEGUE.md).
 
 ---
 

@@ -43,25 +43,78 @@ cd backend/analisis-energetico-api && ./mvnw spring-boot:run
 
 ```bash
 cd data-science/raw
-python -m pip install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate        # en Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 python -m uvicorn interfaces.api.app:app --reload --port 8000
 ```
 
+> Necesita **Python 3.10**: `requirements.txt` está pinneado para esa versión y
+> sobre una más nueva pip se pone a compilar numpy y scikit-learn desde código
+> fuente, sin decir por qué. El entorno virtual tampoco es ceremonia — esas
+> versiones fijas pisarían las de otros proyectos de la misma máquina.
+>
+> En Windows, `python` suele abrir la tienda de aplicaciones en vez de ejecutar
+> nada; ahí el intérprete es `py`.
+
 ### Tests
 
+**Back-end:**
+
 ```bash
-cd backend/analisis-energetico-api && ./mvnw test   # backend
-npm --prefix frontend test                          # frontend
+cd backend/analisis-energetico-api && ./mvnw test
 ```
 
-El servicio de ML necesita además las dependencias de test, que no van en la
-imagen de producción:
+> Verás varias líneas `ERROR` en la salida y **es lo esperado**: hay tests que
+> ejercitan a propósito los caminos de fallo — el detector de motor de
+> persistencia equivocado, el manejador global de excepciones. Lo que importa es
+> el `BUILD SUCCESS` del final.
+
+**Front-end** (el `install` hace falta en un clon nuevo):
+
+```bash
+npm --prefix frontend install
+npm --prefix frontend test
+```
+
+**Servicio de ML** — el camino corto es Docker, y evita una trampa:
 
 ```bash
 cd data-science/raw
-python -m pip install -r requirements.txt -r requirements-dev.txt
+./scripts/run_tests_in_docker.sh
+```
+
+> `requirements.txt` está pinneado para **Python 3.10**, y lo dice en su primera
+> línea. Instalarlo sobre un intérprete más nuevo no falla con un mensaje claro:
+> pip no encuentra ruedas precompiladas para esas versiones exactas de numpy,
+> pandas y scikit-learn, y se pone a compilarlas desde código fuente. Puede
+> tardar mucho o quedarse sin terminar, sin que quede claro por qué.
+>
+> El script de arriba levanta una imagen con Python 3.10, así que la versión del
+> intérprete deja de depender de la máquina.
+>
+> En Windows corre desde **WSL**, no desde Git Bash: este último entrega rutas
+> POSIX que Docker Desktop no resuelve. Sin WSL, el equivalente a mano funciona
+> igual porque usa rutas relativas:
+>
+> ```bash
+> cd data-science
+> docker build -f raw/Dockerfile.test -t energia-tests .
+> docker run --rm energia-tests
+> ```
+
+Si preferís correrlos nativos, necesitás **Python 3.10** y un entorno virtual:
+
+```bash
+cd data-science/raw
+python -m venv .venv
+source .venv/bin/activate        # en Windows: .venv\Scripts\activate
+pip install -r requirements.txt -r requirements-dev.txt
 python -m pytest
 ```
+
+El entorno virtual no es ceremonia: esas versiones fijas pisarían las que
+tengan otros proyectos de la misma máquina.
 
 ---
 
@@ -185,7 +238,7 @@ descartable para no tocar la real:
 
 ```bash
 docker compose exec -T db psql -U energia -d postgres -c "CREATE DATABASE prueba_restore;"
-zcat ~/backups/energia/energia-AAAAMMDD-HHMMSS.sql.gz \
+zcat ~/deployments/energIA/backups/energia-AAAAMMDD-HHMMSS.sql.gz \
   | docker compose exec -T db psql -U energia -d prueba_restore
 docker compose exec -T db psql -U energia -d prueba_restore -c "SELECT count(*) FROM analisis_energetico;"
 docker compose exec -T db psql -U energia -d postgres -c "DROP DATABASE prueba_restore;"

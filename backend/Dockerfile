@@ -56,6 +56,6 @@ ENV PORT=8080 \
 # ps` refleja si el contenedor puede realmente atender trafico y no solo si la
 # JVM esta viva. wget devuelve != 0 ante el 503 que emite un grupo DOWN.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health/readiness || exit 1
+  CMD wget --quiet --tries=1 --timeout=4 --spider http://localhost:8080/actuator/health/readiness || exit 1
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

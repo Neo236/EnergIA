@@ -98,6 +98,10 @@ services:
     # que realmente tiene. Un contenedor sin limite es la forma habitual de que
     # una JVM se coma la memoria de sus vecinos creyendo que le sobra.
     mem_limit: 768m
+    # tini como PID 1: recoge los procesos huerfanos. Si Docker corta el
+    # HEALTHCHECK por timeout, el curl/wget queda colgado de un proceso que no
+    # los recoge (uvicorn, java) y queda zombi hasta reiniciar el contenedor.
+    init: true
     restart: unless-stopped
     networks:
       - energia-network
@@ -133,6 +137,10 @@ services:
     # Techo con holgura sobre el consumo real (137 MB medidos). No es una
     # reserva: el contenedor usa lo que necesita hasta ese limite.
     mem_limit: 512m
+    # tini como PID 1: recoge los procesos huerfanos. Si Docker corta el
+    # HEALTHCHECK por timeout, el curl/wget queda colgado de un proceso que no
+    # los recoge (uvicorn, java) y queda zombi hasta reiniciar el contenedor.
+    init: true
     restart: unless-stopped
     networks:
       - energia-network

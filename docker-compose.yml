@@ -55,8 +55,11 @@ services:
     # reserva: el contenedor usa lo que necesita hasta ese limite.
     mem_limit: 256m
     restart: unless-stopped
+    # Solo en `energia-datos`, que no tiene salida a internet: la base no la
+    # necesita, y si alguien llegara a controlarla no podria mandar datos
+    # afuera sin pasar antes por otro servicio.
     networks:
-      - energia-network
+      - energia-datos
 
   # -------------------------------------------------------------
   # Backend Principal - Spring Boot (Java 17)
@@ -103,8 +106,11 @@ services:
     # los recoge (uvicorn, java) y queda zombi hasta reiniciar el contenedor.
     init: true
     restart: unless-stopped
+    # `energia-network` para salir (el bucket de OCI) y hablar con el resto;
+    # `energia-datos` para llegar a la base.
     networks:
       - energia-network
+      - energia-datos
 
   # -------------------------------------------------------------
   # Microservicio Data Science / ML - FastAPI (Python 3.10)
@@ -217,6 +223,10 @@ services:
 networks:
   energia-network:
     driver: bridge
+  # Sin salida a internet (`internal`): solo la base y el backend.
+  energia-datos:
+    driver: bridge
+    internal: true
 
 volumes:
   db-data:

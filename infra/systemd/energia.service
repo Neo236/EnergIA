@@ -1,0 +1,18 @@
+[Unit]
+Description=EnergIA - el stack, cuando estan sus secretos
+Documentation=https://github.com/Neo236/EnergIA/blob/main/docs/DESPLIEGUE.md
+
+# Unidad de USUARIO, sin dependencia de docker.service (es del sistema; ver
+# energia-respaldo.service). La levanta energia-secretos.path cuando llegan
+# los secretos a memoria (despues de cada arranque del servidor) y la reinicia
+# el administrador de la flota cuando cambia uno.
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=%h/deployments/energia
+# Sin secretos no arranca: el backend no tendria con que hablarle a la base.
+ExecStartPre=/usr/bin/test -e /run/secretos/energia/.listo
+# --force-recreate: un secreto nuevo se monta recien en un contenedor nuevo.
+ExecStart=/usr/bin/docker compose up -d --force-recreate --remove-orphans
+TimeoutStartSec=300

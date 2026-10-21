@@ -398,6 +398,53 @@ jobs:
             echo "  $ruta -> $codigo"
           done
 
+      # Produccion no pasa los secretos por variables: los monta como archivos
+      # (infra/docker-compose.secretos.yml) y Spring los lee de /run/secrets.
+      # Si ese camino se rompe, en el servidor el backend no conecta a la base
+      # o la sonda deja filas de basura, y nada de lo anterior lo veria.
+      - name: Con los secretos como archivos (el compose de produccion)
+        run: |
+          set -euo pipefail
+          s="$RUNNER_TEMP/secretos"; mkdir -p "$s"
+          # La base ya se creo con la contrasena por defecto: la misma, ahora
+          # desde el archivo. La sonda, con un token que solo existe aca.
+          printf 'energia' > "$s/POSTGRES_PASSWORD"
+          printf 'token-de-ci' > "$s/TOKEN_SONDA_SALUD"
+          chmod 444 "$s"/*
+          export SECRETOS_ENERGIA="$s"
+          compose() { docker compose -f docker-compose.yml -f infra/docker-compose.secretos.yml "$@"; }
+          compose up -d db backend
+
+          # Ningun secreto en la configuracion del contenedor.
+          for c in $(compose ps -q db backend); do
+            if docker inspect "$c" --format '{{range .Config.Env}}{{println .}}{{end}}' \
+                 | grep -E '^(POSTGRES_PASSWORD|DB_PASSWORD|TOKEN_SONDA_SALUD)='; then
+              echo "Un secreto quedo como variable en $c."; exit 1
+            fi
+          done
+          echo "  sin secretos en las variables"
+
+          for i in $(seq 1 30); do
+            curl -fsS --max-time 5 http://127.0.0.1:8088/actuator/health/readiness > /dev/null 2>&1 && break
+            [ "$i" -lt 30 ] || { echo "El backend no conecto a la base con la contrasena del archivo."; exit 1; }
+            sleep 5
+          done
+          echo "  la base, con la contrasena del archivo"
+
+          # Con el token del archivo, el analisis es una sonda: no se guarda y
+          # la respuesta no trae id.
+          respuesta=$(curl -fsS --max-time 30 -X POST http://127.0.0.1:8088/api/v1/analisis-energetico \
+            -H 'Content-Type: application/json' -H 'X-EnergIA-Sonda: token-de-ci' \
+            -d '{"consumo_kwh":420,"cantidad_equipos":10,"tipo_inmueble":"Casa",
+                 "uso_horario_pico":false,"horas_alto_consumo":12,"zona_fria":false,
+                 "calidad_aislamiento":"Media","fuente_calefaccion":"Electricidad",
+                 "fuente_agua_caliente":"Electricidad"}')
+          grep -q '"categoria":"Moderado"' <<< "$respuesta" || { echo "Analisis inesperado: $respuesta"; exit 1; }
+          if grep -qE '"id":"[0-9a-f-]{36}"' <<< "$respuesta"; then
+            echo "La sonda se guardo: el token del archivo no llego al backend."; exit 1
+          fi
+          echo "  la sonda, con el token del archivo"
+
       - name: Logs del stack si algo fallo
         if: failure()
         run: docker compose logs --tail=120

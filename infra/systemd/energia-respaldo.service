@@ -13,8 +13,10 @@ Documentation=https://github.com/Neo236/EnergIA/blob/main/docs/DESPLIEGUE.md
 
 [Service]
 Type=oneshot
-WorkingDirectory=%h/projects/EnergIA
-ExecStart=%h/projects/EnergIA/infra/respaldo.sh
+# Desde el despliegue (infra/desplegar.sh), no desde un clon.
+WorkingDirectory=%h/deployments/energia
+Environment=ENERGIA_DESPLIEGUE=%h/deployments/energia
+ExecStart=%h/deployments/energia/codigo/infra/respaldo.sh %h/deployments/energia/backups
 
 # El volcado compite con el trafico de la aplicacion por el mismo disco y la
 # misma base. Corre despacio a proposito: no hay ninguna prisa en un respaldo

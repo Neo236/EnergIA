@@ -128,51 +128,44 @@ no lo asume.
 ### Dónde vive
 
 Estas rutas son las del servidor donde corre hoy, no un requisito del proyecto:
-el stack funciona desde cualquier directorio. Se documentan porque el flujo de
+el stack funciona desde cualquier directorio. Se documentan porque el
 despliegue las usa.
 
 | Ruta | Qué hay |
 |------|---------|
-| `~/projects/EnergIA/` | El clon de `main`. Acá viven el `docker-compose.yml` y el `.env` |
-| `~/deployments/energIA/backups/` | Los volcados de `pg_dump` |
-| `~/gh-runner-energia/` | El runner de GitHub Actions |
+| `~/deployments/energia/codigo/` | El árbol del commit desplegado, **sin permiso de escritura**. Ahí están los dos compose |
+| `~/deployments/energia/.env` | Lo arma el despliegue: las variables, los dos compose (`COMPOSE_FILE`) y la etiqueta de las imágenes. Sin secretos |
+| `/run/secretos/energia/` | Los secretos, **en memoria**: un archivo por secreto. Se borran al reiniciar el servidor |
+| `~/deployments/energia/backups/` | Los volcados de `pg_dump` |
+| `~/deployments/energia/codigo.anterior/` | El despliegue anterior, para volver |
 
-Los respaldos van deliberadamente **fuera** del clon: son datos de esa máquina,
-no del proyecto, y tienen que sobrevivir a un `git reset --hard` o a reclonar el
-repositorio — que es justamente lo que hace el flujo de despliegue.
+No hay un clon en el servidor: el código que corre es el que dejó un
+despliegue. Cambiar algo es otro commit y otro despliegue. Desde
+`~/deployments/energia`, `docker compose` (`ps`, `logs`, `exec`) funciona como
+siempre: el `.env` le dice qué archivos usar.
 
 ### Actualizar
 
-**Automático.** Al mergear a `main`, el flujo `.github/workflows/cd.yml` se
-ejecuta en el runner de este servidor: trae los cambios, respalda la base,
-reconstruye, espera a que el stack responda y **verifica lo desplegado**. Si
-algo falla, vuelve solo al commit anterior y lo relevanta.
+**Lo despliega el administrador de la flota**, no un runner de GitHub: manda el
+commit al servidor y corre ahí `infra/desplegar.sh`, que respalda la base,
+construye las imágenes de ese commit (etiquetadas con él), levanta el stack y
+**verifica lo desplegado**. Si algo falla, vuelve solo a lo que estaba
+(`codigo.anterior`). Un cambio de documentación no hace falta desplegarlo.
 
-Solo se dispara si cambió algo desplegable — un cambio de documentación no
-reinicia el servicio. Para forzarlo sin commitear (por ejemplo tras editar el
-`.env`, que no está en el repositorio): **Actions → Despliegue → Run workflow**.
-
-A mano, si hiciera falta:
-
-```bash
-cd ~/projects/EnergIA && git pull && docker compose up -d --build
-docker compose ps && curl -sI https://energia.neo236.fun | head -1
-```
-
-> **Por qué el CD verifica y no solo construye.** Que `docker compose up`
+> **Por qué el despliegue verifica y no solo construye.** Que `docker compose up`
 > termine sin error no dice que el sistema sirva: puede quedar un contenedor
-> viejo en pie, o un `.env` desactualizado. El flujo repite contra el stack ya
-> desplegado las mismas comprobaciones que el CI hace sobre uno efímero — que el
-> modelo se cargó del repositorio, que los estáticos salen con su tipo real y
+> viejo en pie, o un `.env` desactualizado. El despliegue repite contra el stack
+> ya levantado las mismas comprobaciones que el CI hace sobre uno efímero — que
+> el modelo se cargó del repositorio, que los estáticos salen con su tipo real y
 > que un análisis de referencia devuelve lo esperado.
 >
 > Ese análisis viaja con la cabecera `X-EnergIA-Sonda`, así que **no se
 > persiste**: sin eso, cada despliegue dejaría una fila de basura en la base.
 
-### Variables de entorno
+### Variables y secretos
 
-El archivo `.env` vive en el servidor, junto al `docker-compose.yml`, con
-permisos `600`. **No va al repositorio.**
+**Lo que no es secreto** va en el `.env` del despliegue (lo arma
+`desplegar.sh` a partir de lo que manda el administrador):
 
 | Variable | Valor | Para qué |
 |----------|-------|----------|
@@ -180,8 +173,24 @@ permisos `600`. **No va al repositorio.**
 | `PROXY_BIND` | interfaz de entrada | Dónde escucha el único puerto publicado — ver abajo |
 | `PROXY_PORT` | `8088` | El único puerto que se publica |
 | `POSTGRES_DB` · `POSTGRES_USER` | `energia` | Base de datos |
-| `POSTGRES_PASSWORD` | *(generado)* | `openssl rand -base64 36` |
-| `TOKEN_SONDA_SALUD` | *(generado)* | Token de la sonda de verificación |
+
+**Los secretos no van en ningún archivo del disco ni en una variable de
+entorno.** El administrador los deja en memoria, en `/run/secretos/energia/`
+(un archivo por secreto, 444 dentro de una carpeta 700), y los vuelve a mandar
+después de cada reinicio del servidor. `infra/docker-compose.secretos.yml` los
+monta como `secrets:` en `/run/secrets/`, y el backend los lee de ahí
+(`spring.config.import=configtree`, en `application.properties`). Así
+`docker inspect` no los muestra.
+
+| Secreto | Para qué |
+|---------|----------|
+| `POSTGRES_PASSWORD` | La contraseña de la base: la imagen de PostgreSQL la lee de `POSTGRES_PASSWORD_FILE` (solo al crear la base) y el backend como `DB_PASSWORD` |
+| `TOKEN_SONDA_SALUD` | El token de la sonda de verificación |
+
+**Después de un reinicio**, el stack espera sus secretos:
+`energia-secretos.path` levanta `energia.service` cuando aparecen, y
+`energia.service` no arranca sin ellos. Rotar uno es cambiarlo en el
+administrador y volver a mandarlo con reinicio: nada se edita en el servidor.
 
 > ⚠️ **`PROXY_BIND` no debe ser `0.0.0.0` en un servidor compartido.** Docker
 > publica sus puertos con reglas propias de iptables en la cadena FORWARD, que
@@ -210,15 +219,10 @@ Cada análisis recibe una URL propia y compartible, y la aplicación lo dice en
 pantalla. Esa promesa vale lo que valga el volumen de PostgreSQL: si se pierde,
 **todos los enlaces compartidos devuelven «no encontramos ese análisis»**.
 
-`infra/respaldo.sh` hace un `pg_dump` comprimido y conserva los últimos 14. Se
-instala una vez como timer de systemd de usuario:
-
-```bash
-mkdir -p ~/.config/systemd/user
-cp infra/systemd/energia-respaldo.{service,timer} ~/.config/systemd/user/
-systemctl --user daemon-reload
-systemctl --user enable --now energia-respaldo.timer
-```
+`infra/respaldo.sh` hace un `pg_dump` comprimido y conserva los últimos 14,
+en `~/deployments/energia/backups/`. Lo instala y prende `infra/desplegar.sh`
+como timer de systemd de usuario (`energia-respaldo.timer`), y lo corre antes
+de cada despliegue.
 
 > Requiere `loginctl enable-linger <usuario>` para que corra sin sesión abierta.
 > Comprobalo con `loginctl show-user <usuario> --property=Linger`.
@@ -238,7 +242,7 @@ descartable para no tocar la real:
 
 ```bash
 docker compose exec -T db psql -U energia -d postgres -c "CREATE DATABASE prueba_restore;"
-zcat ~/deployments/energIA/backups/energia-AAAAMMDD-HHMMSS.sql.gz \
+zcat ~/deployments/energia/backups/energia-AAAAMMDD-HHMMSS.sql.gz \
   | docker compose exec -T db psql -U energia -d prueba_restore
 docker compose exec -T db psql -U energia -d prueba_restore -c "SELECT count(*) FROM analisis_energetico;"
 docker compose exec -T db psql -U energia -d postgres -c "DROP DATABASE prueba_restore;"

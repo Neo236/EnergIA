@@ -82,19 +82,29 @@ parecía a un fallo: el formulario respondía y la interfaz se veía perfecta, p
 los números eran inventados y los enlaces compartidos daban «no encontramos ese
 análisis». Levantar el stack entero es un comando; ese es el camino.
 
-### El CD verifica, no solo construye
+### El despliegue verifica, no solo construye
 
-`.github/workflows/cd.yml` corre en un runner propio al mergear a `main`. No
+`infra/desplegar.sh` (lo corre el administrador de la flota en el servidor,
+sobre el commit que se despliega; ya no hay un runner propio ni `cd.yml`) no
 termina cuando `docker compose up` devuelve cero: después comprueba contra el
 stack ya desplegado que el modelo se haya cargado del repositorio, que los
 estáticos salgan con su tipo real y que un análisis de referencia devuelva lo
-esperado. Si algo falla, vuelve solo al commit anterior.
+esperado. Si algo falla, vuelve solo al despliegue anterior.
 
 Esos pasos no son ceremonia: cada uno corresponde a un fallo que ocurrió y que
 un `up` exitoso no habría detectado. No los quites al tocar el flujo.
 
 El análisis de verificación viaja con la cabecera `X-EnergIA-Sonda` para que no
 se persista. Sin eso, cada despliegue dejaría una fila de basura.
+
+### Los secretos de producción son archivos, no variables
+
+`infra/docker-compose.secretos.yml` monta `POSTGRES_PASSWORD` y
+`TOKEN_SONDA_SALUD` como `secrets:` y **saca del contenedor** las variables
+del mismo nombre: Spring las lee de `/run/secrets` (`configtree`), y una
+variable, aunque sea vacía, le ganaría al archivo. No vuelvas a ponerlas en
+`environment:` ni en el `.env` del servidor (`desplegar.sh` se niega). La CI
+lo prueba en el paso "Con los secretos como archivos".
 
 ### No existe un endpoint `DELETE`, y es a propósito
 

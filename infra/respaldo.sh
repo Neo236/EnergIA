@@ -16,18 +16,22 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# En el servidor corre desde su despliegue (ENERGIA_DESPLIEGUE, con el .env que
+# nombra los dos compose; ver infra/desplegar.sh); a mano, desde el clon.
+DIR="${ENERGIA_DESPLIEGUE:-$REPO}"
 
 # Los volcados no van dentro del repositorio: son datos de esta maquina, no del
 # proyecto, y tienen que sobrevivir a un `git reset --hard` o a reclonar. Van a
 # deployments/, que es donde vive lo que debe quedar fuera de los contenedores.
-DESTINO="${1:-$HOME/deployments/energIA/backups}"
+DESTINO="${1:-$HOME/deployments/energia/backups}"
 CONSERVAR=14
 
-cd "$REPO"
+cd "$DIR"
 
-# Las credenciales viven en el .env del servidor, no en el repositorio.
+# El usuario y la base, del .env (no son secretos: pg_dump corre adentro del
+# contenedor, por el socket local, sin contrasena).
 if [ ! -f .env ]; then
-    echo "No se encontro $REPO/.env" >&2
+    echo "No se encontro $DIR/.env" >&2
     exit 1
 fi
 # shellcheck disable=SC1091

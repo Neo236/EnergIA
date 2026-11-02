@@ -12,6 +12,12 @@ SECRETOS="${SECRETOS_ENERGIA:-/run/secretos/energia}"
 cd "$DIR"
 dc() { docker compose --env-file variables.env --env-file .env "$@"; }
 en_red() { docker run --rm --network energia_energia-network curlimages/curl:8.21.0 "$@"; }
+# -i: la cabecera con el token entra por la entrada estándar (curl -H @-), no
+# como argumento: un argumento se ve en `ps` y en la configuración del contenedor.
+en_red_con_token() {
+    printf 'X-EnergIA-Sonda: %s\n' "$(< "$SECRETOS/TOKEN_SONDA_SALUD")" \
+        | docker run --rm -i --network energia_energia-network curlimages/curl:8.21.0 -H @- "$@"
+}
 
 for i in $(seq 1 30); do
     if en_red -fsS --max-time 5 http://proxy:8088/actuator/health/readiness > /dev/null 2>&1; then
@@ -21,7 +27,9 @@ for i in $(seq 1 30); do
     sleep 10
 done
 
-dc logs ml-service | grep -q "Modelo pre-cargado en memoria" \
+# Con <<<, no con una tubería: con pipefail, el grep -q que corta antes haría
+# fallar a `logs` (SIGPIPE) y la verificación daría un falso error.
+grep -q "Modelo pre-cargado en memoria" <<< "$(dc logs ml-service 2>&1)" \
     || { echo "El servicio de ML no cargo el modelo del repositorio." >&2; exit 1; }
 echo "  modelo: cargado de data/latest/"
 
@@ -33,8 +41,8 @@ esac
 
 # El analisis de verificacion es una sonda: no se persiste. Con el token del
 # archivo en memoria; si no llego al backend, la respuesta trae id.
-respuesta=$(en_red -fsS --max-time 30 -X POST http://proxy:8088/api/v1/analisis-energetico \
-    -H 'Content-Type: application/json' -H "X-EnergIA-Sonda: $(cat "$SECRETOS/TOKEN_SONDA_SALUD")" \
+respuesta=$(en_red_con_token -fsS --max-time 30 -X POST http://proxy:8088/api/v1/analisis-energetico \
+    -H 'Content-Type: application/json' \
     -d '{"consumo_kwh":420,"cantidad_equipos":10,"tipo_inmueble":"Casa",
          "uso_horario_pico":false,"horas_alto_consumo":12,"zona_fria":false,
          "calidad_aislamiento":"Media","fuente_calefaccion":"Electricidad",

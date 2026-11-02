@@ -17,7 +17,8 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # En el servidor corre desde su despliegue (ENERGIA_DESPLIEGUE, con el .env que
-# nombra los dos compose; ver infra/desplegar.sh); a mano, desde el clon.
+# nombra los dos compose; lo arma la plataforma, ver despliegue.yaml); a mano,
+# desde el clon.
 DIR="${ENERGIA_DESPLIEGUE:-$REPO}"
 
 # Los volcados no van dentro del repositorio: son datos de esta maquina, no del
@@ -34,8 +35,9 @@ if [ ! -f .env ]; then
     echo "No se encontro $DIR/.env" >&2
     exit 1
 fi
+# (y de variables.env, lo que manda el administrador: POSTGRES_USER y POSTGRES_DB)
 # shellcheck disable=SC1091
-set -a; . ./.env; set +a
+set -a; [ ! -f variables.env ] || . ./variables.env; . ./.env; set +a
 
 USUARIO="${POSTGRES_USER:-energia}"
 BASE="${POSTGRES_DB:-energia}"

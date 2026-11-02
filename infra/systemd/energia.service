@@ -14,5 +14,5 @@ WorkingDirectory=%h/deployments/energia
 # Sin secretos no arranca: el backend no tendria con que hablarle a la base.
 ExecStartPre=/usr/bin/test -e /run/secretos/energia/.listo
 # --force-recreate: un secreto nuevo se monta recien en un contenedor nuevo.
-ExecStart=/usr/bin/docker compose up -d --force-recreate --remove-orphans
+ExecStart=/usr/bin/docker compose --env-file variables.env --env-file .env up -d --force-recreate --remove-orphans
 TimeoutStartSec=300

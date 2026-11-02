@@ -133,24 +133,31 @@ despliegue las usa.
 
 | Ruta | Qué hay |
 |------|---------|
-| `~/deployments/energia/codigo/` | El árbol del commit desplegado, **sin permiso de escritura**. Ahí están los dos compose |
-| `~/deployments/energia/.env` | Lo arma el despliegue: las variables, los dos compose (`COMPOSE_FILE`) y la etiqueta de las imágenes. Sin secretos |
+| `~/deployments/energia/` (de la cuenta `deploy`) | Los dos compose (`docker-compose.yml`, `docker-compose.secretos.yml`) e `infra/` (el `Caddyfile`, el respaldo y la verificación). Sin el resto del código: las imágenes ya vienen construidas |
+| `~/deployments/energia/.env` | Lo arma el despliegue: los dos compose (`COMPOSE_FILE`) y la etiqueta de las imágenes (el commit). Sin secretos |
+| `~/deployments/energia/variables.env` | Lo que no es secreto, lo manda el administrador (tabla de abajo) |
 | `/run/secretos/energia/` | Los secretos, **en memoria**: un archivo por secreto. Se borran al reiniciar el servidor |
 | `~/deployments/energia/backups/` | Los volcados de `pg_dump` |
-| `~/deployments/energia/codigo.anterior/` | El despliegue anterior, para volver |
+| `~/deployments/.anteriores/energia/` | El despliegue anterior, para volver (lo guarda la plataforma antes de cada despliegue) |
 
 No hay un clon en el servidor: el código que corre es el que dejó un
 despliegue. Cambiar algo es otro commit y otro despliegue. Desde
-`~/deployments/energia`, `docker compose` (`ps`, `logs`, `exec`) funciona como
-siempre: el `.env` le dice qué archivos usar.
+`~/deployments/energia`, `docker compose --env-file variables.env --env-file .env`
+(`ps`, `logs`, `exec`): el `.env` dice qué archivos usar y `variables.env`, el
+resto.
 
 ### Actualizar
 
-**Lo despliega el administrador de la flota**, no un runner de GitHub: manda el
-commit al servidor y corre ahí `infra/desplegar.sh`, que respalda la base,
-construye las imágenes de ese commit (etiquetadas con él), levanta el stack y
-**verifica lo desplegado**. Si algo falla, vuelve solo a lo que estaba
-(`codigo.anterior`). Un cambio de documentación no hace falta desplegarlo.
+**Lo despliega la plataforma de la flota del administrador**, no un runner de
+GitHub: lee `despliegue.yaml` del commit (desde su consola o su terminal),
+construye las tres imágenes de ese commit (etiquetadas con él), **respalda la
+base** (`energia-respaldo`), pone los compose e `infra/`, levanta el stack y
+**verifica lo desplegado**: de afuera (que el puerto no quede en todas las
+interfaces, que ningún secreto sea una variable de un contenedor) y de adentro
+de la red del stack (`infra/verificar.sh`, por `energia-verificar.service`). Si
+algo falla, vuelve sola a lo que estaba. Un cambio de documentación no hace
+falta desplegarlo. Hasta el 2026-11-02 lo hacía `infra/desplegar.sh`, en el
+servidor.
 
 > **Por qué el despliegue verifica y no solo construye.** Que `docker compose up`
 > termine sin error no dice que el sistema sirva: puede quedar un contenedor
@@ -164,8 +171,7 @@ construye las imágenes de ese commit (etiquetadas con él), levanta el stack y
 
 ### Variables y secretos
 
-**Lo que no es secreto** va en el `.env` del despliegue (lo arma
-`desplegar.sh` a partir de lo que manda el administrador):
+**Lo que no es secreto** va en `variables.env`, que manda el administrador:
 
 | Variable | Valor | Para qué |
 |----------|-------|----------|
@@ -220,9 +226,9 @@ pantalla. Esa promesa vale lo que valga el volumen de PostgreSQL: si se pierde,
 **todos los enlaces compartidos devuelven «no encontramos ese análisis»**.
 
 `infra/respaldo.sh` hace un `pg_dump` comprimido y conserva los últimos 14,
-en `~/deployments/energia/backups/`. Lo instala y prende `infra/desplegar.sh`
-como timer de systemd de usuario (`energia-respaldo.timer`), y lo corre antes
-de cada despliegue.
+en `~/deployments/energia/backups/`. Corre cada día por un timer de systemd de
+usuario (`energia-respaldo.timer`, que la plataforma prende al desplegar) y
+antes de cada despliegue (`antes: [respaldo]` en `despliegue.yaml`).
 
 > Requiere `loginctl enable-linger <usuario>` para que corra sin sesión abierta.
 > Comprobalo con `loginctl show-user <usuario> --property=Linger`.

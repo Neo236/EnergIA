@@ -1,0 +1,10 @@
+[Unit]
+Description=EnergIA - verificar lo desplegado desde adentro de su red
+Documentation=https://github.com/Neo236/EnergIA/blob/main/docs/DESPLIEGUE.md
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/deployments/energia
+Environment=ENERGIA_DESPLIEGUE=%h/deployments/energia
+ExecStart=%h/deployments/energia/infra/verificar.sh
+TimeoutStartSec=420

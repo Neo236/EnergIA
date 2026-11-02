@@ -1,0 +1,36 @@
+# Cómo se despliega EnergIA en la flota del administrador (homelab-fleet,
+# docs/PLAN-DESPLIEGUES.md). Lo lee el motor de la plataforma desde la consola
+# o la terminal del admin, en el commit que se despliega: construye las tres
+# imágenes en server0, respalda la base, pone lo nuevo, verifica (de afuera y de
+# adentro de la red del stack) y, si algo falla, vuelve solo a lo anterior.
+# Los secretos (POSTGRES_PASSWORD, TOKEN_SONDA_SALUD) y variables.env los manda
+# el administrador; acá no hay ninguno.
+servicio: energia
+nodo: server0
+imagenes:
+  energia-backend: {contexto: backend}
+  energia-ml-service: {contexto: data-science}
+  energia-frontend: {contexto: frontend}
+archivos:
+  docker-compose.yml: docker-compose.yml
+  docker-compose.secretos.yml: infra/docker-compose.secretos.yml
+carpetas:
+  infra: infra
+env:
+  COMPOSE_FILE: docker-compose.yml:docker-compose.secretos.yml
+  SECRETOS_ENERGIA: /run/secretos/energia
+  BACKEND_TAG: "{version}"
+  ML_TAG: "{version}"
+  FRONTEND_TAG: "{version}"
+unidades:
+  - infra/systemd/energia.service
+  - infra/systemd/energia-secretos.path
+  - infra/systemd/energia-respaldo.service
+  - infra/systemd/energia-respaldo.timer
+  - infra/systemd/energia-verificar.service
+antes: [respaldo]
+verificar:
+  puertos: [8088]
+  sin_variables: [POSTGRES_PASSWORD, DB_PASSWORD, TOKEN_SONDA_SALUD]
+  tareas: [verificar]
+  esperar: 300

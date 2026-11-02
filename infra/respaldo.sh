@@ -35,7 +35,8 @@ if [ ! -f .env ]; then
     exit 1
 fi
 # shellcheck disable=SC1091
-set -a; . ./.env; set +a
+# (y de variables.env, lo que manda el administrador: POSTGRES_USER y POSTGRES_DB)
+set -a; [ ! -f variables.env ] || . ./variables.env; . ./.env; set +a
 
 USUARIO="${POSTGRES_USER:-energia}"
 BASE="${POSTGRES_DB:-energia}"

@@ -84,12 +84,13 @@ análisis». Levantar el stack entero es un comando; ese es el camino.
 
 ### El despliegue verifica, no solo construye
 
-`infra/desplegar.sh` (lo corre el administrador de la flota en el servidor,
-sobre el commit que se despliega; ya no hay un runner propio ni `cd.yml`) no
-termina cuando `docker compose up` devuelve cero: después comprueba contra el
-stack ya desplegado que el modelo se haya cargado del repositorio, que los
-estáticos salgan con su tipo real y que un análisis de referencia devuelva lo
-esperado. Si algo falla, vuelve solo al despliegue anterior.
+`despliegue.yaml` le dice a la plataforma de la flota del administrador cómo
+desplegar (ya no hay un runner propio, ni `cd.yml`, ni `infra/desplegar.sh`),
+y el despliegue no termina cuando `docker compose up` devuelve cero: después
+`infra/verificar.sh` comprueba contra el stack ya desplegado que el modelo se
+haya cargado del repositorio, que los estáticos salgan con su tipo real y que
+un análisis de referencia devuelva lo esperado. Si algo falla, la plataforma
+vuelve sola al despliegue anterior.
 
 Esos pasos no son ceremonia: cada uno corresponde a un fallo que ocurrió y que
 un `up` exitoso no habría detectado. No los quites al tocar el flujo.
@@ -103,7 +104,8 @@ se persista. Sin eso, cada despliegue dejaría una fila de basura.
 `TOKEN_SONDA_SALUD` como `secrets:` y **saca del contenedor** las variables
 del mismo nombre: Spring las lee de `/run/secrets` (`configtree`), y una
 variable, aunque sea vacía, le ganaría al archivo. No vuelvas a ponerlas en
-`environment:` ni en el `.env` del servidor (`desplegar.sh` se niega). La CI
+`environment:` ni en el `.env` del servidor (la plataforma verifica que
+ningún contenedor las tenga como variable, y si no, vuelve atrás). La CI
 lo prueba en el paso "Con los secretos como archivos".
 
 ### No existe un endpoint `DELETE`, y es a propósito

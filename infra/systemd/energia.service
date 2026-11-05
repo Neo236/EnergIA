@@ -15,4 +15,8 @@ WorkingDirectory=%h/deployments/energia
 ExecStartPre=/usr/bin/test -e /run/secretos/energia/.listo
 # --force-recreate: un secreto nuevo se monta recien en un contenedor nuevo.
 ExecStart=/usr/bin/docker compose --env-file variables.env --env-file .env up -d --force-recreate --remove-orphans
+# Al arrancar el servidor, Docker levanta los contenedores antes de que lleguen
+# los secretos; si el compose choca con eso, reintenta a los 15 s (2026-11-05).
+Restart=on-failure
+RestartSec=15
 TimeoutStartSec=300
